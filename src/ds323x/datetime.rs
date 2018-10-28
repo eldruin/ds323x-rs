@@ -6,14 +6,28 @@ use interface::{ ReadRegister, WriteRegister };
 
 impl<DI, IC, E> Ds323x<DI, IC>
 where
-    DI: ReadRegister<Error = E> + WriteRegister<Error = E>
+    DI: ReadRegister<Error = E>
 {
     /// Read the seconds.
     pub fn get_seconds(&mut self) -> Result<u8, Error<E>> {
-        let data = self.iface.read_register(Register::SECONDS)?;
-        Ok(packed_bcd_to_decimal(data))
+        self.read_register_decimal(Register::SECONDS)
     }
 
+    /// Read the minutes.
+    pub fn get_minutes(&mut self) -> Result<u8, Error<E>> {
+        self.read_register_decimal(Register::MINUTES)
+    }
+
+    fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<E>> {
+        let data = self.iface.read_register(register)?;
+        Ok(packed_bcd_to_decimal(data))
+    }
+}
+
+impl<DI, IC, E> Ds323x<DI, IC>
+where
+    DI: WriteRegister<Error = E>
+{
     /// Set the seconds [0-59].
     ///
     /// Will return an `Error::InvalidInputData` if the seconds are out of range.
@@ -21,7 +35,21 @@ where
         if seconds > 59 {
             return Err(Error::InvalidInputData);
         }
-        self.iface.write_register(Register::SECONDS, decimal_to_packed_bcd(seconds))
+        self.write_register_decimal(Register::SECONDS, seconds)
+    }
+
+    /// Set the minutes [0-59].
+    ///
+    /// Will return an `Error::InvalidInputData` if the minutes are out of range.
+    pub fn set_minutes(&mut self, minutes: u8) -> Result<(), Error<E>> {
+        if minutes > 59 {
+            return Err(Error::InvalidInputData);
+        }
+        self.write_register_decimal(Register::MINUTES, minutes)
+    }
+
+    fn write_register_decimal(&mut self, register: u8, decimal_number: u8) -> Result<(), Error<E>> {
+        self.iface.write_register(register, decimal_to_packed_bcd(decimal_number))
     }
 }
 

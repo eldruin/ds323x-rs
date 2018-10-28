@@ -5,6 +5,7 @@
 //!
 //! This driver allows you to:
 //! - Read/write the seconds.
+//! - Read/write the minutes.
 //!
 //! ## The devices
 //!
@@ -177,6 +178,7 @@ struct Register;
 
 impl Register {
     const SECONDS   : u8 = 0x00;
+    const MINUTES   : u8 = 0x01;
 }
 
 const DEVICE_ADDRESS: u8 = 0b110_1000;

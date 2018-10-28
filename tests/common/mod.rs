@@ -10,6 +10,7 @@ pub struct Register;
 
 impl Register {
     pub const SECONDS   : u8 = 0x00;
+    pub const MINUTES   : u8 = 0x01;
 }
 
 pub struct DummyOutputPin;

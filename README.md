@@ -7,6 +7,7 @@ extremely accurate real-time clocks, based on the [`embedded-hal`] traits.
 
 This driver allows you to:
 - Read/write the seconds.
+- Read/write the minutes.
 
 ## The devices
 
