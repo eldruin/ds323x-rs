@@ -43,6 +43,20 @@ macro_rules! set_invalid_param_test {
     };
 }
 
+macro_rules! set_invalid_param_range_test {
+    ($method:ident, $too_small_value:expr, $too_big_value:expr) => {
+        mod too_small {
+            use super::*;
+            set_invalid_param_test!($method, $too_small_value);
+        }
+
+        mod too_big {
+            use super::*;
+            set_invalid_param_test!($method, $too_big_value);
+        }
+    };
+}
+
 mod seconds {
     use super::*;
     get_param_test!(get_seconds, SECONDS, 1, 1);
@@ -68,30 +82,14 @@ mod hours_12h_am {
     use super::*;
     get_param_test!(get_hours, HOURS, Hours::AM(12), 0b0101_0010);
     set_param_test!(set_hours, HOURS, Hours::AM(12), 0b0101_0010);
-
-    mod too_small {
-        use super::*;
-        set_invalid_param_test!(set_hours, Hours::AM(0));
-    }
-
-    mod too_big {
-        use super::*;
-        set_invalid_param_test!(set_hours, Hours::AM(13));
-    }
+    set_invalid_param_range_test!(set_hours, Hours::AM(0), Hours::AM(13));
 }
 
 mod hours_12h_pm {
     use super::*;
     get_param_test!(get_hours, HOURS, Hours::PM(12), 0b0111_0010);
     set_param_test!(set_hours, HOURS, Hours::PM(12), 0b0111_0010);
+    set_invalid_param_range_test!(set_hours, Hours::PM(0), Hours::PM(13));
+}
 
-    mod too_small {
-        use super::*;
-        set_invalid_param_test!(set_hours, Hours::PM(0));
-    }
-
-    mod too_big {
-        use super::*;
-        set_invalid_param_test!(set_hours, Hours::PM(13));
-    }
 }
