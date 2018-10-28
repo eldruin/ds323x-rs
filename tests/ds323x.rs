@@ -178,6 +178,18 @@ mod year {
     set_invalid_param_range_test!(set_year, 1999, 2101);
 }
 
+macro_rules! invalid_dt_test {
+    ($name:ident, $year:expr, $month:expr, $day:expr, $weekday:expr,
+     $hour:expr, $minute:expr, $second:expr) => {
+        mod $name {
+            use super::*;
+            const DT : DateTime = DateTime { year: $year, month: $month, day: $day, weekday: $weekday,
+                                             hour: $hour, minute: $minute, second: $second };
+            set_invalid_param_test!(set_datetime, &DT);
+        }
+    };
+}
+
 mod datetime {
     use super::*;
     const DT : DateTime = DateTime { year: 2018, month: 8, day: 13, weekday: 2,
@@ -190,4 +202,17 @@ mod datetime {
     set_param_write_array_test!(set_datetime, &DT, SECONDS,
         [0b0101_1000, 0b0101_1001, 0b0010_0011, 0b0000_0010,
          0b0001_0011, 0b0000_1000, 0b0001_1000]);
+
+    invalid_dt_test!(too_small_year,  1999, 8,  13, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_big_year,    2101, 8,  13, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_small_month, 2018, 0,  13, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_big_month,   2018, 13, 13, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_small_day,   2018, 8,   0, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_big_day,     2018, 8,  32, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_small_wd,    2018, 8,  13, 0, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_big_wd,      2018, 8,  13, 8, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_big_hours,   2018, 8,  13, 2, Hours::H24(24), 59, 58);
+    invalid_dt_test!(too_big_min,     2018, 8,  13, 2, Hours::H24(24), 60, 58);
+    invalid_dt_test!(too_big_seconds, 2018, 8,  13, 2, Hours::H24(24), 59, 60);
 }
+
