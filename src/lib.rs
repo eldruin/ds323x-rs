@@ -176,7 +176,7 @@ struct Register;
 
 impl Register {
     const SECONDS   : u8 = 0x00;
- }
+}
 
 const DEVICE_ADDRESS: u8 = 0b110_1000;
 
@@ -262,97 +262,3 @@ where
 }
 
 mod ds323x;
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    extern crate embedded_hal_mock as hal;
-    extern crate std;
-    use self::std::vec;
-
-    struct DummyOutputPin;
-    impl embedded_hal::digital::OutputPin for DummyOutputPin {
-        fn set_low(&mut self) {}
-        fn set_high(&mut self) {}
-    }
-
-    mod ds3231 {
-        use super::*;
-
-        #[test]
-        fn can_create() {
-            Ds323x::new_ds3231(hal::i2c::Mock::new(&[]));
-        }
-
-        #[test]
-        fn can_get_seconds() {
-            let transactions = [
-                hal::i2c::Transaction::write_read(DEVICE_ADDRESS, vec![Register::SECONDS], vec![1])
-            ];
-            let mut dev = Ds323x::new_ds3231(hal::i2c::Mock::new(&transactions));
-            assert_eq!(1, dev.get_seconds().unwrap());
-        }
-
-        #[test]
-        fn can_set_seconds() {
-            let transactions = [
-                hal::i2c::Transaction::write(DEVICE_ADDRESS, vec![Register::SECONDS, 1])
-            ];
-            let mut dev = Ds323x::new_ds3231(hal::i2c::Mock::new(&transactions));
-            dev.set_seconds(1).unwrap();
-        }
-    }
-    mod ds3232 {
-        use super::*;
-
-        #[test]
-        fn can_create() {
-            Ds323x::new_ds3232(hal::i2c::Mock::new(&[]));
-        }
-
-        #[test]
-        fn can_get_seconds() {
-            let transactions = [
-                hal::i2c::Transaction::write_read(DEVICE_ADDRESS, vec![Register::SECONDS], vec![1])
-            ];
-            let mut dev = Ds323x::new_ds3232(hal::i2c::Mock::new(&transactions));
-            assert_eq!(1, dev.get_seconds().unwrap());
-        }
-
-        #[test]
-        fn can_set_seconds() {
-            let transactions = [
-                hal::i2c::Transaction::write(DEVICE_ADDRESS, vec![Register::SECONDS, 1])
-            ];
-            let mut dev = Ds323x::new_ds3232(hal::i2c::Mock::new(&transactions));
-            dev.set_seconds(1).unwrap();
-        }
-    }
-
-    mod ds3234 {
-        use super::*;
-
-        #[test]
-        fn can_create() {
-            Ds323x::new_ds3234(hal::spi::Mock::new(&[]), DummyOutputPin);
-        }
-
-        #[test]
-        fn can_get_seconds() {
-            let transactions = [
-                hal::spi::Transaction::transfer(vec![Register::SECONDS, 0], vec![Register::SECONDS, 1])
-            ];
-            let mut dev = Ds323x::new_ds3234(hal::spi::Mock::new(&transactions), DummyOutputPin);
-            assert_eq!(1, dev.get_seconds().unwrap());
-        }
-
-        #[test]
-        fn can_set_seconds() {
-            let transactions = [
-                hal::spi::Transaction::write(vec![Register::SECONDS + 0x80, 1])
-            ];
-            let mut dev = Ds323x::new_ds3234(hal::spi::Mock::new(&transactions), DummyOutputPin);
-            dev.set_seconds(1).unwrap();
-        }
-    }
-}
