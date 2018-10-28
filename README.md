@@ -6,13 +6,9 @@ extremely accurate real-time clocks, based on the [`embedded-hal`] traits.
 [`embedded-hal`]: https://github.com/rust-embedded/embedded-hal
 
 This driver allows you to:
-- Read/write the seconds.
-- Read/write the minutes.
-- Read/write the hours in 24h or AM/PM format.
-- Read/write the weekday.
-- Read/write the day.
-- Read/write the month.
-- Read/write the year.
+- Read and set date and time in 12-hour and 24-hour format. See: `get_datetime`.
+- Read and set date and time elements. For example, see: `get_year`.
+- Enable and disable the real-time clock. See: `enable`.
 
 ## The devices
 

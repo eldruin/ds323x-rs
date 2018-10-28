@@ -8,6 +8,7 @@ pub const DEVICE_ADDRESS: u8 = 0b110_1000;
 
 pub struct Register;
 
+#[allow(unused)]
 impl Register {
     pub const SECONDS   : u8 = 0x00;
     pub const MINUTES   : u8 = 0x01;
@@ -15,6 +16,14 @@ impl Register {
     pub const DOW       : u8 = 0x03;
     pub const DOM       : u8 = 0x04;
     pub const MONTH     : u8 = 0x05;
+    pub const CONTROL   : u8 = 0x0E;
+}
+
+pub struct BitFlags;
+
+#[allow(unused)]
+impl BitFlags {
+    pub const EOSC       : u8 = 0b1000_0000;
 }
 
 pub struct DummyOutputPin;
@@ -72,6 +81,18 @@ macro_rules! set_invalid_test {
                 Err(Error::InvalidInputData) => (),
                 _ => panic!("InvalidInputData error not returned.")
             }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! call_test {
+    ($name:ident, $method:ident, $create_method:ident, $transactions:expr) => {
+        #[test]
+        fn $name() {
+            let trans = $transactions;
+            let mut dev = $create_method(&trans);
+            dev.$method().unwrap();
         }
     };
 }

@@ -4,13 +4,9 @@
 //! [`embedded-hal`]: https://github.com/rust-embedded/embedded-hal
 //!
 //! This driver allows you to:
-//! - Read/write the seconds.
-//! - Read/write the minutes.
-//! - Read/write the hours in 24h or AM/PM format.
-//! - Read/write the weekday.
-//! - Read/write the day.
-//! - Read/write the month.
-//! - Read/write the year.
+//! - Read and set date and time in 12-hour and 24-hour format. See: `get_datetime`.
+//! - Read and set date and time elements. For example, see: `get_year`.
+//! - Enable and disable the real-time clock. See: `enable`.
 //!
 //! ## The devices
 //!
@@ -189,6 +185,7 @@ impl Register {
     const DOM       : u8 = 0x04;
     const MONTH     : u8 = 0x05;
     const YEAR      : u8 = 0x06;
+    const CONTROL   : u8 = 0x0E;
 }
 
 struct BitFlags;
@@ -197,6 +194,7 @@ impl BitFlags {
     const H24_H12    : u8 = 0b0100_0000;
     const AM_PM      : u8 = 0b0010_0000;
     const CENTURY    : u8 = 0b1000_0000;
+    const EOSC       : u8 = 0b1000_0000;
 }
 
 const DEVICE_ADDRESS: u8 = 0b110_1000;
