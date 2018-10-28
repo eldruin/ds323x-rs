@@ -11,6 +11,7 @@ This driver allows you to:
 - Read/write the hours in 24h or AM/PM format.
 - Read/write the weekday.
 - Read/write the day.
+- Read/write the month.
 
 ## The devices
 

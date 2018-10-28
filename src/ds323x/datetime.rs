@@ -17,7 +17,7 @@ pub enum Hours {
 
 impl<DI, IC, E> Ds323x<DI, IC>
 where
-    DI: ReadRegister<Error = E>
+    DI: ReadRegister<Error = E> + WriteRegister<Error = E>
 {
     /// Read the seconds.
     pub fn get_seconds(&mut self) -> Result<u8, Error<E>> {
@@ -57,16 +57,18 @@ where
         self.read_register_decimal(Register::DOM)
     }
 
+    /// Read the month [1-12].
+    pub fn get_month(&mut self) -> Result<u8, Error<E>> {
+        let data = self.iface.read_register(Register::MONTH)?;
+        let value = data & !BitFlags::CENTURY;
+        Ok(packed_bcd_to_decimal(value))
+    }
+
     fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<E>> {
         let data = self.iface.read_register(register)?;
         Ok(packed_bcd_to_decimal(data))
     }
-}
 
-impl<DI, IC, E> Ds323x<DI, IC>
-where
-    DI: WriteRegister<Error = E>
-{
     /// Set the seconds [0-59].
     ///
     /// Will return an `Error::InvalidInputData` if the seconds are out of range.
@@ -126,6 +128,19 @@ where
             return Err(Error::InvalidInputData);
         }
         self.iface.write_register(Register::DOM, day)
+    }
+
+    /// Set the month [1-12].
+    ///
+    /// Will return an `Error::InvalidInputData` if the month is out of range.
+    pub fn set_month(&mut self, month: u8) -> Result<(), Error<E>> {
+        if month < 1 || month > 12 {
+            return Err(Error::InvalidInputData);
+        }
+        // keep the century bit
+        let data = self.iface.read_register(Register::MONTH)?;
+        let value = (data & BitFlags::CENTURY) | decimal_to_packed_bcd(month);
+        self.iface.write_register(Register::MONTH, value)
     }
 
     fn write_register_decimal(&mut self, register: u8, decimal_number: u8) -> Result<(), Error<E>> {

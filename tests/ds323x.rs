@@ -34,6 +34,20 @@ macro_rules! set_param_test {
                   [ SpiTrans::write(vec![Register::$register + 0x80, $binary_value]) ]);
     };
 }
+
+macro_rules! read_set_param_test {
+    ($method:ident, $register:ident, $value:expr, $binary_value_read:expr, $binary_value_write:expr) => {
+        set_test!(can_read_set_ds3231, $method, new_ds3231, $value,
+                  [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$binary_value_read]),
+                    I2cTrans::write(DEV_ADDR, vec![Register::$register, $binary_value_write]) ]);
+
+        set_test!(can_read_set_ds3232, $method, new_ds3232, $value,
+                  [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$binary_value_read]),
+                    I2cTrans::write(DEV_ADDR, vec![Register::$register, $binary_value_write]) ]);
+
+        set_test!(can_read_set_ds3234, $method, new_ds3234, $value,
+                  [ SpiTrans::transfer(vec![Register::$register, 0], vec![Register::$register, $binary_value_read]),
+                    SpiTrans::write(vec![Register::$register + 0x80, $binary_value_write]) ]);
     };
 }
 
@@ -106,4 +120,17 @@ mod day {
     get_param_test!(get_day, DOM, 1, 1);
     set_param_test!(set_day, DOM, 1, 1);
     set_invalid_param_range_test!(set_day, 0, 8);
+}
+
+mod month {
+    use super::*;
+    get_param_test!(get_month, MONTH, 1, 1);
+    read_set_param_test!(set_month, MONTH, 12, 0b0000_0010, 0b0001_0010);
+    set_invalid_param_range_test!(set_month, 0, 13);
+
+    mod keeps_century {
+        use super::*;
+        get_param_test!(get_month, MONTH, 12, 0b1001_0010);
+        read_set_param_test!(set_month, MONTH, 12, 0b1000_0010, 0b1001_0010);
+    }
 }

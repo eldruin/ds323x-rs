@@ -9,6 +9,7 @@
 //! - Read/write the hours in 24h or AM/PM format.
 //! - Read/write the weekday.
 //! - Read/write the day.
+//! - Read/write the month.
 //!
 //! ## The devices
 //!
@@ -185,6 +186,7 @@ impl Register {
     const HOURS     : u8 = 0x02;
     const DOW       : u8 = 0x03;
     const DOM       : u8 = 0x04;
+    const MONTH     : u8 = 0x05;
 }
 
 struct BitFlags;
@@ -192,6 +194,7 @@ struct BitFlags;
 impl BitFlags {
     const H24_H12    : u8 = 0b0100_0000;
     const AM_PM      : u8 = 0b0010_0000;
+    const CENTURY    : u8 = 0b1000_0000;
 }
 
 const DEVICE_ADDRESS: u8 = 0b110_1000;
