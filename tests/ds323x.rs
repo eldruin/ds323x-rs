@@ -26,10 +26,10 @@ macro_rules! get_param_test {
 }
 
 macro_rules! get_param_read_array_test {
-    ($method:ident, $value:expr, $register1:ident, [ $( $bin:expr ),+ ], [ $( $bin2:expr ),+ ]) => {
+    ($method:ident, $value:expr, $register1:ident, [ $( $read_bin:expr ),+ ], [ $( $read_bin2:expr ),+ ]) => {
         _get_param_test!($method, $value,
-            [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register1], vec![$( $bin ),*]) ],
-            [ SpiTrans::transfer(vec![Register::$register1, $( $bin2 ),*], vec![Register::$register1, $( $bin ),*]) ]);
+            [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register1], vec![$( $read_bin ),*]) ],
+            [ SpiTrans::transfer(vec![Register::$register1, $( $read_bin2 ),*], vec![Register::$register1, $( $read_bin ),*]) ]);
     };
 }
 
@@ -46,6 +46,14 @@ macro_rules! set_param_test {
         _set_param_test!($method, $value,
             [ I2cTrans::write(DEV_ADDR, vec![Register::$register, $binary_value]) ],
             [ SpiTrans::write(vec![Register::$register + 0x80, $binary_value]) ]);
+    };
+}
+
+macro_rules! set_param_write_array_test {
+    ($method:ident, $value:expr, $register:ident, [ $( $exp_bin:expr ),+ ] ) => {
+        _set_param_test!($method, $value,
+            [ I2cTrans::write(DEV_ADDR, vec![Register::$register, $( $exp_bin ),*]) ],
+            [ SpiTrans::write(vec![Register::$register + 0x80, $( $exp_bin ),*]) ]);
     };
 }
 
@@ -173,9 +181,13 @@ mod year {
 mod datetime {
     use super::*;
     const DT : DateTime = DateTime { year: 2018, month: 8, day: 13, weekday: 2,
-                              hour: Hours::H24(23), minute: 59, second: 58 };
+                                     hour: Hours::H24(23), minute: 59, second: 58 };
     get_param_read_array_test!(get_datetime, DT, SECONDS,
         [0b0101_1000, 0b0101_1001, 0b0010_0011, 0b0000_0010,
          0b0001_0011, 0b0000_1000, 0b0001_1000],
         [0, 0, 0, 0, 0, 0, 0]);
+
+    set_param_write_array_test!(set_datetime, &DT, SECONDS,
+        [0b0101_1000, 0b0101_1001, 0b0010_0011, 0b0000_0010,
+         0b0001_0011, 0b0000_1000, 0b0001_1000]);
 }

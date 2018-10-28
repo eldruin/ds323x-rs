@@ -195,6 +195,29 @@ where
         }
     }
 
+    /// Set the date and time.
+    ///
+    /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
+    pub fn set_datetime(&mut self, datetime: &DateTime) -> Result<(), Error<E>> {
+        if datetime.year < 2000 || datetime.year > 2100 ||
+           datetime.month < 1   || datetime.month > 12  ||
+           datetime.day < 1     || datetime.day > 31    ||
+           datetime.weekday < 1 || datetime.weekday > 7 ||
+           datetime.minute > 59 ||
+           datetime.second > 59 {
+            return Err(Error::InvalidInputData);
+        }
+        let (month, year) = month_year_to_registers(datetime.month, datetime.year);
+        let mut payload = [Register::SECONDS,
+                           decimal_to_packed_bcd(datetime.second),
+                           decimal_to_packed_bcd(datetime.minute),
+                           self.get_hours_register_value(&datetime.hour)?,
+                           decimal_to_packed_bcd(datetime.weekday),
+                           decimal_to_packed_bcd(datetime.day),
+                           month, year];
+        self.iface.write_data(&mut payload)
+}
+
     fn write_register_decimal(&mut self, register: u8, decimal_number: u8) -> Result<(), Error<E>> {
         self.iface.write_register(register, decimal_to_packed_bcd(decimal_number))
     }
@@ -220,6 +243,16 @@ fn year_from_registers(month: u8, year: u8) -> u16 {
     }
     else {
         2000 + (year as u16)
+    }
+}
+
+fn month_year_to_registers(month: u8, year: u16) -> (u8, u8) {
+    if year > 2099 {
+        let month = BitFlags::CENTURY | decimal_to_packed_bcd(month);
+        (month, decimal_to_packed_bcd((year - 2100) as u8))
+    }
+    else {
+        (decimal_to_packed_bcd(month), decimal_to_packed_bcd((year - 2000) as u8))
     }
 }
 
