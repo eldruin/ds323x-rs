@@ -39,11 +39,11 @@ pub fn new_ds3234(transactions: &[SpiTrans])
 
 #[macro_export]
 macro_rules! get_test {
-    ($name:ident, $method:ident, $create_method:ident, $expected:expr, $transaction:expr) => {
+    ($name:ident, $method:ident, $create_method:ident, $expected:expr, $transactions:expr) => {
         #[test]
         fn $name() {
-            let transactions = [ $transaction ];
-            let mut dev = $create_method(&transactions);
+            let trans = $transactions;
+            let mut dev = $create_method(&trans);
             assert_eq!($expected, dev.$method().unwrap());
         }
     };
@@ -51,11 +51,11 @@ macro_rules! get_test {
 
 #[macro_export]
 macro_rules! set_test {
-    ($name:ident, $method:ident, $create_method:ident, $value:expr, $transaction:expr) => {
+    ($name:ident, $method:ident, $create_method:ident, $value:expr, $transactions:expr) => {
         #[test]
         fn $name() {
-            let transactions = [ $transaction ];
-            let mut dev = $create_method(&transactions);
+            let trans = $transactions;
+            let mut dev = $create_method(&trans);
             dev.$method($value).unwrap();
         }
     };
