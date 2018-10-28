@@ -57,14 +57,8 @@ where
         let mut data = [0; 3];
         data[0] = Register::MONTH;
         self.iface.read_data(&mut data)?;
-        let century = data[1] & BitFlags::CENTURY;
-        let year = packed_bcd_to_decimal(data[2]);
-        if century != 0 {
-            Ok(2100 + (year as u16))
-        }
-        else {
-            Ok(2000 + (year as u16))
-        }
+        Ok(year_from_registers(data[1], data[2]))
+    }
     }
 
     fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<E>> {
@@ -184,6 +178,18 @@ fn hours_from_register(data: u8) -> Hours {
         Hours::PM(packed_bcd_to_decimal(data & !(BitFlags::H24_H12 | BitFlags::AM_PM)))
     }
 }
+
+fn year_from_registers(month: u8, year: u8) -> u16 {
+    let century = month & BitFlags::CENTURY;
+    let year = packed_bcd_to_decimal(year);
+    if century != 0 {
+        2100 + (year as u16)
+    }
+    else {
+        2000 + (year as u16)
+    }
+}
+
 fn is_24h_format(hours_data: u8) -> bool {
     hours_data & BitFlags::H24_H12 == 0
 }
