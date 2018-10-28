@@ -79,3 +79,19 @@ mod hours_12h_am {
         set_invalid_param_test!(set_hours, Hours::AM(13));
     }
 }
+
+mod hours_12h_pm {
+    use super::*;
+    get_param_test!(get_hours, HOURS, Hours::PM(12), 0b0111_0010);
+    set_param_test!(set_hours, HOURS, Hours::PM(12), 0b0111_0010);
+
+    mod too_small {
+        use super::*;
+        set_invalid_param_test!(set_hours, Hours::PM(0));
+    }
+
+    mod too_big {
+        use super::*;
+        set_invalid_param_test!(set_hours, Hours::PM(13));
+    }
+}
