@@ -25,11 +25,11 @@ macro_rules! get_param_test {
     };
 }
 
-macro_rules! get_param_read_two_test {
-    ($method:ident, $value:expr, $register1:ident, $bin1:expr, $bin2:expr) => {
+macro_rules! get_param_read_array_test {
+    ($method:ident, $value:expr, $register1:ident, [ $( $bin:expr ),+ ]) => {
         _get_param_test!($method, $value,
-            [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register1], vec![$bin1, $bin2]) ],
-            [ SpiTrans::transfer(vec![Register::$register1, 0, 0], vec![Register::$register1, $bin1, $bin2]) ]);
+            [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register1], vec![$( $bin ),*]) ],
+            [ SpiTrans::transfer(vec![Register::$register1, 0, 0], vec![Register::$register1, $( $bin ),*]) ]);
     };
 }
 
@@ -159,13 +159,14 @@ mod year {
     use super::*;
     mod century0 {
         use super::*;
-        get_param_read_two_test!(get_year, 2099, MONTH, 0, 0b1001_1001);
+        get_param_read_array_test!(get_year, 2099, MONTH, [ 0, 0b1001_1001 ]);
         read_set_param_write_two_test!(set_year, 2099, MONTH, 0b1001_0010, 0b0001_0010, 0b1001_1001);
     }
     mod century1 {
         use super::*;
-        get_param_read_two_test!(get_year, 2100, MONTH, 0b1000_0000, 0);
+        get_param_read_array_test!(get_year, 2100, MONTH, [ 0b1000_0000, 0 ]);
         read_set_param_write_two_test!(set_year, 2100, MONTH, 0b0001_0010, 0b1001_0010, 0);
     }
-    set_invalid_param_test!(set_year, 2101);
+    set_invalid_param_range_test!(set_year, 1999, 2101);
+}
 }
