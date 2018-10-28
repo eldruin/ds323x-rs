@@ -1,7 +1,5 @@
 //! Common implementation
 
-#![deny(missing_docs)]
-
 extern crate embedded_hal as hal;
 use super::super::{ Ds323x, Register, Error };
 use interface::{ ReadRegister, WriteRegister };
