@@ -94,6 +94,66 @@
 //! - [DS3232](https://datasheets.maximintegrated.com/en/ds/DS3232.pdf)
 //! - [DS3234](https://datasheets.maximintegrated.com/en/ds/DS3234.pdf)
 //!
+//! ## Usage examples (see also examples folder)
+//!
+//! To use this driver, import this crate and an `embedded_hal` implementation,
+//! then instantiate the appropriate device.
+//! In the following 3 examples an instance of the devices DS3231, DS3232 and
+//! DS3234 will be created as an example. The rest of examples will use the
+//! DS3231 as an example, except when using features specific to another IC,
+//! for example, RAM access which is not available in the DS3231 device.
+//!
+//! ### Create a driver instance for the DS3231
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::Ds323x;
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let rtc = Ds323x::new_ds3231(dev);
+//! // do something...
+//!
+//! // get the I2C device back
+//! let dev = rtc.destroy_ds3231();
+//! # }
+//! ```
+//!
+//! ### Create a driver instance for the DS3232
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::Ds323x;
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let rtc = Ds323x::new_ds3232(dev);
+//! // do something...
+//!
+//! // get the I2C device back
+//! let dev = rtc.destroy_ds3232();
+//! # }
+//! ```
+//!
+//! ### Create a driver instance for the DS3234
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::Ds323x;
+//!
+//! # fn main() {
+//! let dev = hal::Spidev::open("/dev/spidev0.0").unwrap();
+//! let chip_select = hal::Pin::new(24);
+//! let rtc = Ds323x::new_ds3234(dev, chip_select);
+//! // do something...
+//!
+//! // get the SPI device and chip select pin back
+//! let (dev, chip_select) = rtc.destroy_ds3234();
+//! # }
+//! ```
 
 #![deny(unsafe_code)]
 #![deny(missing_docs)]
