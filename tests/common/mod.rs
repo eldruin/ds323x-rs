@@ -59,3 +59,16 @@ macro_rules! set_test {
     };
 }
 
+#[macro_export]
+macro_rules! set_invalid_test {
+    ($name:ident, $method:ident, $create_method:ident, $value:expr) => {
+        #[test]
+        fn $name() {
+            let mut dev = $create_method(&[]);
+            match dev.$method($value) {
+                Err(Error::InvalidInputData) => (),
+                _ => panic!("InvalidInputData error not returned.")
+            }
+        }
+    };
+}
