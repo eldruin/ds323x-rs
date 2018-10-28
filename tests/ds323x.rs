@@ -1,3 +1,5 @@
+#[deny(warnings)]
+
 extern crate embedded_hal_mock as hal;
 use hal::i2c::Transaction as I2cTrans;
 use hal::spi::Transaction as SpiTrans;
