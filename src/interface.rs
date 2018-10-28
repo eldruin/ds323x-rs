@@ -25,8 +25,8 @@ pub trait WriteData {
     type Error;
     /// Write to an u8 register
     fn write_register(&mut self, register: u8, data: u8) -> Result<(), Error<Self::Error>>;
-    /// Write to two consecutive u8 registers
-    fn write_two_registers(&mut self, first_register: u8, data: &[u8; 2]) -> Result<(), Error<Self::Error>>;
+    /// Write data. The first element corresponds to the starting address.
+    fn write_data(&mut self, payload: &mut [u8]) -> Result<(), Error<Self::Error>>;
 }
 
 impl<I2C, E> WriteData for I2cInterface<I2C>
@@ -41,8 +41,7 @@ where
             .map_err(Error::Comm)
     }
 
-    fn write_two_registers(&mut self, first_register: u8, data: &[u8; 2]) -> Result<(), Error<Self::Error>> {
-        let payload: [u8; 3] = [first_register, data[0], data[1]];
+    fn write_data(&mut self, payload: &mut [u8]) -> Result<(), Error<Self::Error>> {
         self.i2c
             .write(DEVICE_ADDRESS, &payload)
             .map_err(Error::Comm)
@@ -67,10 +66,9 @@ where
         result
     }
 
-    fn write_two_registers(&mut self, first_register: u8, data: &[u8; 2]) -> Result<(), Error<E>> {
+    fn write_data(&mut self, payload: &mut [u8]) -> Result<(), Error<Self::Error>> {
         self.cs.set_low();
-
-        let payload: [u8; 3] = [first_register + 0x80, data[0], data[1]];
+        payload[0] += 0x80;
         let result = self.spi
                          .write(&payload)
                          .map_err(Error::Comm);
@@ -87,8 +85,8 @@ pub trait ReadData {
     type Error;
     /// Read an u8 register
     fn read_register(&mut self, register: u8) -> Result<u8, Error<Self::Error>>;
-    /// Read two u8 registers
-    fn read_two_registers(&mut self, register: u8, data: &mut [u8; 2]) -> Result<(), Error<Self::Error>>;
+    /// Read some data. The first element corresponds to the starting address.
+    fn read_data(&mut self, payload: &mut [u8]) -> Result<(), Error<Self::Error>>;
 }
 
 impl<I2C, E> ReadData for I2cInterface<I2C>
@@ -104,9 +102,10 @@ where
             .and(Ok(data[0]))
     }
 
-    fn read_two_registers(&mut self, register: u8, data: &mut [u8; 2]) -> Result<(), Error<Self::Error>> {
+    fn read_data(&mut self, payload: &mut [u8]) -> Result<(), Error<Self::Error>> {
+        let len = payload.len();
         self.i2c
-            .write_read(DEVICE_ADDRESS, &[register], &mut data[..])
+            .write_read(DEVICE_ADDRESS, &[payload[0]], &mut payload[1..=(len-1)])
             .map_err(Error::Comm)
     }
 }
@@ -130,19 +129,13 @@ where
         }
     }
 
-    fn read_two_registers(&mut self, register: u8, data: &mut [u8; 2]) -> Result<(), Error<Self::Error>> {
+    fn read_data(&mut self, mut payload: &mut [u8]) -> Result<(), Error<Self::Error>> {
         self.cs.set_low();
-        let mut payload = [register, 0, 0];
         let result = self.spi
                          .transfer(&mut payload)
                          .map_err(Error::Comm);
         self.cs.set_high();
-        match result {
-            Ok(result) => { data[0] = result[1];
-                            data[1] = result[2];
-                            Ok(())
-                          },
-            Err(e) => Err(e)
-        }
+        result?;
+        Ok(())
     }
 }

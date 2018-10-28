@@ -66,10 +66,11 @@ where
 
     /// Read the year [2000-2100].
     pub fn get_year(&mut self) -> Result<u16, Error<E>> {
-        let mut data = [0; 2];
-        self.iface.read_two_registers(Register::MONTH, &mut data)?;
-        let century = data[0] & BitFlags::CENTURY;
-        let year = packed_bcd_to_decimal(data[1]);
+        let mut data = [0; 3];
+        data[0] = Register::MONTH;
+        self.iface.read_data(&mut data)?;
+        let century = data[1] & BitFlags::CENTURY;
+        let year = packed_bcd_to_decimal(data[2]);
         if century != 0 {
             Ok(2100 + (year as u16))
         }
@@ -167,13 +168,15 @@ where
         let data = self.iface.read_register(Register::MONTH)?;
         let month_bcd = data & !BitFlags::CENTURY;
         if year > 2099 {
-            let data = [ BitFlags::CENTURY | month_bcd,
-                         decimal_to_packed_bcd((year - 2100) as u8) ];
-            self.iface.write_two_registers(Register::MONTH, &data)
+            let mut data = [ Register::MONTH,
+                             BitFlags::CENTURY | month_bcd,
+                             decimal_to_packed_bcd((year - 2100) as u8) ];
+            self.iface.write_data(&mut data)
         }
         else {
-            let data = [ month_bcd, decimal_to_packed_bcd((year - 2000) as u8) ];
-            self.iface.write_two_registers(Register::MONTH, &data)
+            let mut data = [ Register::MONTH, month_bcd,
+                             decimal_to_packed_bcd((year - 2000) as u8) ];
+            self.iface.write_data(&mut data)
         }
     }
 
