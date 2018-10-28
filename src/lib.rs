@@ -6,6 +6,7 @@
 //! This driver allows you to:
 //! - Read/write the seconds.
 //! - Read/write the minutes.
+//! - Read/write the hours in 24h or AM/PM format.
 //!
 //! ## The devices
 //!
@@ -179,6 +180,14 @@ struct Register;
 impl Register {
     const SECONDS   : u8 = 0x00;
     const MINUTES   : u8 = 0x01;
+    const HOURS     : u8 = 0x02;
+}
+
+struct BitFlags;
+
+impl BitFlags {
+    const H24_H12    : u8 = 0b0100_0000;
+    const AM_PM      : u8 = 0b0010_0000;
 }
 
 const DEVICE_ADDRESS: u8 = 0b110_1000;
@@ -265,3 +274,4 @@ where
 }
 
 mod ds323x;
+pub use ds323x::Hours;

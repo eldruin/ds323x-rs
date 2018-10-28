@@ -1,8 +1,19 @@
 //! Common implementation
 
 extern crate embedded_hal as hal;
-use super::super::{ Ds323x, Register, Error };
+use super::super::{ Ds323x, Register, BitFlags, Error };
 use interface::{ ReadRegister, WriteRegister };
+
+/// Hours in either 12-hour (AM/PM) or 24-hour format
+#[derive(Debug, Clone, PartialEq)]
+pub enum Hours {
+    /// AM [1-12]
+    AM(u8),
+    /// PM [1-12]
+    PM(u8),
+    /// 24H format [0-23]
+    H24(u8),
+}
 
 impl<DI, IC, E> Ds323x<DI, IC>
 where
@@ -16,6 +27,24 @@ where
     /// Read the minutes.
     pub fn get_minutes(&mut self) -> Result<u8, Error<E>> {
         self.read_register_decimal(Register::MINUTES)
+    }
+
+    /// Read the hours.
+    pub fn get_hours(&mut self) -> Result<Hours, Error<E>> {
+        let data = self.iface.read_register(Register::HOURS)?;
+        self.get_hours_from_register(data)
+    }
+
+    fn get_hours_from_register(&self, data: u8) -> Result<Hours, Error<E>> {
+        if is_24h_format(data) {
+            Ok(Hours::H24(packed_bcd_to_decimal(data & !BitFlags::H24_H12)))
+        }
+        else if is_am(data) {
+            Ok(Hours::AM(packed_bcd_to_decimal(data & !(BitFlags::H24_H12 | BitFlags::AM_PM))))
+        }
+        else {
+            Ok(Hours::PM(packed_bcd_to_decimal(data & !(BitFlags::H24_H12 | BitFlags::AM_PM))))
+        }
     }
 
     fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<E>> {
@@ -48,9 +77,38 @@ where
         self.write_register_decimal(Register::MINUTES, minutes)
     }
 
+    /// Set the hours.
+    ///
+    /// Changes the operating mode to 12h/24h depending on the parameter.
+    ///
+    /// Will return an `Error::InvalidInputData` if the hours are out of range.
+    pub fn set_hours(&mut self, hours: Hours) -> Result<(), Error<E>> {
+        let value = self.get_hours_register_value(&hours)?;
+        self.iface.write_register(Register::HOURS, value)
+    }
+
+    fn get_hours_register_value(&mut self, hours: &Hours) -> Result<u8, Error<E>> {
+        match *hours {
+            Hours::H24(h) if h > 23 => Err(Error::InvalidInputData),
+            Hours::H24(h) => Ok(decimal_to_packed_bcd(h)),
+            Hours::AM(h) if h < 1 || h > 12 => Err(Error::InvalidInputData),
+            Hours::AM(h) =>  Ok(BitFlags::H24_H12 | decimal_to_packed_bcd(h)),
+            Hours::PM(h) if h < 1 || h > 12 => Err(Error::InvalidInputData),
+            Hours::PM(h) =>  Ok(BitFlags::H24_H12 | BitFlags::AM_PM | decimal_to_packed_bcd(h)),
+        }
+    }
+
     fn write_register_decimal(&mut self, register: u8, decimal_number: u8) -> Result<(), Error<E>> {
         self.iface.write_register(register, decimal_to_packed_bcd(decimal_number))
     }
+}
+
+fn is_24h_format(hours_data: u8) -> bool {
+    hours_data & BitFlags::H24_H12 == 0
+}
+
+fn is_am(hours_data: u8) -> bool {
+    hours_data & BitFlags::AM_PM == 0
 }
 
 // Transforms a decimal number to packed BCD format

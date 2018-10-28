@@ -6,6 +6,8 @@ use hal::spi::Transaction as SpiTrans;
 mod common;
 use common::{ DEVICE_ADDRESS, Register, new_ds3231,
               new_ds3232, new_ds3234 };
+extern crate ds323x;
+use ds323x::{ Hours };
 
 mod seconds {
     use super::*;
@@ -49,4 +51,25 @@ mod minutes {
 
     set_test!(can_set_ds3234, set_minutes, new_ds3234, 1,
             SpiTrans::write(vec![Register::MINUTES + 0x80, 1]));
+
+mod hours {
+    use super::*;
+    get_test!(can_get_ds3231, get_hours, new_ds3231, Hours::H24(21),
+            I2cTrans::write_read(DEVICE_ADDRESS, vec![Register::HOURS], vec![0b0010_0001]));
+
+    get_test!(can_get_ds3232, get_hours, new_ds3232, Hours::H24(21),
+            I2cTrans::write_read(DEVICE_ADDRESS, vec![Register::HOURS], vec![0b0010_0001]));
+
+    get_test!(can_get_ds3234, get_hours, new_ds3234, Hours::H24(21),
+            SpiTrans::transfer(vec![Register::HOURS, 0], vec![Register::HOURS, 0b0010_0001]));
+
+
+    set_test!(can_set_ds3231, set_hours, new_ds3231, Hours::H24(21),
+            I2cTrans::write(DEVICE_ADDRESS, vec![Register::HOURS, 0b0010_0001]));
+
+    set_test!(can_set_ds3232, set_hours, new_ds3232, Hours::H24(21),
+            I2cTrans::write(DEVICE_ADDRESS, vec![Register::HOURS, 0b0010_0001]));
+
+    set_test!(can_set_ds3234, set_hours, new_ds3234, Hours::H24(21),
+            SpiTrans::write(vec![Register::HOURS + 0x80, 0b0010_0001]));
 }
