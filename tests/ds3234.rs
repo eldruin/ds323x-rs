@@ -1,6 +1,7 @@
 extern crate embedded_hal_mock as hal;
 extern crate ds323x;
 use ds323x::Ds323x;
+#[allow(dead_code)]
 mod common;
 use common::DummyOutputPin;
 
@@ -10,4 +11,3 @@ fn can_create_and_destroy() {
     let (mut spi, _cs) = dev.destroy_ds3234();
     spi.done();
 }
-    
