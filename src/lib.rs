@@ -156,6 +156,105 @@
 //! let (dev, chip_select) = rtc.destroy_ds3234();
 //! # }
 //! ```
+//!
+//! ### Set the current date and time at once
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::{ Ds323x, DateTime, Hours };
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3231(dev);
+//! let datetime = DateTime {
+//!                           year: 2018,
+//!                           month: 08,
+//!                           day: 15,
+//!                           weekday: 4,
+//!                           hour: Hours::H24(19),
+//!                           minute: 59,
+//!                           second: 58
+//!                };
+//! rtc.set_datetime(&datetime).unwrap();
+//! # }
+//! ```
+//!
+//! ### Get the current date and time at once
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::{ Ds323x, Hours };
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3231(dev);
+//!
+//! let datetime = rtc.get_datetime().unwrap();
+//!
+//! // The hours depend on the RTC running mode
+//! match datetime.hour {
+//!     Hours::H24(h) => println!("{}-{}-{}, {} {}:{}:{}", datetime.year,
+//!                               datetime.month, datetime.day, datetime.weekday,
+//!                               h, datetime.minute, datetime.second),
+//!     Hours::AM(h) => println!("{}-{}-{}, {} {}:{}:{} AM", datetime.year,
+//!                               datetime.month, datetime.day, datetime.weekday,
+//!                               h, datetime.minute, datetime.second),
+//!     Hours::PM(h) => println!("{}-{}-{}, {} {}:{}:{} PM", datetime.year,
+//!                               datetime.month, datetime.day, datetime.weekday,
+//!                               h, datetime.minute, datetime.second),
+//! }
+//! // This will print something like: 2018-08-15, 4 19:59:58
+//! # }
+//! ```
+//!
+//! ### Get the year
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::{ Ds323x, Hours };
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3231(dev);
+//! let year = rtc.get_year().unwrap();
+//! println!("Year: {}", year);
+//! # }
+//! ```
+//! Similar methods exist for month, day, weekday, hours, minutes and seconds.
+//!
+//! ### Set the year
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::{ Ds323x, Hours };
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3231(dev);
+//! rtc.set_year(2018).unwrap();
+//! # }
+//! ```
+//! Similar methods exist for month, day, weekday, hours, minutes and seconds.
+//!
+//! ### Enable/disable the device
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::Ds323x;
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3231(dev);
+//! rtc.disable().unwrap(); // stops the clock
+//! rtc.enable().unwrap(); // set clock to run
+//! # }
+//! ```
+
 
 #![deny(unsafe_code)]
 #![deny(missing_docs)]
