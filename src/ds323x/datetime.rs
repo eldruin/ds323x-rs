@@ -4,6 +4,25 @@ extern crate embedded_hal as hal;
 use super::super::{ Ds323x, Register, BitFlags, Error };
 use interface::{ ReadData, WriteData };
 
+/// Date and time
+#[derive(Debug, Clone, PartialEq)]
+pub struct DateTime {
+    /// Year [2000-2099]
+    pub year    : u16,
+    /// Month [1-12]
+    pub month   : u8,
+    /// Day [1-31]
+    pub day     : u8,
+    /// Weekday [1-7]
+    pub weekday : u8,
+    /// Hour in 24h/12h format
+    pub hour    : Hours,
+    /// Minute [0-59]
+    pub minute  : u8,
+    /// Second [0-59]
+    pub second  : u8,
+}
+
 /// Hours in either 12-hour (AM/PM) or 24-hour format
 #[derive(Debug, Clone, PartialEq)]
 pub enum Hours {
@@ -59,6 +78,20 @@ where
         self.iface.read_data(&mut data)?;
         Ok(year_from_registers(data[1], data[2]))
     }
+
+    /// Read the date and time.
+    pub fn get_datetime(&mut self) -> Result<DateTime, Error<E>> {
+        let mut data = [0; 8];
+        self.iface.read_data(&mut data)?;
+        Ok(DateTime {
+            year:    year_from_registers(data[Register::MONTH as usize + 1], data[Register::YEAR as usize + 1]),
+            month:   packed_bcd_to_decimal(data[Register::MONTH as usize + 1] & !BitFlags::CENTURY),
+            day:     packed_bcd_to_decimal(data[Register::DOM as usize + 1]),
+            weekday:  packed_bcd_to_decimal(data[Register::DOW as usize + 1]),
+            hour:    hours_from_register(data[Register::HOURS as usize + 1]),
+            minute:  packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]),
+            second:  packed_bcd_to_decimal(data[Register::SECONDS as usize + 1])
+        })
     }
 
     fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<E>> {

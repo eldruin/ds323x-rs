@@ -1,2 +1,2 @@
 mod datetime;
-pub use self::datetime::Hours;
+pub use self::datetime::{ Hours, DateTime };

@@ -188,6 +188,7 @@ impl Register {
     const DOW       : u8 = 0x03;
     const DOM       : u8 = 0x04;
     const MONTH     : u8 = 0x05;
+    const YEAR      : u8 = 0x06;
 }
 
 struct BitFlags;
@@ -282,4 +283,4 @@ where
 }
 
 mod ds323x;
-pub use ds323x::Hours;
+pub use ds323x::{ Hours, DateTime };
