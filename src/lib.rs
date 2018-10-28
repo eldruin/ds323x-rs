@@ -7,6 +7,7 @@
 //! - Read/write the seconds.
 //! - Read/write the minutes.
 //! - Read/write the hours in 24h or AM/PM format.
+//! - Read/write the weekday.
 //!
 //! ## The devices
 //!
@@ -181,6 +182,7 @@ impl Register {
     const SECONDS   : u8 = 0x00;
     const MINUTES   : u8 = 0x01;
     const HOURS     : u8 = 0x02;
+    const DOW       : u8 = 0x03;
 }
 
 struct BitFlags;

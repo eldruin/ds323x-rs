@@ -47,6 +47,11 @@ where
         }
     }
 
+    /// Read the day of the week [1-7].
+    pub fn get_weekday(&mut self) -> Result<u8, Error<E>> {
+        self.read_register_decimal(Register::DOW)
+    }
+
     fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<E>> {
         let data = self.iface.read_register(register)?;
         Ok(packed_bcd_to_decimal(data))
@@ -98,6 +103,16 @@ where
         }
     }
 
+    /// Set the day of week [1-7].
+    ///
+    /// Will return an `Error::InvalidInputData` if the day is out of range.
+    pub fn set_weekday(&mut self, weekday: u8) -> Result<(), Error<E>> {
+        if weekday < 1 || weekday > 7 {
+            return Err(Error::InvalidInputData);
+        }
+        self.iface.write_register(Register::DOW, weekday)
+    }
+
     fn write_register_decimal(&mut self, register: u8, decimal_number: u8) -> Result<(), Error<E>> {
         self.iface.write_register(register, decimal_to_packed_bcd(decimal_number))
     }
@@ -137,7 +152,7 @@ mod tests {
         assert_eq!(21, packed_bcd_to_decimal(0b0010_0001));
         assert_eq!(59, packed_bcd_to_decimal(0b0101_1001));
     }
-    
+
     #[test]
     fn can_convert_decimal_to_packed_bcd() {
         assert_eq!(0b0000_0000, decimal_to_packed_bcd( 0));

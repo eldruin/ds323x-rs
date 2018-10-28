@@ -9,6 +9,7 @@ This driver allows you to:
 - Read/write the seconds.
 - Read/write the minutes.
 - Read/write the hours in 24h or AM/PM format.
+- Read/write the weekday.
 
 ## The devices
 
