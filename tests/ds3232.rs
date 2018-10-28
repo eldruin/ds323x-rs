@@ -8,4 +8,3 @@ fn can_create_and_destroy() {
     let mut i2c = dev.destroy_ds3232();
     i2c.done();
 }
-    
