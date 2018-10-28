@@ -32,19 +32,7 @@ where
     /// Read the hours.
     pub fn get_hours(&mut self) -> Result<Hours, Error<E>> {
         let data = self.iface.read_register(Register::HOURS)?;
-        self.get_hours_from_register(data)
-    }
-
-    fn get_hours_from_register(&self, data: u8) -> Result<Hours, Error<E>> {
-        if is_24h_format(data) {
-            Ok(Hours::H24(packed_bcd_to_decimal(data & !BitFlags::H24_H12)))
-        }
-        else if is_am(data) {
-            Ok(Hours::AM(packed_bcd_to_decimal(data & !(BitFlags::H24_H12 | BitFlags::AM_PM))))
-        }
-        else {
-            Ok(Hours::PM(packed_bcd_to_decimal(data & !(BitFlags::H24_H12 | BitFlags::AM_PM))))
-        }
+        Ok(hours_from_register(data))
     }
 
     /// Read the day of the week [1-7].
@@ -185,6 +173,17 @@ where
     }
 }
 
+fn hours_from_register(data: u8) -> Hours {
+    if is_24h_format(data) {
+        Hours::H24(packed_bcd_to_decimal(data & !BitFlags::H24_H12))
+    }
+    else if is_am(data) {
+        Hours::AM(packed_bcd_to_decimal(data & !(BitFlags::H24_H12 | BitFlags::AM_PM)))
+    }
+    else {
+        Hours::PM(packed_bcd_to_decimal(data & !(BitFlags::H24_H12 | BitFlags::AM_PM)))
+    }
+}
 fn is_24h_format(hours_data: u8) -> bool {
     hours_data & BitFlags::H24_H12 == 0
 }
