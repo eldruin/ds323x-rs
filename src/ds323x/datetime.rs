@@ -2,7 +2,7 @@
 
 extern crate embedded_hal as hal;
 use super::super::{ Ds323x, Register, BitFlags, Error };
-use interface::{ ReadRegister, WriteRegister };
+use interface::{ ReadData, WriteData };
 
 /// Hours in either 12-hour (AM/PM) or 24-hour format
 #[derive(Debug, Clone, PartialEq)]
@@ -17,7 +17,7 @@ pub enum Hours {
 
 impl<DI, IC, E> Ds323x<DI, IC>
 where
-    DI: ReadRegister<Error = E> + WriteRegister<Error = E>
+    DI: ReadData<Error = E> + WriteData<Error = E>
 {
     /// Read the seconds.
     pub fn get_seconds(&mut self) -> Result<u8, Error<E>> {
@@ -62,6 +62,20 @@ where
         let data = self.iface.read_register(Register::MONTH)?;
         let value = data & !BitFlags::CENTURY;
         Ok(packed_bcd_to_decimal(value))
+    }
+
+    /// Read the year [2000-2100].
+    pub fn get_year(&mut self) -> Result<u16, Error<E>> {
+        let mut data = [0; 2];
+        self.iface.read_two_registers(Register::MONTH, &mut data)?;
+        let century = data[0] & BitFlags::CENTURY;
+        let year = packed_bcd_to_decimal(data[1]);
+        if century != 0 {
+            Ok(2100 + (year as u16))
+        }
+        else {
+            Ok(2000 + (year as u16))
+        }
     }
 
     fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<E>> {
@@ -141,6 +155,26 @@ where
         let data = self.iface.read_register(Register::MONTH)?;
         let value = (data & BitFlags::CENTURY) | decimal_to_packed_bcd(month);
         self.iface.write_register(Register::MONTH, value)
+    }
+
+    /// Set the year [2000-2100].
+    ///
+    /// Will return an `Error::InvalidInputData` if the year is out of range.
+    pub fn set_year(&mut self, year: u16) -> Result<(), Error<E>> {
+        if year < 2000 || year > 2100 {
+            return Err(Error::InvalidInputData);
+        }
+        let data = self.iface.read_register(Register::MONTH)?;
+        let month_bcd = data & !BitFlags::CENTURY;
+        if year > 2099 {
+            let data = [ BitFlags::CENTURY | month_bcd,
+                         decimal_to_packed_bcd((year - 2100) as u8) ];
+            self.iface.write_two_registers(Register::MONTH, &data)
+        }
+        else {
+            let data = [ month_bcd, decimal_to_packed_bcd((year - 2000) as u8) ];
+            self.iface.write_two_registers(Register::MONTH, &data)
+        }
     }
 
     fn write_register_decimal(&mut self, register: u8, decimal_number: u8) -> Result<(), Error<E>> {

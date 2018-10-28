@@ -10,6 +10,7 @@
 //! - Read/write the weekday.
 //! - Read/write the day.
 //! - Read/write the month.
+//! - Read/write the year.
 //!
 //! ## The devices
 //!

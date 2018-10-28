@@ -19,15 +19,17 @@ pub struct SpiInterface<SPI, CS> {
     pub(crate) cs: CS
 }
 
-/// Write to a register
-pub trait WriteRegister {
+/// Write data
+pub trait WriteData {
     /// Error type
     type Error;
     /// Write to an u8 register
     fn write_register(&mut self, register: u8, data: u8) -> Result<(), Error<Self::Error>>;
+    /// Write to two consecutive u8 registers
+    fn write_two_registers(&mut self, first_register: u8, data: &[u8; 2]) -> Result<(), Error<Self::Error>>;
 }
 
-impl<I2C, E> WriteRegister for I2cInterface<I2C>
+impl<I2C, E> WriteData for I2cInterface<I2C>
 where
     I2C: blocking::i2c::Write<Error = E>
 {
@@ -38,9 +40,16 @@ where
             .write(DEVICE_ADDRESS, &payload)
             .map_err(Error::Comm)
     }
+
+    fn write_two_registers(&mut self, first_register: u8, data: &[u8; 2]) -> Result<(), Error<Self::Error>> {
+        let payload: [u8; 3] = [first_register, data[0], data[1]];
+        self.i2c
+            .write(DEVICE_ADDRESS, &payload)
+            .map_err(Error::Comm)
+    }
 }
 
-impl<SPI, CS, E> WriteRegister for SpiInterface<SPI, CS>
+impl<SPI, CS, E> WriteData for SpiInterface<SPI, CS>
 where
     SPI: blocking::spi::Write<u8, Error = E>,
     CS:  hal::digital::OutputPin
@@ -53,22 +62,36 @@ where
         let result = self.spi
                          .write(&payload)
                          .map_err(Error::Comm);
-        
+
+        self.cs.set_high();
+        result
+    }
+
+    fn write_two_registers(&mut self, first_register: u8, data: &[u8; 2]) -> Result<(), Error<E>> {
+        self.cs.set_low();
+
+        let payload: [u8; 3] = [first_register + 0x80, data[0], data[1]];
+        let result = self.spi
+                         .write(&payload)
+                         .map_err(Error::Comm);
+
         self.cs.set_high();
         result
     }
 }
 
 
-/// Read a register
-pub trait ReadRegister {
+/// Read data
+pub trait ReadData {
     /// Error type
     type Error;
     /// Read an u8 register
     fn read_register(&mut self, register: u8) -> Result<u8, Error<Self::Error>>;
+    /// Read two u8 registers
+    fn read_two_registers(&mut self, register: u8, data: &mut [u8; 2]) -> Result<(), Error<Self::Error>>;
 }
 
-impl<I2C, E> ReadRegister for I2cInterface<I2C>
+impl<I2C, E> ReadData for I2cInterface<I2C>
 where
     I2C: blocking::i2c::WriteRead<Error = E>
 {
@@ -80,9 +103,15 @@ where
             .map_err(Error::Comm)
             .and(Ok(data[0]))
     }
+
+    fn read_two_registers(&mut self, register: u8, data: &mut [u8; 2]) -> Result<(), Error<Self::Error>> {
+        self.i2c
+            .write_read(DEVICE_ADDRESS, &[register], &mut data[..])
+            .map_err(Error::Comm)
+    }
 }
 
-impl<SPI, CS, E> ReadRegister for SpiInterface<SPI, CS>
+impl<SPI, CS, E> ReadData for SpiInterface<SPI, CS>
 where
     SPI: blocking::spi::Transfer<u8, Error = E>,
     CS:  hal::digital::OutputPin
@@ -91,13 +120,29 @@ where
     fn read_register(&mut self, register: u8) -> Result<u8, Error<E>> {
         self.cs.set_low();
         let mut data = [register, 0];
-        {
-            let result = self.spi
-                            .transfer(&mut data)
-                            .map_err(Error::Comm);
-            self.cs.set_high();
-            result?;
+        let result = self.spi
+                         .transfer(&mut data)
+                         .map_err(Error::Comm);
+        self.cs.set_high();
+        match result {
+            Ok(result) => Ok(result[1]),
+            Err(e) => Err(e)
         }
-        Ok(data[1])
+    }
+
+    fn read_two_registers(&mut self, register: u8, data: &mut [u8; 2]) -> Result<(), Error<Self::Error>> {
+        self.cs.set_low();
+        let mut payload = [register, 0, 0];
+        let result = self.spi
+                         .transfer(&mut payload)
+                         .map_err(Error::Comm);
+        self.cs.set_high();
+        match result {
+            Ok(result) => { data[0] = result[1];
+                            data[1] = result[2];
+                            Ok(())
+                          },
+            Err(e) => Err(e)
+        }
     }
 }
