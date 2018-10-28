@@ -98,3 +98,10 @@ mod weekday {
     set_param_test!(set_weekday, DOW, 1, 1);
     set_invalid_param_range_test!(set_weekday, 0, 8);
 }
+
+mod day {
+    use super::*;
+    get_param_test!(get_day, DOM, 1, 1);
+    set_param_test!(set_day, DOM, 1, 1);
+    set_invalid_param_range_test!(set_day, 0, 8);
+}

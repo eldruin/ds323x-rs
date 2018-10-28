@@ -52,6 +52,11 @@ where
         self.read_register_decimal(Register::DOW)
     }
 
+    /// Read the day of the month [1-31].
+    pub fn get_day(&mut self) -> Result<u8, Error<E>> {
+        self.read_register_decimal(Register::DOM)
+    }
+
     fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<E>> {
         let data = self.iface.read_register(register)?;
         Ok(packed_bcd_to_decimal(data))
@@ -111,6 +116,16 @@ where
             return Err(Error::InvalidInputData);
         }
         self.iface.write_register(Register::DOW, weekday)
+    }
+
+    /// Set the day of month [1-31].
+    ///
+    /// Will return an `Error::InvalidInputData` if the day is out of range.
+    pub fn set_day(&mut self, day: u8) -> Result<(), Error<E>> {
+        if day < 1 || day > 7 {
+            return Err(Error::InvalidInputData);
+        }
+        self.iface.write_register(Register::DOM, day)
     }
 
     fn write_register_decimal(&mut self, register: u8, decimal_number: u8) -> Result<(), Error<E>> {

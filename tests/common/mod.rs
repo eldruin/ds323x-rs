@@ -13,6 +13,7 @@ impl Register {
     pub const MINUTES   : u8 = 0x01;
     pub const HOURS     : u8 = 0x02;
     pub const DOW       : u8 = 0x03;
+    pub const DOM       : u8 = 0x04;
 }
 
 pub struct DummyOutputPin;
