@@ -4,85 +4,78 @@ extern crate embedded_hal_mock as hal;
 use hal::i2c::Transaction as I2cTrans;
 use hal::spi::Transaction as SpiTrans;
 mod common;
-use common::{ DEVICE_ADDRESS, Register, new_ds3231,
+use common::{ DEVICE_ADDRESS as DEV_ADDR, Register, new_ds3231,
               new_ds3232, new_ds3234 };
 extern crate ds323x;
 use ds323x::{ Hours, Error };
 
+macro_rules! get_param_test {
+    ($method:ident, $register:ident, $value:expr, $binary_value:expr) => {
+        get_test!(can_get_ds3231, $method, new_ds3231, $value,
+                I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$binary_value]));
+
+        get_test!(can_get_ds3232, $method, new_ds3232, $value,
+                I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$binary_value]));
+
+        get_test!(can_get_ds3234, $method, new_ds3234, $value,
+                SpiTrans::transfer(vec![Register::$register, 0], vec![Register::$register, $binary_value]));
+    };
+}
+
+macro_rules! set_param_test {
+    ($method:ident, $register:ident, $value:expr, $binary_value:expr) => {
+        set_test!(can_set_ds3231, $method, new_ds3231, $value,
+                I2cTrans::write(DEV_ADDR, vec![Register::$register, $binary_value]));
+
+        set_test!(can_set_ds3232, $method, new_ds3232, $value,
+                I2cTrans::write(DEV_ADDR, vec![Register::$register, $binary_value]));
+
+        set_test!(can_set_ds3234, $method, new_ds3234, $value,
+                SpiTrans::write(vec![Register::$register + 0x80, $binary_value]));
+    };
+}
+
+macro_rules! set_invalid_param_test {
+    ($method:ident, $value:expr) => {
+        set_invalid_test!(cannot_set_invalid_ds3231, $method, new_ds3231, $value);
+        set_invalid_test!(cannot_set_invalid_ds3232, $method, new_ds3232, $value);
+        set_invalid_test!(cannot_set_invalid_ds3234, $method, new_ds3234, $value);
+    };
+}
+
 mod seconds {
     use super::*;
-    get_test!(can_get_ds3231, get_seconds, new_ds3231, 1,
-            I2cTrans::write_read(DEVICE_ADDRESS, vec![Register::SECONDS], vec![1]));
-
-    get_test!(can_get_ds3232, get_seconds, new_ds3232, 1,
-            I2cTrans::write_read(DEVICE_ADDRESS, vec![Register::SECONDS], vec![1]));
-
-    get_test!(can_get_ds3234, get_seconds, new_ds3234, 1,
-            SpiTrans::transfer(vec![Register::SECONDS, 0], vec![Register::SECONDS, 1]));
-
-
-    set_test!(can_set_ds3231, set_seconds, new_ds3231, 1,
-            I2cTrans::write(DEVICE_ADDRESS, vec![Register::SECONDS, 1]));
-
-    set_test!(can_set_ds3232, set_seconds, new_ds3232, 1,
-            I2cTrans::write(DEVICE_ADDRESS, vec![Register::SECONDS, 1]));
-
-    set_test!(can_set_ds3234, set_seconds, new_ds3234, 1,
-            SpiTrans::write(vec![Register::SECONDS + 0x80, 1]));
-
-    set_invalid_test!(cannot_set_invalid_ds3231, set_seconds, new_ds3231, 60);
-    set_invalid_test!(cannot_set_invalid_ds3232, set_seconds, new_ds3232, 60);
-    set_invalid_test!(cannot_set_invalid_ds3234, set_seconds, new_ds3234, 60);
+    get_param_test!(get_seconds, SECONDS, 1, 1);
+    set_param_test!(set_seconds, SECONDS, 1, 1);
+    set_invalid_param_test!(set_seconds, 60);
 }
 
 mod minutes {
     use super::*;
-    get_test!(can_get_ds3231, get_minutes, new_ds3231, 1,
-            I2cTrans::write_read(DEVICE_ADDRESS, vec![Register::MINUTES], vec![1]));
-
-    get_test!(can_get_ds3232, get_minutes, new_ds3232, 1,
-            I2cTrans::write_read(DEVICE_ADDRESS, vec![Register::MINUTES], vec![1]));
-
-    get_test!(can_get_ds3234, get_minutes, new_ds3234, 1,
-            SpiTrans::transfer(vec![Register::MINUTES, 0], vec![Register::MINUTES, 1]));
-
-
-    set_test!(can_set_ds3231, set_minutes, new_ds3231, 1,
-            I2cTrans::write(DEVICE_ADDRESS, vec![Register::MINUTES, 1]));
-
-    set_test!(can_set_ds3232, set_minutes, new_ds3232, 1,
-            I2cTrans::write(DEVICE_ADDRESS, vec![Register::MINUTES, 1]));
-
-    set_test!(can_set_ds3234, set_minutes, new_ds3234, 1,
-            SpiTrans::write(vec![Register::MINUTES + 0x80, 1]));
-
-    set_invalid_test!(cannot_set_invalid_ds3231, set_minutes, new_ds3231, 60);
-    set_invalid_test!(cannot_set_invalid_ds3232, set_minutes, new_ds3232, 60);
-    set_invalid_test!(cannot_set_invalid_ds3234, set_minutes, new_ds3234, 60);
+    get_param_test!(get_minutes, MINUTES, 1, 1);
+    set_param_test!(set_minutes, MINUTES, 1, 1);
+    set_invalid_param_test!(set_minutes, 60);
 }
 
-mod hours {
+mod hours_24h {
     use super::*;
-    get_test!(can_get_ds3231, get_hours, new_ds3231, Hours::H24(21),
-            I2cTrans::write_read(DEVICE_ADDRESS, vec![Register::HOURS], vec![0b0010_0001]));
+    get_param_test!(get_hours, HOURS, Hours::H24(21), 0b0010_0001);
+    set_param_test!(set_hours, HOURS, Hours::H24(21), 0b0010_0001);
+    set_invalid_param_test!(set_hours, Hours::H24(24));
+}
 
-    get_test!(can_get_ds3232, get_hours, new_ds3232, Hours::H24(21),
-            I2cTrans::write_read(DEVICE_ADDRESS, vec![Register::HOURS], vec![0b0010_0001]));
+mod hours_12h_am {
+    use super::*;
+    get_param_test!(get_hours, HOURS, Hours::AM(12), 0b0101_0010);
+    set_param_test!(set_hours, HOURS, Hours::AM(12), 0b0101_0010);
 
-    get_test!(can_get_ds3234, get_hours, new_ds3234, Hours::H24(21),
-            SpiTrans::transfer(vec![Register::HOURS, 0], vec![Register::HOURS, 0b0010_0001]));
+    mod too_small {
+        use super::*;
+        set_invalid_param_test!(set_hours, Hours::AM(0));
+    }
 
-
-    set_test!(can_set_ds3231, set_hours, new_ds3231, Hours::H24(21),
-            I2cTrans::write(DEVICE_ADDRESS, vec![Register::HOURS, 0b0010_0001]));
-
-    set_test!(can_set_ds3232, set_hours, new_ds3232, Hours::H24(21),
-            I2cTrans::write(DEVICE_ADDRESS, vec![Register::HOURS, 0b0010_0001]));
-
-    set_test!(can_set_ds3234, set_hours, new_ds3234, Hours::H24(21),
-            SpiTrans::write(vec![Register::HOURS + 0x80, 0b0010_0001]));
-
-    set_invalid_test!(cannot_set_invalid_ds3231, set_hours, new_ds3231, Hours::H24(24));
-    set_invalid_test!(cannot_set_invalid_ds3232, set_hours, new_ds3232, Hours::H24(24));
-    set_invalid_test!(cannot_set_invalid_ds3234, set_hours, new_ds3234, Hours::H24(24));
+    mod too_big {
+        use super::*;
+        set_invalid_param_test!(set_hours, Hours::AM(13));
+    }
 }
