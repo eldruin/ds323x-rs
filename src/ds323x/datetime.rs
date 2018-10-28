@@ -3,7 +3,7 @@
 #![deny(missing_docs)]
 
 extern crate embedded_hal as hal;
-use super::{ Ds323x, Register, Error };
+use super::super::{ Ds323x, Register, Error };
 use interface::{ ReadRegister, WriteRegister };
 
 impl<DI, IC, E> Ds323x<DI, IC>
