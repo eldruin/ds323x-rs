@@ -287,6 +287,7 @@ impl Register {
     const CONTROL      : u8 = 0x0E;
     const STATUS       : u8 = 0x0F;
     const AGING_OFFSET : u8 = 0x10;
+    const TEMP_MSB     : u8 = 0x11;
 }
 
 struct BitFlags;

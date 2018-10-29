@@ -13,3 +13,7 @@ get_param_test!(is_not_busy, is_busy, STATUS, false, 0xFF & !BF::BUSY);
 
 get_param_test!(stopped,     has_been_stopped, STATUS, true,  0xFF);
 get_param_test!(not_stopped, has_been_stopped, STATUS, false, 0xFF & !BF::OSC_STOP);
+
+get_param_read_array_test!(temp_0,   get_temperature,    0.0,  TEMP_MSB, [0, 0], [0, 0]);
+get_param_read_array_test!(temp_min, get_temperature, -128.0,  TEMP_MSB, [0b1000_0000, 0], [0, 0]);
+get_param_read_array_test!(temp_max, get_temperature,  127.75, TEMP_MSB, [0b0111_1111, 0b1100_0000], [0, 0]);
