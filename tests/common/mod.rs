@@ -25,6 +25,7 @@ pub struct BitFlags;
 #[allow(unused)]
 impl BitFlags {
     pub const EOSC       : u8 = 0b1000_0000;
+    pub const TEMP_CONV  : u8 = 0b0010_0000;
     pub const BUSY       : u8 = 0b0000_0100;
     pub const EN32KHZ    : u8 = 0b0000_1000;
     pub const OSC_STOP   : u8 = 0b1000_0000;

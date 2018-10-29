@@ -30,6 +30,17 @@ where
         Ok(())
     }
 
+    /// Force a temperature conversion and time compensation with TXCO algorithm.
+    ///
+    /// The *busy* status should be checked before doing this. See [`is_busy()`](#method.is_busy)
+    pub fn convert_temperature(&mut self) -> Result<(), Error<E>> {
+        let control = self.iface.read_register(Register::CONTROL)?;
+        if (control & BitFlags::TEMP_CONV) == 0 {
+            self.iface.write_register(Register::CONTROL, control | BitFlags::TEMP_CONV)?;
+        }
+        Ok(())
+    }
+
     /// Enable the 32kHz output.
     ///
     /// (Does not alter the device register if already enabled).
