@@ -44,3 +44,5 @@ change_if_necessary_test!(en_32khz_out,  enable_32khz_output,  STATUS, 0xFF, 0xF
 change_if_necessary_test!(dis_32khz_out, disable_32khz_output, STATUS, 0xFF & !BF::EN32KHZ, 0xFF);
 change_if_necessary_test!(clr_stop, clear_has_been_stopped_flag, STATUS, 0xFF & !BF::OSC_STOP, 0xFF);
 
+set_param_test!(aging_offset_min, set_aging_offset, AGING_OFFSET, -128, 128);
+set_param_test!(aging_offset_max, set_aging_offset, AGING_OFFSET,  127, 127);

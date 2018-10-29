@@ -277,15 +277,16 @@ pub enum Error<E> {
 struct Register;
 
 impl Register {
-    const SECONDS   : u8 = 0x00;
-    const MINUTES   : u8 = 0x01;
-    const HOURS     : u8 = 0x02;
-    const DOW       : u8 = 0x03;
-    const DOM       : u8 = 0x04;
-    const MONTH     : u8 = 0x05;
-    const YEAR      : u8 = 0x06;
-    const CONTROL   : u8 = 0x0E;
+    const SECONDS      : u8 = 0x00;
+    const MINUTES      : u8 = 0x01;
+    const HOURS        : u8 = 0x02;
+    const DOW          : u8 = 0x03;
+    const DOM          : u8 = 0x04;
+    const MONTH        : u8 = 0x05;
+    const YEAR         : u8 = 0x06;
+    const CONTROL      : u8 = 0x0E;
     const STATUS       : u8 = 0x0F;
+    const AGING_OFFSET : u8 = 0x10;
 }
 
 struct BitFlags;

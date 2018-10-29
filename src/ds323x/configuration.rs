@@ -62,4 +62,9 @@ where
         }
         Ok(())
     }
+
+    /// Set the aging offset.
+    pub fn set_aging_offset(&mut self, offset: i8) -> Result<(), Error<E>> {
+        self.iface.write_register(Register::AGING_OFFSET, offset as u8)
+    }
 }
