@@ -17,6 +17,7 @@ impl Register {
     pub const DOM       : u8 = 0x04;
     pub const MONTH     : u8 = 0x05;
     pub const CONTROL   : u8 = 0x0E;
+    pub const STATUS       : u8 = 0x0F;
 }
 
 pub struct BitFlags;
@@ -24,6 +25,7 @@ pub struct BitFlags;
 #[allow(unused)]
 impl BitFlags {
     pub const EOSC       : u8 = 0b1000_0000;
+    pub const BUSY       : u8 = 0b0000_0100;
 }
 
 pub struct DummyOutputPin;

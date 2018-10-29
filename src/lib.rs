@@ -285,6 +285,7 @@ impl Register {
     const MONTH     : u8 = 0x05;
     const YEAR      : u8 = 0x06;
     const CONTROL   : u8 = 0x0E;
+    const STATUS       : u8 = 0x0F;
 }
 
 struct BitFlags;
@@ -294,6 +295,7 @@ impl BitFlags {
     const AM_PM      : u8 = 0b0010_0000;
     const CENTURY    : u8 = 0b1000_0000;
     const EOSC       : u8 = 0b1000_0000;
+    const BUSY       : u8 = 0b0000_0100;
 }
 
 const DEVICE_ADDRESS: u8 = 0b110_1000;
