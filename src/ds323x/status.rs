@@ -13,4 +13,11 @@ where
         let status = self.iface.read_register(Register::STATUS)?;
         Ok((status & BitFlags::BUSY) != 0)
     }
+
+    /// Read whether the oscillator is stopped or has been stopped at
+    /// some point.
+    pub fn has_been_stopped(&mut self) -> Result<bool, Error<E>> {
+        let status = self.iface.read_register(Register::STATUS)?;
+        Ok((status & BitFlags::OSC_STOP) != 0)
+    }
 }

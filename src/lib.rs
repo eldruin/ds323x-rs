@@ -296,6 +296,7 @@ impl BitFlags {
     const CENTURY    : u8 = 0b1000_0000;
     const EOSC       : u8 = 0b1000_0000;
     const BUSY       : u8 = 0b0000_0100;
+    const OSC_STOP   : u8 = 0b1000_0000;
 }
 
 const DEVICE_ADDRESS: u8 = 0b110_1000;
