@@ -4,9 +4,27 @@
 //! [`embedded-hal`]: https://github.com/rust-embedded/embedded-hal
 //!
 //! This driver allows you to:
-//! - Read and set date and time in 12-hour and 24-hour format. See: `get_datetime`.
-//! - Read and set date and time elements. For example, see: `get_year`.
-//! - Enable and disable the real-time clock. See: `enable`.
+//! - Read and set date and time in 12-hour and 24-hour format. See: [`get_datetime`].
+//! - Read and set date and time elements. For example, see: [`get_year`].
+//! - Enable and disable the real-time clock. See: [`enable`].
+//! - Read the temperature. See [`get_temperature`].
+//! - Force a temperature conversion and time compensation. See [`convert_temperature`].
+//! - Read the busy status. See [`is_busy`].
+//! - Read whether the oscillator is or has been stopped. See [`has_been_stopped`].
+//! - Clear the has-been-stopped flag. See [`clear_has_been_stopped_flag`].
+//! - Enable/disable the 32kHz output. See [`enable_32khz_output`].
+//! - Set the aging offset. See [`set_aging_offset`].
+//!
+//! [`get_datetime`]: struct.Ds323x.html#method.get_datetime
+//! [`get_year`]: struct.Ds323x.html#method.get_year
+//! [`enable`]: struct.Ds323x.html#method.enable
+//! [`get_temperature`]: struct.Ds323x.html#method.get_temperature
+//! [`convert_temperature`]: struct.Ds323x.html#method.convert_temperature
+//! [`is_busy`]: struct.Ds323x.html#method.is_busy
+//! [`has_been_stopped`]: struct.Ds323x.html#method.has_been_stopped
+//! [`clear_has_been_stopped_flag`]: struct.Ds323x.html#method.clear_has_been_stopped_flag
+//! [`enable_32khz_output`]: struct.Ds323x.html#method.enable_32khz_output
+//! [`set_aging_offset`]: struct.Ds323x.html#method.set_aging_offset
 //!
 //! ## The devices
 //!
