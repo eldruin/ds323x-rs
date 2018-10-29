@@ -272,7 +272,48 @@
 //! rtc.enable().unwrap(); // set clock to run
 //! # }
 //! ```
-
+//!
+//! ### Read the temperature
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::Ds323x;
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3231(dev);
+//! let temperature = rtc.get_temperature().unwrap();
+//! # }
+//! ```
+//!
+//! ### Read busy status
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::Ds323x;
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3231(dev);
+//! let is_busy = rtc.is_busy().unwrap();
+//! # }
+//! ```
+//!
+//! ### Set the aging offset
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::Ds323x;
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3231(dev);
+//! rtc.set_aging_offset(-15).unwrap();
+//! # }
+//! ```
 
 #![deny(unsafe_code)]
 #![deny(missing_docs)]
