@@ -39,4 +39,5 @@ macro_rules! change_if_necessary_test {
 
 change_if_necessary_test!(enable, enable, CONTROL, 0xFF & !BF::EOSC,  0xFF);
 change_if_necessary_test!(disable, disable, CONTROL, 0xFF, 0xFF & !BF::EOSC);
+change_if_necessary_test!(clr_stop, clear_has_been_stopped_flag, STATUS, 0xFF & !BF::OSC_STOP, 0xFF);
 
