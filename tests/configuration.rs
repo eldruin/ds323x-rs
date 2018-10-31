@@ -3,6 +3,10 @@
 extern crate embedded_hal_mock as hal;
 use hal::i2c::Transaction as I2cTrans;
 use hal::spi::Transaction as SpiTrans;
+
+extern crate ds323x;
+use ds323x::SqWFreq;
+
 mod common;
 use common::{ DEVICE_ADDRESS as DEV_ADDR, Register, new_ds3231,
               new_ds3232, new_ds3234, destroy_ds3231, destroy_ds3232,
@@ -64,4 +68,9 @@ call_method_test!(int_sqw_out_sqw, use_int_sqw_output_as_square_wave, CONTROL, C
 
 call_method_test!(enable_sqw,  enable_square_wave,  CONTROL, CONTROL_POR_VALUE |  BF::BBSQW);
 call_method_test!(disable_sqw, disable_square_wave, CONTROL, CONTROL_POR_VALUE & !BF::BBSQW);
+
+set_param_test!(set_sqw_freq_1,     set_square_wave_frequency, CONTROL, SqWFreq::_1Hz,     CONTROL_POR_VALUE & !BF::RS2 & !BF::RS1);
+set_param_test!(set_sqw_freq_1_024, set_square_wave_frequency, CONTROL, SqWFreq::_1_024Hz, CONTROL_POR_VALUE & !BF::RS2 |  BF::RS1);
+set_param_test!(set_sqw_freq_4_096, set_square_wave_frequency, CONTROL, SqWFreq::_4_096Hz, CONTROL_POR_VALUE |  BF::RS2 & !BF::RS1);
+set_param_test!(set_sqw_freq_8_192, set_square_wave_frequency, CONTROL, SqWFreq::_8_192Hz, CONTROL_POR_VALUE |  BF::RS2 |  BF::RS1);
 

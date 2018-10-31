@@ -333,6 +333,19 @@ pub enum Error<E> {
     InvalidInputData
 }
 
+/// Square-wave output frequency
+#[derive(Debug, Clone, PartialEq)]
+pub enum SqWFreq {
+    /// 1 Hz
+    _1Hz,
+    /// 1.024 Hz
+    _1_024Hz,
+    /// 4.096 Hz
+    _4_096Hz,
+    /// 8.192 Hz
+    _8_192Hz,
+}
+
 struct Register;
 
 impl Register {
@@ -358,6 +371,8 @@ impl BitFlags {
     const EOSC       : u8 = 0b1000_0000;
     const BBSQW      : u8 = 0b0100_0000;
     const TEMP_CONV  : u8 = 0b0010_0000;
+    const RS2        : u8 = 0b0001_0000;
+    const RS1        : u8 = 0b0000_1000;
     const INTCN      : u8 = 0b0000_0100;
     const BUSY       : u8 = 0b0000_0100;
     const EN32KHZ    : u8 = 0b0000_1000;

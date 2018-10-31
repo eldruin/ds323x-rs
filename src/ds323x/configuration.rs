@@ -1,7 +1,7 @@
 //! Device configuration
 
 extern crate embedded_hal as hal;
-use super::super::{ Ds323x, Register, BitFlags, Error };
+use super::super::{ Ds323x, SqWFreq, Register, BitFlags, Error };
 use interface::{ ReadData, WriteData };
 
 impl<DI, IC, E> Ds323x<DI, IC>
@@ -88,6 +88,19 @@ where
         let control = self.control;
         self.write_control(control & !BitFlags::BBSQW)
     }
+
+    /// Set the square-wave output frequency.
+    pub fn set_square_wave_frequency(&mut self, freq: SqWFreq) -> Result<(), Error<E>> {
+        let new_control;
+        match freq {
+            SqWFreq::_1Hz     => new_control = self.control & !BitFlags::RS2 & !BitFlags::RS1,
+            SqWFreq::_1_024Hz => new_control = self.control & !BitFlags::RS2 |  BitFlags::RS1,
+            SqWFreq::_4_096Hz => new_control = self.control |  BitFlags::RS2 & !BitFlags::RS1,
+            SqWFreq::_8_192Hz => new_control = self.control |  BitFlags::RS2 |  BitFlags::RS1,
+        }
+        self.write_control(new_control)
+    }
+
     fn write_control(&mut self, control: u8) -> Result<(), Error<E>> {
         self.iface.write_register(Register::CONTROL, control)?;
         self.control = control;
