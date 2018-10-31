@@ -17,6 +17,7 @@
 //! - Select the function of the INT/SQW output pin. See [`use_int_sqw_output_as_interrupt`].
 //! - Enable and disable the square-wave generation. See [`enable_square_wave`].
 //! - Select the square-wave frequency. See [`set_square_wave_frequency`].
+//! - Enable and disable the 32kHz output when battery powered. See [`enable_32khz_output_on_battery`].
 //!
 //! [`get_datetime`]: struct.Ds323x.html#method.get_datetime
 //! [`get_year`]: struct.Ds323x.html#method.get_year
@@ -31,6 +32,7 @@
 //! [`use_int_sqw_output_as_interrupt`]: Struct.Ds323x.html#method.use_int_sqw_output_as_interrupt
 //! [`enable_square_wave`]: Struct.Ds323x.html#method.enable_square_wave
 //! [`set_square_wave_frequency`]: Struct.Ds323x.html#method.set_square_wave_frequency
+//! [`enable_32khz_output_on_battery`]: Struct.Ds323x.html#method.enable_32khz_output_on_battery
 //!
 //! ## The devices
 //!
@@ -327,6 +329,24 @@
 //! # }
 //! ```
 //!
+//! ### Enable the 32kHz output except when on battery power
+//!
+//! Additionally enabling the output depending on the power source is only
+//! available for the devices DS3232 and DS3234.
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::{ Ds323x, SqWFreq };
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3232(dev);
+//! rtc.disable_32khz_output_on_battery().unwrap();
+//! rtc.enable_32khz_output().unwrap();
+//! # }
+//! ```
+//!
 //! ### Set the aging offset
 //!
 //! ```no_run
@@ -506,3 +526,5 @@ where
 
 mod ds323x;
 pub use ds323x::{ Hours, DateTime };
+mod ds3232;
+mod ds3234;

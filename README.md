@@ -19,6 +19,7 @@ This driver allows you to:
 - Select the function of the INT/SQW output pin. See `use_int_sqw_output_as_interrupt`.
 - Enable and disable the square-wave generation. See `enable_square_wave`.
 - Select the square-wave frequency. See `set_square_wave_frequency`.
+- Enable and disable the 32kHz output when battery powered. See `enable_32khz_output_on_battery`.
 
 ## The devices
 
