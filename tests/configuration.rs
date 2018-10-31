@@ -6,9 +6,9 @@ use hal::spi::Transaction as SpiTrans;
 mod common;
 use common::{ DEVICE_ADDRESS as DEV_ADDR, Register, new_ds3231,
               new_ds3232, new_ds3234, destroy_ds3231, destroy_ds3232,
-              destroy_ds3234, BitFlags as BF };
+              destroy_ds3234, BitFlags as BF, CONTROL_POR_VALUE };
 
-macro_rules! call_method_test {
+macro_rules! call_triple_test {
     ($name:ident, $method:ident, $i2c_transactions:expr, $spi_transactions:expr) => {
         mod $name {
             use super::*;
@@ -19,15 +19,24 @@ macro_rules! call_method_test {
     };
 }
 
+macro_rules! call_method_test {
+    ($name:ident, $method:ident, $register:ident, $value_enabled:expr) => {
+        call_triple_test!($name, $method,
+            [ I2cTrans::write(DEV_ADDR, vec![Register::$register, $value_enabled]) ],
+            [ SpiTrans::write(vec![Register::$register + 0x80, $value_enabled])    ]);
+    };
+}
+
+
 macro_rules! change_if_necessary_test {
     ($name:ident, $method:ident, $register:ident, $value_enabled:expr, $value_disabled:expr) => {
         mod $name {
             use super::*;
-            call_method_test!(do_nothing_if_not_necessary, $method,
-                [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$value_enabled]) ],
-                [ SpiTrans::transfer(vec![Register::$register, 0], vec![Register::$register, $value_enabled]) ]);
+            call_triple_test!(do_nothing_if_not_necessary, $method,
+                 [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$value_enabled]) ],
+                 [ SpiTrans::transfer(vec![Register::$register, 0], vec![Register::$register, $value_enabled]) ]);
 
-            call_method_test!(change, $method,
+            call_triple_test!(change, $method,
                 [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$value_disabled]),
                   I2cTrans::write(DEV_ADDR, vec![Register::$register, $value_enabled]) ],
 
@@ -37,12 +46,12 @@ macro_rules! change_if_necessary_test {
     };
 }
 
-change_if_necessary_test!(enable, enable, CONTROL, 0xFF & !BF::EOSC,  0xFF);
-change_if_necessary_test!(disable, disable, CONTROL, 0xFF, 0xFF & !BF::EOSC);
-change_if_necessary_test!(conv_temp, convert_temperature, CONTROL, 0xFF, 0xFF & !BF::TEMP_CONV);
-change_if_necessary_test!(en_32khz_out,  enable_32khz_output,  STATUS, 0xFF, 0xFF & !BF::EN32KHZ);
+call_method_test!(enable, enable, CONTROL, CONTROL_POR_VALUE & !BF::EOSC);
+call_method_test!(disable, disable, CONTROL, CONTROL_POR_VALUE | BF::EOSC);
+change_if_necessary_test!(en_32khz_out,  enable_32khz_output,  STATUS, BF::EN32KHZ, 0);
 change_if_necessary_test!(dis_32khz_out, disable_32khz_output, STATUS, 0xFF & !BF::EN32KHZ, 0xFF);
 change_if_necessary_test!(clr_stop, clear_has_been_stopped_flag, STATUS, 0xFF & !BF::OSC_STOP, 0xFF);
+change_if_necessary_test!(conv_temp, convert_temperature, CONTROL, CONTROL_POR_VALUE | BF::TEMP_CONV, CONTROL_POR_VALUE & !BF::TEMP_CONV);
 
-set_param_test!(aging_offset_min, set_aging_offset, AGING_OFFSET, -128, 128);
-set_param_test!(aging_offset_max, set_aging_offset, AGING_OFFSET,  127, 127);
+set_param_test!(set_aging_offset_min, set_aging_offset, AGING_OFFSET, -128, 0b1000_0000);
+set_param_test!(set_aging_offset_max, set_aging_offset, AGING_OFFSET,  127, 127);

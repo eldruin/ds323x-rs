@@ -4,7 +4,9 @@ use self::ds323x::{ Ds323x, interface, ic };
 use hal::i2c::{ Mock as I2cMock, Transaction as I2cTrans };
 use hal::spi::{ Mock as SpiMock, Transaction as SpiTrans };
 
-pub const DEVICE_ADDRESS: u8 = 0b110_1000;
+pub const DEVICE_ADDRESS   : u8 = 0b110_1000;
+#[allow(unused)]
+pub const CONTROL_POR_VALUE: u8 = 0b0001_1100;
 
 pub struct Register;
 

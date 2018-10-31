@@ -362,7 +362,8 @@ impl BitFlags {
     const OSC_STOP   : u8 = 0b1000_0000;
 }
 
-const DEVICE_ADDRESS: u8 = 0b110_1000;
+const DEVICE_ADDRESS   : u8 = 0b110_1000;
+const CONTROL_POR_VALUE: u8 = 0b0001_1100;
 
 /// IC markers
 pub mod ic {
@@ -380,6 +381,7 @@ use interface::{ I2cInterface, SpiInterface };
 #[derive(Debug, Default)]
 pub struct Ds323x<DI, IC> {
     iface: DI,
+    control: u8,
     _ic: PhantomData<IC>
 }
 
@@ -393,6 +395,7 @@ where
             iface: I2cInterface {
                 i2c,
             },
+            control: CONTROL_POR_VALUE,
             _ic: PhantomData
         }
     }
@@ -413,6 +416,7 @@ where
             iface: I2cInterface {
                 i2c,
             },
+            control: CONTROL_POR_VALUE,
             _ic: PhantomData
         }
     }
@@ -435,6 +439,7 @@ where
                 spi,
                 cs: chip_select
             },
+            control: CONTROL_POR_VALUE,
             _ic: PhantomData
         }
     }
