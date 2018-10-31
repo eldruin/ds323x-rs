@@ -45,18 +45,6 @@ macro_rules! set_param_test_2_4 {
     };
 }
 
-#[test]
-fn can_create_and_destroy_ds3232() {
-    let dev = new_ds3232(&[]);
-    destroy_ds3232(dev);
-}
-
-#[test]
-fn can_create_and_destroy_ds3234() {
-    let dev = new_ds3234(&[]);
-    destroy_ds3234(dev);
-}
-
 const DEFAULT_WRITE_STATUS: u8 = DS323X_POR_STATUS | BF::ALARM2F | BF::ALARM1F;
 
 call_method_status_test!(can_en_32khz_bat, enable_32khz_output_on_battery,
