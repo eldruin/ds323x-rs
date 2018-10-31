@@ -34,20 +34,14 @@ where
 
     /// Enable the 32kHz output.
     pub fn enable_32khz_output(&mut self) -> Result<(), Error<E>> {
-        // avoid clearing alarm flags
-        let status = self.status | BitFlags::EN32KHZ | BitFlags::ALARM2F | BitFlags::ALARM1F;
-        self.iface.write_register(Register::STATUS, status)?;
-        self.status = status;
-        Ok(())
+        let status = self.status | BitFlags::EN32KHZ;
+        self.write_status_without_clearing_alarm(status)
     }
 
     /// Disable the 32kHz output.
     pub fn disable_32khz_output(&mut self) -> Result<(), Error<E>> {
-        // avoid clearing alarm flags
-        let status = self.status & !BitFlags::EN32KHZ | BitFlags::ALARM2F | BitFlags::ALARM1F;
-        self.iface.write_register(Register::STATUS, status)?;
-        self.status = status;
-        Ok(())
+        let status = self.status & !BitFlags::EN32KHZ;
+        self.write_status_without_clearing_alarm(status)
     }
 
     /// Set the aging offset.
@@ -100,6 +94,14 @@ where
     fn write_control(&mut self, control: u8) -> Result<(), Error<E>> {
         self.iface.write_register(Register::CONTROL, control)?;
         self.control = control;
+        Ok(())
+    }
+
+    pub(crate) fn write_status_without_clearing_alarm(&mut self, status: u8) -> Result<(), Error<E>> {
+        // avoid clearing alarm flags
+        let new_status = status | BitFlags::ALARM2F | BitFlags::ALARM1F;
+        self.iface.write_register(Register::STATUS, new_status)?;
+        self.status = status;
         Ok(())
     }
 }
