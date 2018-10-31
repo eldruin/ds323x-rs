@@ -8,6 +8,9 @@ use common::{ DEVICE_ADDRESS as DEV_ADDR, Register, new_ds3231,
               new_ds3232, new_ds3234, destroy_ds3231, destroy_ds3232,
               destroy_ds3234, BitFlags as BF };
 
+get_param_test!(is_running,     is_running, CONTROL, true,  0);
+get_param_test!(is_not_running, is_running, CONTROL, false, BF::EOSC);
+
 get_param_test!(is_busy,     is_busy, STATUS, true,  0xFF);
 get_param_test!(is_not_busy, is_busy, STATUS, false, 0xFF & !BF::BUSY);
 

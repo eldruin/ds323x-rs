@@ -8,6 +8,12 @@ impl<DI, IC, E> Ds323x<DI, IC>
 where
     DI: ReadData<Error = E> + WriteData<Error = E>
 {
+    /// Read whether the oscillator is running
+    pub fn is_running(&mut self) -> Result<bool, Error<E>> {
+        let control = self.iface.read_register(Register::CONTROL)?;
+        Ok((control & BitFlags::EOSC) == 0)
+    }
+
     /// Read the busy status
     pub fn is_busy(&mut self) -> Result<bool, Error<E>> {
         let status = self.iface.read_register(Register::STATUS)?;
