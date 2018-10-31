@@ -1,4 +1,4 @@
-//! Device configuration
+//! Device status
 
 extern crate embedded_hal as hal;
 use super::super::{ Ds323x, Register, BitFlags, Error };
@@ -8,7 +8,7 @@ impl<DI, IC, E> Ds323x<DI, IC>
 where
     DI: ReadData<Error = E> + WriteData<Error = E>
 {
-    /// Read busy status.
+    /// Read the busy status
     pub fn is_busy(&mut self) -> Result<bool, Error<E>> {
         let status = self.iface.read_register(Register::STATUS)?;
         Ok((status & BitFlags::BUSY) != 0)
@@ -16,14 +16,21 @@ where
 
     /// Read whether the oscillator is stopped or has been stopped at
     /// some point.
+    ///
+    /// This allows a better assessment of the validity of the timekeeping data.
+    ///
+    /// Once this is true, it will stay as such until cleared with
+    /// [`clear_has_been_stopped_flag`](#method.clear_has_been_stopped_flag)
     pub fn has_been_stopped(&mut self) -> Result<bool, Error<E>> {
         let status = self.iface.read_register(Register::STATUS)?;
         Ok((status & BitFlags::OSC_STOP) != 0)
     }
 
-    /// Clear the has been stopped flag.
+    /// Clear flag signalling whether the oscillator is stopped or has been
+    /// stopped at some point.
     ///
     /// (Does not alter the device register if already cleared).
+    /// See also: [`has_been_stopped()`](#method.has_been_stopped)
     pub fn clear_has_been_stopped_flag(&mut self) -> Result<(), Error<E>> {
         let status = self.iface.read_register(Register::STATUS)?;
         if (status & BitFlags::OSC_STOP) != 0 {
@@ -33,6 +40,9 @@ where
     }
 
     /// Read the temperature.
+    ///
+    /// Note: It is possible to manually force a temperature conversion with
+    /// [`convert_temperature()`](#method.convert_temperature)
     pub fn get_temperature(&mut self) -> Result<f32, Error<E>> {
         let mut data = [Register::TEMP_MSB, 0, 0];
         self.iface.read_data(&mut data)?;
@@ -43,7 +53,6 @@ where
             Ok(temp_sign_extended as i16 as f32 * 0.25)
         }
         else {
-            let temp = ((data[1] as u16) << 2) | (data[2] >> 6) as u16;
             Ok(temp as f32 * 0.25)
         }
     }
