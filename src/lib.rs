@@ -301,6 +301,23 @@
 //! # }
 //! ```
 //!
+//! ### Enable the square-wave output with a frequency of 4.096Hz
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::{ Ds323x, SqWFreq };
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3231(dev);
+//! rtc.set_square_wave_frequency(SqWFreq::_4_096Hz).unwrap();
+//! // The same output pin can be used for interrupts or as square-wave output
+//! rtc.use_int_sqw_output_as_square_wave().unwrap();
+//! rtc.enable_square_wave().unwrap();
+//! # }
+//! ```
+//!
 //! ### Set the aging offset
 //!
 //! ```no_run
