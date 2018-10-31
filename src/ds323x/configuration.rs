@@ -64,6 +64,19 @@ where
         let offset = self.iface.read_register(Register::AGING_OFFSET)?;
         Ok(offset as i8)
     }
+
+    /// Set the interrupt/square-wave output to be used as interrupt output.
+    pub fn use_int_sqw_output_as_interrupt(&mut self) -> Result<(), Error<E>> {
+        let control = self.control;
+        self.write_control(control | BitFlags::INTCN)
+    }
+
+    /// Set the interrupt/square-wave output to be used as square-wave output.
+    pub fn use_int_sqw_output_as_square_wave(&mut self) -> Result<(), Error<E>> {
+        let control = self.control;
+        self.write_control(control & !BitFlags::INTCN)
+    }
+
     fn write_control(&mut self, control: u8) -> Result<(), Error<E>> {
         self.iface.write_register(Register::CONTROL, control)?;
         self.control = control;

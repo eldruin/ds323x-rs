@@ -357,6 +357,7 @@ impl BitFlags {
     const CENTURY    : u8 = 0b1000_0000;
     const EOSC       : u8 = 0b1000_0000;
     const TEMP_CONV  : u8 = 0b0010_0000;
+    const INTCN      : u8 = 0b0000_0100;
     const BUSY       : u8 = 0b0000_0100;
     const EN32KHZ    : u8 = 0b0000_1000;
     const OSC_STOP   : u8 = 0b1000_0000;
