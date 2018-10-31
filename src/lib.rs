@@ -19,6 +19,7 @@
 //! - Select the square-wave frequency. See [`set_square_wave_frequency`].
 //! - Enable and disable the 32kHz output when battery powered. See [`enable_32khz_output_on_battery`].
 //! - Set the temperature conversion rate. See [`set_temperature_conversion_rate`].
+//! - Enable and disable the temperature conversions when battery-powered. See [`enable_temperature_conversions_on_battery`].
 //!
 //! [`get_datetime`]: struct.Ds323x.html#method.get_datetime
 //! [`get_year`]: struct.Ds323x.html#method.get_year
@@ -35,6 +36,7 @@
 //! [`set_square_wave_frequency`]: Struct.Ds323x.html#method.set_square_wave_frequency
 //! [`enable_32khz_output_on_battery`]: Struct.Ds323x.html#method.enable_32khz_output_on_battery
 //! [`set_temperature_conversion_rate`]: Struct.Ds323x.html#method.set_temperature_conversion_rate
+//! [`enable_temperature_conversions_on_battery`]: Struct.Ds323x.html#method.enable_temperature_conversions_on_battery
 //!
 //! ## The devices
 //!
@@ -438,28 +440,30 @@ impl Register {
     const STATUS       : u8 = 0x0F;
     const AGING_OFFSET : u8 = 0x10;
     const TEMP_MSB     : u8 = 0x11;
+    const TEMP_CONV    : u8 = 0x13;
 }
 
 struct BitFlags;
 
 impl BitFlags {
-    const H24_H12    : u8 = 0b0100_0000;
-    const AM_PM      : u8 = 0b0010_0000;
-    const CENTURY    : u8 = 0b1000_0000;
-    const EOSC       : u8 = 0b1000_0000;
-    const BBSQW      : u8 = 0b0100_0000;
-    const TEMP_CONV  : u8 = 0b0010_0000;
-    const RS2        : u8 = 0b0001_0000;
-    const RS1        : u8 = 0b0000_1000;
-    const INTCN      : u8 = 0b0000_0100;
-    const OSC_STOP   : u8 = 0b1000_0000;
-    const BB32KHZ    : u8 = 0b0100_0000;
-    const CRATE1     : u8 = 0b0010_0000;
-    const CRATE0     : u8 = 0b0001_0000;
-    const EN32KHZ    : u8 = 0b0000_1000;
-    const BUSY       : u8 = 0b0000_0100;
-    const ALARM2F    : u8 = 0b0000_0010;
-    const ALARM1F    : u8 = 0b0000_0001;
+    const H24_H12       : u8 = 0b0100_0000;
+    const AM_PM         : u8 = 0b0010_0000;
+    const CENTURY       : u8 = 0b1000_0000;
+    const EOSC          : u8 = 0b1000_0000;
+    const BBSQW         : u8 = 0b0100_0000;
+    const TEMP_CONV     : u8 = 0b0010_0000;
+    const RS2           : u8 = 0b0001_0000;
+    const RS1           : u8 = 0b0000_1000;
+    const INTCN         : u8 = 0b0000_0100;
+    const OSC_STOP      : u8 = 0b1000_0000;
+    const BB32KHZ       : u8 = 0b0100_0000;
+    const CRATE1        : u8 = 0b0010_0000;
+    const CRATE0        : u8 = 0b0001_0000;
+    const EN32KHZ       : u8 = 0b0000_1000;
+    const BUSY          : u8 = 0b0000_0100;
+    const ALARM2F       : u8 = 0b0000_0010;
+    const ALARM1F       : u8 = 0b0000_0001;
+    const TEMP_CONV_BAT : u8 = 0b0000_0001;
 }
 
 const DEVICE_ADDRESS   : u8 = 0b110_1000;

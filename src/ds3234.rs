@@ -3,8 +3,8 @@
 extern crate embedded_hal as hal;
 use hal::blocking;
 use core::marker::PhantomData;
-use super::{ Ds323x, TempConvRate, BitFlags, Error, ic, CONTROL_POR_VALUE };
-use interface::SpiInterface;
+use super::{ Ds323x, TempConvRate, Register, BitFlags, Error, ic, CONTROL_POR_VALUE };
+use interface::{ SpiInterface, WriteData };
 
 impl<SPI, CS, E> Ds323x<SpiInterface<SPI, CS>, ic::DS3234>
 where
@@ -68,5 +68,19 @@ where
             TempConvRate::_512s => status = self.status |  BitFlags::CRATE1 |  BitFlags::CRATE0,
         }
         self.write_status_without_clearing_alarm(status)
+    }
+
+    /// Enable the temperature conversions when battery-powered. (enabled per default)
+    ///
+    /// Note: This is only available for DS3234 devices.
+    pub fn enable_temperature_conversions_on_battery(&mut self) -> Result<(), Error<E>> {
+        self.iface.write_register(Register::TEMP_CONV, 0)
+    }
+
+    /// Disable the temperature conversions when battery-powered.
+    ///
+    /// Note: This is only available for DS3234 devices.
+    pub fn disable_temperature_conversions_on_battery(&mut self) -> Result<(), Error<E>> {
+        self.iface.write_register(Register::TEMP_CONV, BitFlags::TEMP_CONV_BAT)
     }
 }
