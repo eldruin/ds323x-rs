@@ -26,7 +26,7 @@ where
     /// This allows a better assessment of the validity of the timekeeping data.
     ///
     /// Once this is true, it will stay as such until cleared with
-    /// [`clear_has_been_stopped_flag`](#method.clear_has_been_stopped_flag)
+    /// [`clear_has_been_stopped_flag()`](#method.clear_has_been_stopped_flag)
     pub fn has_been_stopped(&mut self) -> Result<bool, Error<E>> {
         let status = self.iface.read_register(Register::STATUS)?;
         Ok((status & BitFlags::OSC_STOP) != 0)

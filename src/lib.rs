@@ -31,12 +31,12 @@
 //! [`clear_has_been_stopped_flag`]: struct.Ds323x.html#method.clear_has_been_stopped_flag
 //! [`set_aging_offset`]: struct.Ds323x.html#method.set_aging_offset
 //! [`enable_32khz_output`]: struct.Ds323x.html#method.enable_32khz_output
-//! [`use_int_sqw_output_as_interrupt`]: Struct.Ds323x.html#method.use_int_sqw_output_as_interrupt
-//! [`enable_square_wave`]: Struct.Ds323x.html#method.enable_square_wave
-//! [`set_square_wave_frequency`]: Struct.Ds323x.html#method.set_square_wave_frequency
-//! [`enable_32khz_output_on_battery`]: Struct.Ds323x.html#method.enable_32khz_output_on_battery
-//! [`set_temperature_conversion_rate`]: Struct.Ds323x.html#method.set_temperature_conversion_rate
-//! [`enable_temperature_conversions_on_battery`]: Struct.Ds323x.html#method.enable_temperature_conversions_on_battery
+//! [`use_int_sqw_output_as_interrupt`]: struct.Ds323x.html#method.use_int_sqw_output_as_interrupt
+//! [`enable_square_wave`]: struct.Ds323x.html#method.enable_square_wave
+//! [`set_square_wave_frequency`]: struct.Ds323x.html#method.set_square_wave_frequency
+//! [`enable_32khz_output_on_battery`]: struct.Ds323x.html#method.enable_32khz_output_on_battery
+//! [`set_temperature_conversion_rate`]: struct.Ds323x.html#method.set_temperature_conversion_rate
+//! [`enable_temperature_conversions_on_battery`]: struct.Ds323x.html#method.enable_temperature_conversions_on_battery
 //!
 //! ## The devices
 //!

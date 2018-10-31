@@ -33,7 +33,7 @@ where
     /// Enable the 32kHz output when battery-powered. (enabled per default)
     ///
     /// Additionally, the 32kHz output needs to be enabled. See
-    /// [`enable_32khz_output`](#method.enable_32khz_output).
+    /// [`enable_32khz_output()`](#method.enable_32khz_output).
     ///
     /// Note: This is only available for DS3232 and DS3234 devices.
     pub fn enable_32khz_output_on_battery(&mut self) -> Result<(), Error<E>> {
@@ -44,7 +44,7 @@ where
     /// Disable the 32kHz output when battery-powered.
     ///
     /// The 32kHz output will still generate a wave when not battery-powered if
-    /// it enabled. See [`enable_32khz_output`](#method.enable_32khz_output).
+    /// it enabled. See [`enable_32khz_output()`](#method.enable_32khz_output).
     ///
     /// Note: This is only available for DS3232 and DS3234 devices.
     pub fn disable_32khz_output_on_battery(&mut self) -> Result<(), Error<E>> {
