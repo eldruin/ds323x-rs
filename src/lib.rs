@@ -5,15 +5,18 @@
 //!
 //! This driver allows you to:
 //! - Read and set date and time in 12-hour and 24-hour format. See: [`get_datetime`].
-//! - Read and set date and time elements. For example, see: [`get_year`].
+//! - Read and set date and time individual elements. For example, see: [`get_year`].
 //! - Enable and disable the real-time clock. See: [`enable`].
 //! - Read the temperature. See [`get_temperature`].
 //! - Force a temperature conversion and time compensation. See [`convert_temperature`].
 //! - Read the busy status. See [`is_busy`].
 //! - Read whether the oscillator is or has been stopped. See [`has_been_stopped`].
 //! - Clear the has-been-stopped flag. See [`clear_has_been_stopped_flag`].
-//! - Enable/disable the 32kHz output. See [`enable_32khz_output`].
-//! - Set the aging offset. See [`set_aging_offset`].
+//! - Set and read the aging offset. See [`set_aging_offset`].
+//! - Enable and disable the 32kHz output. See [`enable_32khz_output`].
+//! - Select the function of the INT/SQW output pin. See [`use_int_sqw_output_as_interrupt`].
+//! - Enable and disable the square-wave generation. See [`enable_square_wave`].
+//! - Select the square-wave frequency. See [`set_square_wave_frequency`].
 //!
 //! [`get_datetime`]: struct.Ds323x.html#method.get_datetime
 //! [`get_year`]: struct.Ds323x.html#method.get_year
@@ -23,8 +26,11 @@
 //! [`is_busy`]: struct.Ds323x.html#method.is_busy
 //! [`has_been_stopped`]: struct.Ds323x.html#method.has_been_stopped
 //! [`clear_has_been_stopped_flag`]: struct.Ds323x.html#method.clear_has_been_stopped_flag
-//! [`enable_32khz_output`]: struct.Ds323x.html#method.enable_32khz_output
 //! [`set_aging_offset`]: struct.Ds323x.html#method.set_aging_offset
+//! [`enable_32khz_output`]: struct.Ds323x.html#method.enable_32khz_output
+//! [`use_int_sqw_output_as_interrupt`]: Struct.Ds323x.html#method.use_int_sqw_output_as_interrupt
+//! [`enable_square_wave`]: Struct.Ds323x.html#method.enable_square_wave
+//! [`set_square_wave_frequency`]: Struct.Ds323x.html#method.set_square_wave_frequency
 //!
 //! ## The devices
 //!
@@ -334,6 +340,7 @@
 //! rtc.set_aging_offset(-15).unwrap();
 //! # }
 //! ```
+//!
 
 #![deny(unsafe_code)]
 #![deny(missing_docs)]

@@ -7,15 +7,18 @@ extremely accurate real-time clocks, based on the [`embedded-hal`] traits.
 
 This driver allows you to:
 - Read and set date and time in 12-hour and 24-hour format. See: `get_datetime`.
-- Read and set date and time elements. For example, see: `get_year`.
+- Read and set date and time individual elements. For example, see: `get_year`.
 - Enable and disable the real-time clock. See: `enable`.
 - Read the temperature. See `get_temperature`.
 - Force a temperature conversion and time compensation. See `convert_temperature`.
 - Read the busy status. See `is_busy`.
 - Read whether the oscillator is or has been stopped. See `has_been_stopped`.
 - Clear the has-been-stopped flag. See `clear_has_been_stopped_flag`.
-- Enable/disable the 32kHz output. See `enable_32khz_output`.
 - Set the aging offset. See `set_aging_offset`.
+- Enable and disable the 32kHz output. See `enable_32khz_output`.
+- Select the function of the INT/SQW output pin. See `use_int_sqw_output_as_interrupt`.
+- Enable and disable the square-wave generation. See `enable_square_wave`.
+- Select the square-wave frequency. See `set_square_wave_frequency`.
 
 ## The devices
 
