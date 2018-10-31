@@ -33,24 +33,20 @@ where
     }
 
     /// Enable the 32kHz output.
-    ///
-    /// (Does not alter the device register if already enabled).
     pub fn enable_32khz_output(&mut self) -> Result<(), Error<E>> {
-        let status = self.iface.read_register(Register::STATUS)?;
-        if (status & BitFlags::EN32KHZ) == 0 {
-            self.iface.write_register(Register::STATUS, status | BitFlags::EN32KHZ)?;
-        }
+        // avoid clearing alarm flags
+        let status = self.status | BitFlags::EN32KHZ | BitFlags::ALARM2F | BitFlags::ALARM1F;
+        self.iface.write_register(Register::STATUS, status)?;
+        self.status = status;
         Ok(())
     }
 
     /// Disable the 32kHz output.
-    ///
-    /// (Does not alter the device register if already disabled).
     pub fn disable_32khz_output(&mut self) -> Result<(), Error<E>> {
-        let status = self.iface.read_register(Register::STATUS)?;
-        if (status & BitFlags::EN32KHZ) != 0 {
-            self.iface.write_register(Register::STATUS, status & !BitFlags::EN32KHZ)?;
-        }
+        // avoid clearing alarm flags
+        let status = self.status & !BitFlags::EN32KHZ | BitFlags::ALARM2F | BitFlags::ALARM1F;
+        self.iface.write_register(Register::STATUS, status)?;
+        self.status = status;
         Ok(())
     }
 

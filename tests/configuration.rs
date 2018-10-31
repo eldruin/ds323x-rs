@@ -10,7 +10,8 @@ use ds323x::SqWFreq;
 mod common;
 use common::{ DEVICE_ADDRESS as DEV_ADDR, Register, new_ds3231,
               new_ds3232, new_ds3234, destroy_ds3231, destroy_ds3232,
-              destroy_ds3234, BitFlags as BF, CONTROL_POR_VALUE };
+              destroy_ds3234, BitFlags as BF, CONTROL_POR_VALUE,
+              DS3231_POR_STATUS, DS323X_POR_STATUS };
 
 macro_rules! call_triple_test {
     ($name:ident, $method:ident, $i2c_transactions:expr, $spi_transactions:expr) => {
@@ -31,6 +32,19 @@ macro_rules! call_method_test {
     };
 }
 
+macro_rules! call_method_status_test {
+    ($name:ident, $method:ident, $value_ds3231:expr, $value_ds323x:expr) => {
+        mod $name {
+            use super::*;
+            call_test!(can_call_ds3231, $method, new_ds3231, destroy_ds3231,
+                [ I2cTrans::write(DEV_ADDR, vec![Register::STATUS, $value_ds3231]) ]);
+            call_test!(can_call_ds3232, $method, new_ds3232, destroy_ds3232,
+                [ I2cTrans::write(DEV_ADDR, vec![Register::STATUS, $value_ds323x]) ]);
+            call_test!(can_call_ds3234, $method, new_ds3234, destroy_ds3234,
+                [ SpiTrans::write(vec![Register::STATUS + 0x80, $value_ds323x]) ]);
+        }
+    };
+}
 
 macro_rules! change_if_necessary_test {
     ($name:ident, $method:ident, $register:ident, $value_enabled:expr, $value_disabled:expr) => {
@@ -52,8 +66,12 @@ macro_rules! change_if_necessary_test {
 
 call_method_test!(enable, enable, CONTROL, CONTROL_POR_VALUE & !BF::EOSC);
 call_method_test!(disable, disable, CONTROL, CONTROL_POR_VALUE | BF::EOSC);
-change_if_necessary_test!(en_32khz_out,  enable_32khz_output,  STATUS, BF::EN32KHZ, 0);
-change_if_necessary_test!(dis_32khz_out, disable_32khz_output, STATUS, 0xFF & !BF::EN32KHZ, 0xFF);
+call_method_status_test!(en_32khz_out,  enable_32khz_output,
+    DS3231_POR_STATUS |  BF::EN32KHZ | BF::ALARM2F | BF::ALARM1F,
+    DS323X_POR_STATUS |  BF::EN32KHZ | BF::ALARM2F | BF::ALARM1F);
+call_method_status_test!(dis_32khz_out, disable_32khz_output,
+    DS3231_POR_STATUS & !BF::EN32KHZ | BF::ALARM2F | BF::ALARM1F,
+    DS323X_POR_STATUS & !BF::EN32KHZ | BF::ALARM2F | BF::ALARM1F);
 change_if_necessary_test!(clr_stop, clear_has_been_stopped_flag, STATUS, 0xFF & !BF::OSC_STOP, 0xFF);
 change_if_necessary_test!(conv_temp, convert_temperature, CONTROL, CONTROL_POR_VALUE | BF::TEMP_CONV, CONTROL_POR_VALUE & !BF::TEMP_CONV);
 

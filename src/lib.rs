@@ -401,9 +401,12 @@ impl BitFlags {
     const RS2        : u8 = 0b0001_0000;
     const RS1        : u8 = 0b0000_1000;
     const INTCN      : u8 = 0b0000_0100;
-    const BUSY       : u8 = 0b0000_0100;
-    const EN32KHZ    : u8 = 0b0000_1000;
     const OSC_STOP   : u8 = 0b1000_0000;
+    const BB32KHZ    : u8 = 0b0100_0000;
+    const EN32KHZ    : u8 = 0b0000_1000;
+    const BUSY       : u8 = 0b0000_0100;
+    const ALARM2F    : u8 = 0b0000_0010;
+    const ALARM1F    : u8 = 0b0000_0001;
 }
 
 const DEVICE_ADDRESS   : u8 = 0b110_1000;
@@ -426,6 +429,7 @@ use interface::{ I2cInterface, SpiInterface };
 pub struct Ds323x<DI, IC> {
     iface: DI,
     control: u8,
+    status : u8,
     _ic: PhantomData<IC>
 }
 
@@ -435,11 +439,13 @@ where
 {
     /// Create a new instance of the DS3231 device.
     pub fn new_ds3231(i2c: I2C) -> Self {
+        const STATUS_POR_VALUE : u8 = BitFlags::OSC_STOP | BitFlags::EN32KHZ;
         Ds323x {
             iface: I2cInterface {
                 i2c,
             },
             control: CONTROL_POR_VALUE,
+            status: STATUS_POR_VALUE,
             _ic: PhantomData
         }
     }
@@ -456,11 +462,13 @@ where
 {
     /// Create a new instance of the DS3232 device.
     pub fn new_ds3232(i2c: I2C) -> Self {
+        const STATUS_POR_VALUE : u8 = BitFlags::OSC_STOP | BitFlags::BB32KHZ | BitFlags::EN32KHZ;
         Ds323x {
             iface: I2cInterface {
                 i2c,
             },
             control: CONTROL_POR_VALUE,
+            status: STATUS_POR_VALUE,
             _ic: PhantomData
         }
     }
@@ -478,12 +486,14 @@ where
 {
     /// Create a new instance.
     pub fn new_ds3234(spi: SPI, chip_select: CS) -> Self {
+        const STATUS_POR_VALUE : u8 = BitFlags::OSC_STOP | BitFlags::BB32KHZ | BitFlags::EN32KHZ;
         Ds323x {
             iface: SpiInterface {
                 spi,
                 cs: chip_select
             },
             control: CONTROL_POR_VALUE,
+            status: STATUS_POR_VALUE,
             _ic: PhantomData
         }
     }
