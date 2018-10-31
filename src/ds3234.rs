@@ -30,7 +30,7 @@ where
         (self.iface.spi, self.iface.cs)
     }
 
-    /// Enable the 32kHz output when battery-powered.
+    /// Enable the 32kHz output when battery-powered. (enabled per default)
     ///
     /// Additionally, the 32kHz output needs to be enabled. See
     /// [`enable_32khz_output`](#method.enable_32khz_output).

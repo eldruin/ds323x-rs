@@ -8,7 +8,7 @@ impl<DI, IC, E> Ds323x<DI, IC>
 where
     DI: ReadData<Error = E> + WriteData<Error = E>
 {
-    /// Enable the oscillator (set the clock running).
+    /// Enable the oscillator (set the clock running) (default).
     pub fn enable(&mut self) -> Result<(), Error<E>> {
         let control = self.control;
         self.write_control(control & !BitFlags::EOSC)
@@ -32,7 +32,7 @@ where
         Ok(())
     }
 
-    /// Enable the 32kHz output.
+    /// Enable the 32kHz output. (enabled per default)
     pub fn enable_32khz_output(&mut self) -> Result<(), Error<E>> {
         let status = self.status | BitFlags::EN32KHZ;
         self.write_status_without_clearing_alarm(status)
@@ -61,7 +61,7 @@ where
         self.write_control(control | BitFlags::INTCN)
     }
 
-    /// Set the interrupt/square-wave output to be used as square-wave output.
+    /// Set the interrupt/square-wave output to be used as square-wave output. (default)
     pub fn use_int_sqw_output_as_square_wave(&mut self) -> Result<(), Error<E>> {
         let control = self.control;
         self.write_control(control & !BitFlags::INTCN)
