@@ -269,7 +269,10 @@
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut rtc = Ds323x::new_ds3231(dev);
 //! rtc.disable().unwrap(); // stops the clock
+//! let is_running = rtc.is_running().unwrap();
+//! println!("Is running: {}", is_running); // will print false
 //! rtc.enable().unwrap(); // set clock to run
+//! println!("Is running: {}", is_running); // will print true
 //! # }
 //! ```
 //!
