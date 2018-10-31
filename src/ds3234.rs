@@ -2,7 +2,8 @@
 
 extern crate embedded_hal as hal;
 use hal::blocking;
-use super::{ Ds323x, TempConvRate, BitFlags, Error, ic };
+use core::marker::PhantomData;
+use super::{ Ds323x, TempConvRate, BitFlags, Error, ic, CONTROL_POR_VALUE };
 use interface::SpiInterface;
 
 impl<SPI, CS, E> Ds323x<SpiInterface<SPI, CS>, ic::DS3234>
@@ -10,6 +11,25 @@ where
     SPI: blocking::spi::Transfer<u8, Error = E> + blocking::spi::Write<u8, Error = E>,
     CS:  hal::digital::OutputPin
 {
+    /// Create a new instance.
+    pub fn new_ds3234(spi: SPI, chip_select: CS) -> Self {
+        const STATUS_POR_VALUE : u8 = BitFlags::OSC_STOP | BitFlags::BB32KHZ | BitFlags::EN32KHZ;
+        Ds323x {
+            iface: SpiInterface {
+                spi,
+                cs: chip_select
+            },
+            control: CONTROL_POR_VALUE,
+            status: STATUS_POR_VALUE,
+            _ic: PhantomData
+        }
+    }
+
+    /// Destroy driver instance, return SPI bus instance and CS output pin.
+    pub fn destroy_ds3234(self) -> (SPI, CS) {
+        (self.iface.spi, self.iface.cs)
+    }
+
     /// Enable the 32kHz output when battery-powered.
     ///
     /// Additionally, the 32kHz output needs to be enabled. See

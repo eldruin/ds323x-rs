@@ -385,7 +385,6 @@
 #![no_std]
 
 extern crate embedded_hal as hal;
-use hal::blocking;
 use core::marker::PhantomData;
 
 /// All possible errors in this crate
@@ -475,8 +474,6 @@ pub mod ic {
     /// DS3234 IC marker
     pub struct DS3234;
 }
-pub mod interface;
-use interface::{ I2cInterface, SpiInterface };
 
 /// DS3231, DS3232 and DS3234 RTC driver
 #[derive(Debug, Default)]
@@ -487,78 +484,9 @@ pub struct Ds323x<DI, IC> {
     _ic: PhantomData<IC>
 }
 
-impl<I2C, E> Ds323x<I2cInterface<I2C>, ic::DS3231>
-where
-    I2C: blocking::i2c::Write<Error = E> + blocking::i2c::WriteRead<Error = E>
-{
-    /// Create a new instance of the DS3231 device.
-    pub fn new_ds3231(i2c: I2C) -> Self {
-        const STATUS_POR_VALUE : u8 = BitFlags::OSC_STOP | BitFlags::EN32KHZ;
-        Ds323x {
-            iface: I2cInterface {
-                i2c,
-            },
-            control: CONTROL_POR_VALUE,
-            status: STATUS_POR_VALUE,
-            _ic: PhantomData
-        }
-    }
-
-    /// Destroy driver instance, return I²C bus instance.
-    pub fn destroy_ds3231(self) -> I2C {
-        self.iface.i2c
-    }
-}
-
-impl<I2C, E> Ds323x<I2cInterface<I2C>, ic::DS3232>
-where
-    I2C: blocking::i2c::Write<Error = E> + blocking::i2c::WriteRead<Error = E>
-{
-    /// Create a new instance of the DS3232 device.
-    pub fn new_ds3232(i2c: I2C) -> Self {
-        const STATUS_POR_VALUE : u8 = BitFlags::OSC_STOP | BitFlags::BB32KHZ | BitFlags::EN32KHZ;
-        Ds323x {
-            iface: I2cInterface {
-                i2c,
-            },
-            control: CONTROL_POR_VALUE,
-            status: STATUS_POR_VALUE,
-            _ic: PhantomData
-        }
-    }
-
-    /// Destroy driver instance, return I²C bus instance.
-    pub fn destroy_ds3232(self) -> I2C {
-        self.iface.i2c
-    }
-}
-
-impl<SPI, CS, E> Ds323x<SpiInterface<SPI, CS>, ic::DS3234>
-where
-    SPI: blocking::spi::Transfer<u8, Error = E> + blocking::spi::Write<u8, Error = E>,
-    CS:  hal::digital::OutputPin
-{
-    /// Create a new instance.
-    pub fn new_ds3234(spi: SPI, chip_select: CS) -> Self {
-        const STATUS_POR_VALUE : u8 = BitFlags::OSC_STOP | BitFlags::BB32KHZ | BitFlags::EN32KHZ;
-        Ds323x {
-            iface: SpiInterface {
-                spi,
-                cs: chip_select
-            },
-            control: CONTROL_POR_VALUE,
-            status: STATUS_POR_VALUE,
-            _ic: PhantomData
-        }
-    }
-
-    /// Destroy driver instance, return SPI bus instance and CS output pin.
-    pub fn destroy_ds3234(self) -> (SPI, CS) {
-        (self.iface.spi, self.iface.cs)
-    }
-}
-
+pub mod interface;
 mod ds323x;
 pub use ds323x::{ Hours, DateTime };
+mod ds3231;
 mod ds3232;
 mod ds3234;
