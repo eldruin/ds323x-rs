@@ -40,6 +40,8 @@ impl BitFlags {
     pub const INTCN      : u8 = 0b0000_0100;
     pub const OSC_STOP   : u8 = 0b1000_0000;
     pub const BB32KHZ    : u8 = 0b0100_0000;
+    pub const CRATE1     : u8 = 0b0010_0000;
+    pub const CRATE0     : u8 = 0b0001_0000;
     pub const EN32KHZ    : u8 = 0b0000_1000;
     pub const BUSY       : u8 = 0b0000_0100;
     pub const ALARM2F    : u8 = 0b0000_0010;

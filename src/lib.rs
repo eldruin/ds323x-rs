@@ -18,6 +18,7 @@
 //! - Enable and disable the square-wave generation. See [`enable_square_wave`].
 //! - Select the square-wave frequency. See [`set_square_wave_frequency`].
 //! - Enable and disable the 32kHz output when battery powered. See [`enable_32khz_output_on_battery`].
+//! - Set the temperature conversion rate. See [`set_temperature_conversion_rate`].
 //!
 //! [`get_datetime`]: struct.Ds323x.html#method.get_datetime
 //! [`get_year`]: struct.Ds323x.html#method.get_year
@@ -33,6 +34,7 @@
 //! [`enable_square_wave`]: Struct.Ds323x.html#method.enable_square_wave
 //! [`set_square_wave_frequency`]: Struct.Ds323x.html#method.set_square_wave_frequency
 //! [`enable_32khz_output_on_battery`]: Struct.Ds323x.html#method.enable_32khz_output_on_battery
+//! [`set_temperature_conversion_rate`]: Struct.Ds323x.html#method.set_temperature_conversion_rate
 //!
 //! ## The devices
 //!
@@ -361,6 +363,21 @@
 //! # }
 //! ```
 //!
+//! ### Set the temperature conversion rate to once every 128 seconds
+//!
+//! This is only available for the devices DS3232 and DS3234.
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::{ Ds323x, TempConvRate };
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3232(dev);
+//! rtc.set_temperature_conversion_rate(TempConvRate::_128s).unwrap();
+//! # }
+//! ```
 
 #![deny(unsafe_code)]
 #![deny(missing_docs)]
@@ -393,6 +410,21 @@ pub enum SqWFreq {
     _8_192Hz,
 }
 
+/// Temperature conversion rate
+///
+/// This is only available on the DS3232 and DS3234 devices.
+#[derive(Debug, Clone, PartialEq)]
+pub enum TempConvRate {
+    /// Once every 64 seconds
+    _64s,
+    /// Once every 128 seconds
+    _128s,
+    /// Once every 256 seconds
+    _256s,
+    /// Once every 512 seconds
+    _512s,
+}
+
 struct Register;
 
 impl Register {
@@ -423,6 +455,8 @@ impl BitFlags {
     const INTCN      : u8 = 0b0000_0100;
     const OSC_STOP   : u8 = 0b1000_0000;
     const BB32KHZ    : u8 = 0b0100_0000;
+    const CRATE1     : u8 = 0b0010_0000;
+    const CRATE0     : u8 = 0b0001_0000;
     const EN32KHZ    : u8 = 0b0000_1000;
     const BUSY       : u8 = 0b0000_0100;
     const ALARM2F    : u8 = 0b0000_0010;

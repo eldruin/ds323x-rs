@@ -20,6 +20,7 @@ This driver allows you to:
 - Enable and disable the square-wave generation. See `enable_square_wave`.
 - Select the square-wave frequency. See `set_square_wave_frequency`.
 - Enable and disable the 32kHz output when battery powered. See `enable_32khz_output_on_battery`.
+- Set the temperature conversion rate. See `set_temperature_conversion_rate`.
 
 ## The devices
 
