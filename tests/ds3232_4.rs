@@ -34,9 +34,10 @@ fn can_create_and_destroy_ds3234() {
     destroy_ds3234(dev);
 }
 
-call_method_status_test!(can_en_32khz_bat, enable_32khz_output_on_battery,
-    DS323X_POR_STATUS |  BF::BB32KHZ | BF::ALARM2F | BF::ALARM1F );
+const DEFAULT_WRITE_STATUS: u8 = DS323X_POR_STATUS | BF::ALARM2F | BF::ALARM1F;
 
+call_method_status_test!(can_en_32khz_bat, enable_32khz_output_on_battery,
+    DEFAULT_WRITE_STATUS |  BF::BB32KHZ );
 call_method_status_test!(can_dis_32khz_bat, disable_32khz_output_on_battery,
-    DS323X_POR_STATUS & !BF::BB32KHZ | BF::ALARM2F | BF::ALARM1F );
+    DEFAULT_WRITE_STATUS & !BF::BB32KHZ);
 
