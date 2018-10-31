@@ -59,6 +59,11 @@ where
         self.iface.write_register(Register::AGING_OFFSET, offset as u8)
     }
 
+    /// Read the aging offset.
+    pub fn get_aging_offset(&mut self) -> Result<i8, Error<E>> {
+        let offset = self.iface.read_register(Register::AGING_OFFSET)?;
+        Ok(offset as i8)
+    }
     fn write_control(&mut self, control: u8) -> Result<(), Error<E>> {
         self.iface.write_register(Register::CONTROL, control)?;
         self.control = control;

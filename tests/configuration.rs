@@ -55,3 +55,7 @@ change_if_necessary_test!(conv_temp, convert_temperature, CONTROL, CONTROL_POR_V
 
 set_param_test!(set_aging_offset_min, set_aging_offset, AGING_OFFSET, -128, 0b1000_0000);
 set_param_test!(set_aging_offset_max, set_aging_offset, AGING_OFFSET,  127, 127);
+
+get_param_test!(get_aging_offset_min, get_aging_offset, AGING_OFFSET, -128, 0b1000_0000);
+get_param_test!(get_aging_offset_max, get_aging_offset, AGING_OFFSET,  127, 127);
+
