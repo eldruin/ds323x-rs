@@ -356,6 +356,7 @@ impl BitFlags {
     const AM_PM      : u8 = 0b0010_0000;
     const CENTURY    : u8 = 0b1000_0000;
     const EOSC       : u8 = 0b1000_0000;
+    const BBSQW      : u8 = 0b0100_0000;
     const TEMP_CONV  : u8 = 0b0010_0000;
     const INTCN      : u8 = 0b0000_0100;
     const BUSY       : u8 = 0b0000_0100;

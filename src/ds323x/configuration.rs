@@ -77,6 +77,17 @@ where
         self.write_control(control & !BitFlags::INTCN)
     }
 
+    /// Enable battery-backed square wave generation.
+    pub fn enable_square_wave(&mut self) -> Result<(), Error<E>> {
+        let control = self.control;
+        self.write_control(control | BitFlags::BBSQW)
+    }
+
+    /// Disable battery-backed square wave generation.
+    pub fn disable_square_wave(&mut self) -> Result<(), Error<E>> {
+        let control = self.control;
+        self.write_control(control & !BitFlags::BBSQW)
+    }
     fn write_control(&mut self, control: u8) -> Result<(), Error<E>> {
         self.iface.write_register(Register::CONTROL, control)?;
         self.control = control;

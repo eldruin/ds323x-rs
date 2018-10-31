@@ -62,3 +62,6 @@ get_param_test!(get_aging_offset_max, get_aging_offset, AGING_OFFSET,  127, 127)
 call_method_test!(int_sqw_out_int, use_int_sqw_output_as_interrupt,   CONTROL, CONTROL_POR_VALUE |  BF::INTCN);
 call_method_test!(int_sqw_out_sqw, use_int_sqw_output_as_square_wave, CONTROL, CONTROL_POR_VALUE & !BF::INTCN);
 
+call_method_test!(enable_sqw,  enable_square_wave,  CONTROL, CONTROL_POR_VALUE |  BF::BBSQW);
+call_method_test!(disable_sqw, disable_square_wave, CONTROL, CONTROL_POR_VALUE & !BF::BBSQW);
+
