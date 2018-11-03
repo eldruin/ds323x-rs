@@ -447,6 +447,7 @@ impl Register {
     const AGING_OFFSET : u8 = 0x10;
     const TEMP_MSB     : u8 = 0x11;
     const TEMP_CONV    : u8 = 0x13;
+    const ALARM1_SECONDS : u8 = 0x07;
 }
 
 struct BitFlags;
@@ -472,6 +473,7 @@ impl BitFlags {
     const ALARM2F       : u8 = 0b0000_0010;
     const ALARM1F       : u8 = 0b0000_0001;
     const TEMP_CONV_BAT : u8 = 0b0000_0001;
+    const ALARM_MATCH   : u8 = 0b1000_0000;
 }
 
 const DEVICE_ADDRESS   : u8 = 0b110_1000;
@@ -498,7 +500,7 @@ pub struct Ds323x<DI, IC> {
 
 pub mod interface;
 mod ds323x;
-pub use ds323x::{ Hours, DateTime };
+pub use ds323x::{ Hours, DateTime, DateAlarm1, Alarm1Matching };
 mod ds3231;
 mod ds3232;
 mod ds3234;

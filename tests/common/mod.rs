@@ -27,6 +27,7 @@ impl Register {
     pub const AGING_OFFSET : u8 = 0x10;
     pub const TEMP_MSB     : u8 = 0x11;
     pub const TEMP_CONV    : u8 = 0x13;
+    pub const ALARM1_SECONDS : u8 = 0x07;
 }
 
 pub struct BitFlags;
@@ -50,6 +51,7 @@ impl BitFlags {
     pub const ALARM2F       : u8 = 0b0000_0010;
     pub const ALARM1F       : u8 = 0b0000_0001;
     pub const TEMP_CONV_BAT : u8 = 0b0000_0001;
+    pub const ALARM_MATCH   : u8 = 0b1000_0000;
 }
 
 pub struct DummyOutputPin;
