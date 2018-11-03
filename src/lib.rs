@@ -388,6 +388,50 @@
 //! rtc.set_temperature_conversion_rate(TempConvRate::_128s).unwrap();
 //! # }
 //! ```
+//!
+//! ### Set the Alarm1 to each week on a week day at a specific time
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::{ Ds323x, Hours, WeekdayAlarm1, Alarm1Matching };
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3231(dev);
+//! let alarm1 = WeekdayAlarm1 {
+//!     weekday: 1,
+//!     hour: Hours::H24(7),
+//!     minute: 2,
+//!     second: 15
+//! };
+//! rtc.set_alarm1_weekday(alarm1, Alarm1Matching::AllMatch).unwrap();
+//! # }
+//! ```
+//!
+//! ### Set the Alarm2 to each day at the same time and enable interrupts on output
+//!
+//! The INT/SQW output pin will be set to 1 when it the alarm matches.
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate ds323x;
+//! use ds323x::{ Ds323x, Hours, DateAlarm2, Alarm2Matching };
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut rtc = Ds323x::new_ds3231(dev);
+//! let alarm2 = DateAlarm2 {
+//!     date: 1, // does not matter given the chosen matching
+//!     hour: Hours::AM(11),
+//!     minute: 2
+//! };
+//! rtc.set_alarm2_date(alarm2, Alarm2Matching::HoursAndMinutesMatch).unwrap();
+//! rtc.use_int_sqw_output_as_interrupt().unwrap();
+//! rtc.enable_alarm2_interrupts().unwrap();
+//! # }
+//! ```
+
 
 #![deny(unsafe_code)]
 #![deny(missing_docs)]
