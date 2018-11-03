@@ -64,8 +64,8 @@ macro_rules! change_if_necessary_test {
     };
 }
 
-call_method_test!(enable, enable, CONTROL, CONTROL_POR_VALUE & !BF::EOSC);
-call_method_test!(disable, disable, CONTROL, CONTROL_POR_VALUE | BF::EOSC);
+call_method_test!(enable,  enable,  CONTROL, CONTROL_POR_VALUE & !BF::EOSC);
+call_method_test!(disable, disable, CONTROL, CONTROL_POR_VALUE |  BF::EOSC);
 call_method_status_test!(en_32khz_out,  enable_32khz_output,
     DS3231_POR_STATUS |  BF::EN32KHZ | BF::ALARM2F | BF::ALARM1F,
     DS323X_POR_STATUS |  BF::EN32KHZ | BF::ALARM2F | BF::ALARM1F);
