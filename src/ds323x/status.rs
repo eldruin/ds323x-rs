@@ -40,11 +40,39 @@ where
         let status = self.status & !BitFlags::OSC_STOP;
         self.write_status_without_clearing_alarm(status)
     }
+
+    /// Read whether the Alarm1 has matched at some point.
+    ///
+    /// Once this is true, it will stay as such until cleared with
+    /// [`clear_alarm1_matched_flag()`](#method.clear_alarm1_matched_flag)
+    pub fn has_alarm1_matched(&mut self) -> Result<bool, Error<E>> {
         let status = self.iface.read_register(Register::STATUS)?;
-        if (status & BitFlags::OSC_STOP) != 0 {
-            self.iface.write_register(Register::STATUS, status & !BitFlags::OSC_STOP)?;
-        }
-        Ok(())
+        Ok((status & BitFlags::ALARM1F) != 0)
+    }
+
+    /// Clear flag signalling whether the Alarm1 has matched at some point.
+    ///
+    /// See also: [`has_alarm1_matched()`](#method.has_alarm1_matched)
+    pub fn clear_alarm1_matched_flag(&mut self) -> Result<(), Error<E>> {
+        let status = self.status | BitFlags::ALARM2F;
+        self.iface.write_register(Register::STATUS, status)
+    }
+
+    /// Read whether the Alarm2 has matched at some point.
+    ///
+    /// Once this is true, it will stay as such until cleared with
+    /// [`clear_alarm2_matched_flag()`](#method.clear_alarm2_matched_flag)
+    pub fn has_alarm2_matched(&mut self) -> Result<bool, Error<E>> {
+        let status = self.iface.read_register(Register::STATUS)?;
+        Ok((status & BitFlags::ALARM2F) != 0)
+    }
+
+    /// Clear flag signalling whether the Alarm2 has matched at some point.
+    ///
+    /// See also: [`has_alarm2_matched()`](#method.has_alarm2_matched)
+    pub fn clear_alarm2_matched_flag(&mut self) -> Result<(), Error<E>> {
+        let status = self.status | BitFlags::ALARM1F;
+        self.iface.write_register(Register::STATUS, status)
     }
 
     /// Read the temperature.

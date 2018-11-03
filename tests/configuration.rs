@@ -72,6 +72,15 @@ call_method_status_test!(en_32khz_out,  enable_32khz_output,
 call_method_status_test!(dis_32khz_out, disable_32khz_output,
     DS3231_POR_STATUS & !BF::EN32KHZ | BF::ALARM2F | BF::ALARM1F,
     DS323X_POR_STATUS & !BF::EN32KHZ | BF::ALARM2F | BF::ALARM1F);
+
+call_method_status_test!(clear_alarm1_matched,  clear_alarm1_matched_flag,
+    DS3231_POR_STATUS | BF::ALARM2F,
+    DS323X_POR_STATUS | BF::ALARM2F);
+
+call_method_status_test!(clear_alarm2_matched,  clear_alarm2_matched_flag,
+    DS3231_POR_STATUS | BF::ALARM1F,
+    DS323X_POR_STATUS | BF::ALARM1F);
+
 call_method_status_test!(clr_stop, clear_has_been_stopped_flag,
     DS3231_POR_STATUS & !BF::OSC_STOP | BF::ALARM2F | BF::ALARM1F,
     DS323X_POR_STATUS & !BF::OSC_STOP | BF::ALARM2F | BF::ALARM1F);

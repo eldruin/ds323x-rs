@@ -17,6 +17,8 @@
 //! - Select the function of the INT/SQW output pin. See [`use_int_sqw_output_as_interrupt`].
 //! - Enable and disable the square-wave generation. See [`enable_square_wave`].
 //! - Select the square-wave frequency. See [`set_square_wave_frequency`].
+//! - Read whether alarms 1 or 2 have matched. See [`has_alarm1_matched`].
+//! - Clear flag indicating that alarms 1 or 2 have matched. See [`clear_alarm1_matched_flag`].
 //! - Enable and disable the 32kHz output when battery powered. See [`enable_32khz_output_on_battery`].
 //! - Set the temperature conversion rate. See [`set_temperature_conversion_rate`].
 //! - Enable and disable the temperature conversions when battery-powered. See [`enable_temperature_conversions_on_battery`].
@@ -34,6 +36,8 @@
 //! [`use_int_sqw_output_as_interrupt`]: struct.Ds323x.html#method.use_int_sqw_output_as_interrupt
 //! [`enable_square_wave`]: struct.Ds323x.html#method.enable_square_wave
 //! [`set_square_wave_frequency`]: struct.Ds323x.html#method.set_square_wave_frequency
+//! [`has_alarm1_matched`]: struct.Ds323x.html#method.has_alarm1_matched
+//! [`clear_alarm1_matched_flag`]: struct.Ds323x.html#method.clear_alarm1_matched_flag
 //! [`enable_32khz_output_on_battery`]: struct.Ds323x.html#method.enable_32khz_output_on_battery
 //! [`set_temperature_conversion_rate`]: struct.Ds323x.html#method.set_temperature_conversion_rate
 //! [`enable_temperature_conversions_on_battery`]: struct.Ds323x.html#method.enable_temperature_conversions_on_battery
