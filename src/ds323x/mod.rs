@@ -1,7 +1,8 @@
 mod configuration;
 mod status;
 mod alarms;
-pub use self::alarms::{ DateAlarm1, WeekdayAlarm1, Alarm1Matching };
+pub use self::alarms::{ DateAlarm1, WeekdayAlarm1, Alarm1Matching,
+                        DateAlarm2, WeekdayAlarm2, Alarm2Matching };
 mod datetime;
 pub use self::datetime::{ Hours, DateTime };
 use super::{ BitFlags, Error };

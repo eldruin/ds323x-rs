@@ -17,6 +17,7 @@
 //! - Select the function of the INT/SQW output pin. See [`use_int_sqw_output_as_interrupt`].
 //! - Enable and disable the square-wave generation. See [`enable_square_wave`].
 //! - Select the square-wave frequency. See [`set_square_wave_frequency`].
+//! - Set alarms 1 and 2 with several matching policies. See [`set_alarm1_date`].
 //! - Read whether alarms 1 or 2 have matched. See [`has_alarm1_matched`].
 //! - Clear flag indicating that alarms 1 or 2 have matched. See [`clear_alarm1_matched_flag`].
 //! - Enable and disable alarms 1 and 2 interrupt generation. See [`enable_alarm1_interrupts`].
@@ -37,6 +38,7 @@
 //! [`use_int_sqw_output_as_interrupt`]: struct.Ds323x.html#method.use_int_sqw_output_as_interrupt
 //! [`enable_square_wave`]: struct.Ds323x.html#method.enable_square_wave
 //! [`set_square_wave_frequency`]: struct.Ds323x.html#method.set_square_wave_frequency
+//! [`set_alarm1_date`]: struct.Ds323x.html#method.set_alarm1_date
 //! [`has_alarm1_matched`]: struct.Ds323x.html#method.has_alarm1_matched
 //! [`clear_alarm1_matched_flag`]: struct.Ds323x.html#method.clear_alarm1_matched_flag
 //! [`enable_alarm1_interrupts`]: struct.Ds323x.html#method.enable_alarm1_interrupts
@@ -435,19 +437,20 @@ pub enum TempConvRate {
 struct Register;
 
 impl Register {
-    const SECONDS      : u8 = 0x00;
-    const MINUTES      : u8 = 0x01;
-    const HOURS        : u8 = 0x02;
-    const DOW          : u8 = 0x03;
-    const DOM          : u8 = 0x04;
-    const MONTH        : u8 = 0x05;
-    const YEAR         : u8 = 0x06;
-    const CONTROL      : u8 = 0x0E;
-    const STATUS       : u8 = 0x0F;
-    const AGING_OFFSET : u8 = 0x10;
-    const TEMP_MSB     : u8 = 0x11;
-    const TEMP_CONV    : u8 = 0x13;
+    const SECONDS        : u8 = 0x00;
+    const MINUTES        : u8 = 0x01;
+    const HOURS          : u8 = 0x02;
+    const DOW            : u8 = 0x03;
+    const DOM            : u8 = 0x04;
+    const MONTH          : u8 = 0x05;
+    const YEAR           : u8 = 0x06;
     const ALARM1_SECONDS : u8 = 0x07;
+    const ALARM2_MINUTES : u8 = 0x0B;
+    const CONTROL        : u8 = 0x0E;
+    const STATUS         : u8 = 0x0F;
+    const AGING_OFFSET   : u8 = 0x10;
+    const TEMP_MSB       : u8 = 0x11;
+    const TEMP_CONV      : u8 = 0x13;
 }
 
 struct BitFlags;
@@ -501,7 +504,8 @@ pub struct Ds323x<DI, IC> {
 
 pub mod interface;
 mod ds323x;
-pub use ds323x::{ Hours, DateTime, DateAlarm1, WeekdayAlarm1, Alarm1Matching };
+pub use ds323x::{ Hours, DateTime, DateAlarm1, WeekdayAlarm1, Alarm1Matching,
+                  DateAlarm2, WeekdayAlarm2, Alarm2Matching };
 mod ds3231;
 mod ds3232;
 mod ds3234;

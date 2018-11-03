@@ -16,18 +16,19 @@ pub struct Register;
 
 #[allow(unused)]
 impl Register {
-    pub const SECONDS      : u8 = 0x00;
-    pub const MINUTES      : u8 = 0x01;
-    pub const HOURS        : u8 = 0x02;
-    pub const DOW          : u8 = 0x03;
-    pub const DOM          : u8 = 0x04;
-    pub const MONTH        : u8 = 0x05;
-    pub const CONTROL      : u8 = 0x0E;
-    pub const STATUS       : u8 = 0x0F;
-    pub const AGING_OFFSET : u8 = 0x10;
-    pub const TEMP_MSB     : u8 = 0x11;
-    pub const TEMP_CONV    : u8 = 0x13;
+    pub const SECONDS        : u8 = 0x00;
+    pub const MINUTES        : u8 = 0x01;
+    pub const HOURS          : u8 = 0x02;
+    pub const DOW            : u8 = 0x03;
+    pub const DOM            : u8 = 0x04;
+    pub const MONTH          : u8 = 0x05;
     pub const ALARM1_SECONDS : u8 = 0x07;
+    pub const ALARM2_MINUTES : u8 = 0x0B;
+    pub const CONTROL        : u8 = 0x0E;
+    pub const STATUS         : u8 = 0x0F;
+    pub const AGING_OFFSET   : u8 = 0x10;
+    pub const TEMP_MSB       : u8 = 0x11;
+    pub const TEMP_CONV      : u8 = 0x13;
 }
 
 pub struct BitFlags;
