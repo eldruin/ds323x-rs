@@ -18,6 +18,19 @@ pub struct DateAlarm1 {
     pub second: u8
 }
 
+/// Parameters for setting Alarm1 on a weekday
+#[derive(Debug, Clone, PartialEq)]
+pub struct WeekdayAlarm1 {
+    /// Weekday [1-7]
+    pub weekday: u8,
+    /// Hour
+    pub hour: Hours,
+    /// Minute [0-59]
+    pub minute: u8,
+    /// Second [0-59]
+    pub second: u8
+}
+
 /// Alarm1 trigger rate
 #[derive(Debug, Clone, PartialEq)]
 pub enum Alarm1Matching {
@@ -65,6 +78,24 @@ where
                          decimal_to_packed_bcd(when.minute) | match_mask[1],
                          hours_to_register(&when.hour)?     | match_mask[2],
                          decimal_to_packed_bcd(when.date)   | match_mask[3]];
+        self.iface.write_data(&mut data)
+    }
+
+    /// Set Alarm1 for weekday.
+    ///
+    /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
+    pub fn set_alarm1_weekday(&mut self, when: WeekdayAlarm1, matching: Alarm1Matching) -> Result<(), Error<E>> {
+        if when.weekday < 1    || when.weekday > 7 ||
+           when.minute > 59 ||
+           when.second > 59 {
+            return Err(Error::InvalidInputData);
+        }
+        let match_mask = get_matching_mask_alarm1(matching);
+        let mut data = [ Register::ALARM1_SECONDS,
+                         decimal_to_packed_bcd(when.second)  | match_mask[0],
+                         decimal_to_packed_bcd(when.minute)  | match_mask[1],
+                         hours_to_register(&when.hour)?      | match_mask[2],
+                         decimal_to_packed_bcd(when.weekday) | match_mask[3] | BitFlags::WEEKDAY];
         self.iface.write_data(&mut data)
     }
 

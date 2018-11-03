@@ -474,6 +474,7 @@ impl BitFlags {
     const ALARM1F       : u8 = 0b0000_0001;
     const TEMP_CONV_BAT : u8 = 0b0000_0001;
     const ALARM_MATCH   : u8 = 0b1000_0000;
+    const WEEKDAY       : u8 = 0b0100_0000;
 }
 
 const DEVICE_ADDRESS   : u8 = 0b110_1000;
@@ -500,7 +501,7 @@ pub struct Ds323x<DI, IC> {
 
 pub mod interface;
 mod ds323x;
-pub use ds323x::{ Hours, DateTime, DateAlarm1, Alarm1Matching };
+pub use ds323x::{ Hours, DateTime, DateAlarm1, WeekdayAlarm1, Alarm1Matching };
 mod ds3231;
 mod ds3232;
 mod ds3234;

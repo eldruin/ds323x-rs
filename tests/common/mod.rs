@@ -52,6 +52,7 @@ impl BitFlags {
     pub const ALARM1F       : u8 = 0b0000_0001;
     pub const TEMP_CONV_BAT : u8 = 0b0000_0001;
     pub const ALARM_MATCH   : u8 = 0b1000_0000;
+    pub const WEEKDAY       : u8 = 0b0100_0000;
 }
 
 pub struct DummyOutputPin;
