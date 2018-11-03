@@ -2,6 +2,7 @@ mod configuration;
 mod status;
 mod datetime;
 pub use self::datetime::{ Hours, DateTime };
+use super::{ BitFlags, Error };
 
 // Transforms a decimal number to packed BCD format
 fn decimal_to_packed_bcd(dec: u8) -> u8 {
@@ -12,6 +13,18 @@ fn decimal_to_packed_bcd(dec: u8) -> u8 {
 fn packed_bcd_to_decimal(bcd: u8) -> u8 {
     (bcd >> 4) * 10 + (bcd & 0xF)
 }
+
+fn hours_to_register<E>(hours: &Hours) -> Result<u8, Error<E>> {
+    match *hours {
+        Hours::H24(h) if h > 23 => Err(Error::InvalidInputData),
+        Hours::H24(h) => Ok(decimal_to_packed_bcd(h)),
+        Hours::AM(h) if h < 1 || h > 12 => Err(Error::InvalidInputData),
+        Hours::AM(h) =>  Ok(BitFlags::H24_H12 | decimal_to_packed_bcd(h)),
+        Hours::PM(h) if h < 1 || h > 12 => Err(Error::InvalidInputData),
+        Hours::PM(h) =>  Ok(BitFlags::H24_H12 | BitFlags::AM_PM | decimal_to_packed_bcd(h)),
+    }
+}
+
 
 #[cfg(test)]
 mod tests {

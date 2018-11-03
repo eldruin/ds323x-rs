@@ -2,6 +2,7 @@
 
 extern crate embedded_hal as hal;
 use super::super::{ Ds323x, Register, BitFlags, Error };
+use super::{ decimal_to_packed_bcd, packed_bcd_to_decimal, hours_to_register };
 use interface::{ ReadData, WriteData };
 
 /// Date and time
@@ -125,19 +126,8 @@ where
     ///
     /// Will return an `Error::InvalidInputData` if the hours are out of range.
     pub fn set_hours(&mut self, hours: Hours) -> Result<(), Error<E>> {
-        let value = self.get_hours_register_value(&hours)?;
+        let value = hours_to_register(&hours)?;
         self.iface.write_register(Register::HOURS, value)
-    }
-
-    fn get_hours_register_value(&mut self, hours: &Hours) -> Result<u8, Error<E>> {
-        match *hours {
-            Hours::H24(h) if h > 23 => Err(Error::InvalidInputData),
-            Hours::H24(h) => Ok(decimal_to_packed_bcd(h)),
-            Hours::AM(h) if h < 1 || h > 12 => Err(Error::InvalidInputData),
-            Hours::AM(h) =>  Ok(BitFlags::H24_H12 | decimal_to_packed_bcd(h)),
-            Hours::PM(h) if h < 1 || h > 12 => Err(Error::InvalidInputData),
-            Hours::PM(h) =>  Ok(BitFlags::H24_H12 | BitFlags::AM_PM | decimal_to_packed_bcd(h)),
-        }
     }
 
     /// Set the day of week [1-7].
@@ -211,7 +201,7 @@ where
         let mut payload = [Register::SECONDS,
                            decimal_to_packed_bcd(datetime.second),
                            decimal_to_packed_bcd(datetime.minute),
-                           self.get_hours_register_value(&datetime.hour)?,
+                           hours_to_register(&datetime.hour)?,
                            decimal_to_packed_bcd(datetime.weekday),
                            decimal_to_packed_bcd(datetime.day),
                            month, year];
