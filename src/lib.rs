@@ -352,7 +352,7 @@
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut rtc = Ds323x::new_ds3232(dev);
-//! rtc.disable_32khz_output_on_battery().unwrap();
+//! rtc.disable_32khz_output_on_battery().unwrap(); // only available for DS3232 and DS3234
 //! rtc.enable_32khz_output().unwrap();
 //! # }
 //! ```
