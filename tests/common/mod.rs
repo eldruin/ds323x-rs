@@ -39,6 +39,8 @@ impl BitFlags {
     pub const RS2           : u8 = 0b0001_0000;
     pub const RS1           : u8 = 0b0000_1000;
     pub const INTCN         : u8 = 0b0000_0100;
+    pub const ALARM2_INT_EN : u8 = 0b0000_0010;
+    pub const ALARM1_INT_EN : u8 = 0b0000_0001;
     pub const OSC_STOP      : u8 = 0b1000_0000;
     pub const BB32KHZ       : u8 = 0b0100_0000;
     pub const CRATE1        : u8 = 0b0010_0000;

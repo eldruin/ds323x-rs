@@ -87,6 +87,12 @@ call_method_status_test!(clr_stop, clear_has_been_stopped_flag,
 
 change_if_necessary_test!(conv_temp, convert_temperature, CONTROL, CONTROL_POR_VALUE | BF::TEMP_CONV, CONTROL_POR_VALUE & !BF::TEMP_CONV);
 
+call_method_test!(en_al1_int,  enable_alarm1_interrupts,  CONTROL, CONTROL_POR_VALUE |  BF::ALARM1_INT_EN);
+call_method_test!(dis_al1_int, disable_alarm1_interrupts, CONTROL, CONTROL_POR_VALUE & !BF::ALARM1_INT_EN);
+
+call_method_test!(en_al2_int,  enable_alarm2_interrupts,  CONTROL, CONTROL_POR_VALUE |  BF::ALARM2_INT_EN);
+call_method_test!(dis_al2_int, disable_alarm2_interrupts, CONTROL, CONTROL_POR_VALUE & !BF::ALARM2_INT_EN);
+
 set_param_test!(set_aging_offset_min, set_aging_offset, AGING_OFFSET, -128, 0b1000_0000);
 set_param_test!(set_aging_offset_max, set_aging_offset, AGING_OFFSET,  127, 127);
 

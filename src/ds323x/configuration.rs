@@ -91,6 +91,30 @@ where
         self.write_control(new_control)
     }
 
+    /// Enable Alarm1 interrupts.
+    pub fn enable_alarm1_interrupts(&mut self) -> Result<(), Error<E>> {
+        let control = self.control;
+        self.write_control(control | BitFlags::ALARM1_INT_EN)
+    }
+
+    /// Disable Alarm1 interrupts.
+    pub fn disable_alarm1_interrupts(&mut self) -> Result<(), Error<E>> {
+        let control = self.control;
+        self.write_control(control & !BitFlags::ALARM1_INT_EN)
+    }
+
+    /// Enable Alarm2 interrupts.
+    pub fn enable_alarm2_interrupts(&mut self) -> Result<(), Error<E>> {
+        let control = self.control;
+        self.write_control(control | BitFlags::ALARM2_INT_EN)
+    }
+
+    /// Disable Alarm2 interrupts.
+    pub fn disable_alarm2_interrupts(&mut self) -> Result<(), Error<E>> {
+        let control = self.control;
+        self.write_control(control & !BitFlags::ALARM2_INT_EN)
+    }
+
     fn write_control(&mut self, control: u8) -> Result<(), Error<E>> {
         self.iface.write_register(Register::CONTROL, control)?;
         self.control = control;

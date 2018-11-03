@@ -19,6 +19,7 @@
 //! - Select the square-wave frequency. See [`set_square_wave_frequency`].
 //! - Read whether alarms 1 or 2 have matched. See [`has_alarm1_matched`].
 //! - Clear flag indicating that alarms 1 or 2 have matched. See [`clear_alarm1_matched_flag`].
+//! - Enable and disable alarms 1 and 2 interrupt generation. See [`enable_alarm1_interrupts`].
 //! - Enable and disable the 32kHz output when battery powered. See [`enable_32khz_output_on_battery`].
 //! - Set the temperature conversion rate. See [`set_temperature_conversion_rate`].
 //! - Enable and disable the temperature conversions when battery-powered. See [`enable_temperature_conversions_on_battery`].
@@ -38,6 +39,7 @@
 //! [`set_square_wave_frequency`]: struct.Ds323x.html#method.set_square_wave_frequency
 //! [`has_alarm1_matched`]: struct.Ds323x.html#method.has_alarm1_matched
 //! [`clear_alarm1_matched_flag`]: struct.Ds323x.html#method.clear_alarm1_matched_flag
+//! [`enable_alarm1_interrupts`]: struct.Ds323x.html#method.enable_alarm1_interrupts
 //! [`enable_32khz_output_on_battery`]: struct.Ds323x.html#method.enable_32khz_output_on_battery
 //! [`set_temperature_conversion_rate`]: struct.Ds323x.html#method.set_temperature_conversion_rate
 //! [`enable_temperature_conversions_on_battery`]: struct.Ds323x.html#method.enable_temperature_conversions_on_battery
@@ -459,6 +461,8 @@ impl BitFlags {
     const RS2           : u8 = 0b0001_0000;
     const RS1           : u8 = 0b0000_1000;
     const INTCN         : u8 = 0b0000_0100;
+    const ALARM2_INT_EN : u8 = 0b0000_0010;
+    const ALARM1_INT_EN : u8 = 0b0000_0001;
     const OSC_STOP      : u8 = 0b1000_0000;
     const BB32KHZ       : u8 = 0b0100_0000;
     const CRATE1        : u8 = 0b0010_0000;

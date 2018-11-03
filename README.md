@@ -21,6 +21,7 @@ This driver allows you to:
 - Select the square-wave frequency. See `set_square_wave_frequency`.
 - Read whether alarms 1 or 2 have matched. See `has_alarm1_matched`.
 - Clear flag indicating that alarms 1 or 2 have matched. See `clear_alarm1_matched_flag`.
+- Enable and disable alarms 1 and 2 interrupt generation. See `enable_alarm1_interrupts`.
 - Enable and disable the 32kHz output when battery-powered. See `enable_32khz_output_on_battery`.
 - Set the temperature conversion rate. See `set_temperature_conversion_rate`.
 - Enable and disable the temperature conversions when battery-powered. See `enable_temperature_conversions_on_battery`.
