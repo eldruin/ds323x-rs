@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ...
 
+### Changed
+- [breaking-change] `clear_has_been_stopped_flag()` always sets the value of the status register.
+
 ## 0.1.0 - 2018-10-31
 
 This is the initial release to crates.io. All changes will be documented in

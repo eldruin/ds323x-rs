@@ -35,9 +35,11 @@ where
     /// Clear flag signalling whether the oscillator is stopped or has been
     /// stopped at some point.
     ///
-    /// (Does not alter the device register if already cleared).
     /// See also: [`has_been_stopped()`](#method.has_been_stopped)
     pub fn clear_has_been_stopped_flag(&mut self) -> Result<(), Error<E>> {
+        let status = self.status & !BitFlags::OSC_STOP;
+        self.write_status_without_clearing_alarm(status)
+    }
         let status = self.iface.read_register(Register::STATUS)?;
         if (status & BitFlags::OSC_STOP) != 0 {
             self.iface.write_register(Register::STATUS, status & !BitFlags::OSC_STOP)?;
