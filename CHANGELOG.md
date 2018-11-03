@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-...
+### Added
+- Support for alarms 1 and 2.
 
 ### Changed
 - [breaking-change] `clear_has_been_stopped_flag()` always sets the value of the status register.
