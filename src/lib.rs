@@ -452,7 +452,7 @@ pub enum Error<E> {
 }
 
 /// Square-wave output frequency
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum SqWFreq {
     /// 1 Hz (default)
     _1Hz,
@@ -467,7 +467,7 @@ pub enum SqWFreq {
 /// Temperature conversion rate
 ///
 /// This is only available on the DS3232 and DS3234 devices.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TempConvRate {
     /// Once every 64 seconds (default)
     _64s,

@@ -6,7 +6,7 @@ use interface::{ ReadData, WriteData };
 use super::{ decimal_to_packed_bcd, hours_to_register };
 
 /// Parameters for setting Alarm1 on a date
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DateAlarm1 {
     /// Date (day of month) [1-31]
     pub date: u8,
@@ -19,7 +19,7 @@ pub struct DateAlarm1 {
 }
 
 /// Parameters for setting Alarm1 on a weekday
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct WeekdayAlarm1 {
     /// Weekday [1-7]
     pub weekday: u8,
@@ -32,7 +32,7 @@ pub struct WeekdayAlarm1 {
 }
 
 /// Alarm1 trigger rate
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Alarm1Matching {
     /// Alarm once per second.
     OncePerSecond,
@@ -48,7 +48,7 @@ pub enum Alarm1Matching {
 
 
 /// Parameters for setting Alarm2 on a date
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DateAlarm2 {
     /// Date (day of month) [1-31]
     pub date: u8,
@@ -59,7 +59,7 @@ pub struct DateAlarm2 {
 }
 
 /// Parameters for setting Alarm2 on a weekday
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct WeekdayAlarm2 {
     /// Weekday [1-7]
     pub weekday: u8,
@@ -70,7 +70,7 @@ pub struct WeekdayAlarm2 {
 }
 
 /// Alarm2 trigger rate
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Alarm2Matching {
     /// Alarm once per minute. (00 seconds of every minute)
     OncePerMinute,

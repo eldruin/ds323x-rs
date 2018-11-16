@@ -6,7 +6,7 @@ use super::{ decimal_to_packed_bcd, packed_bcd_to_decimal, hours_to_register };
 use interface::{ ReadData, WriteData };
 
 /// Date and time
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DateTime {
     /// Year [2000-2099]
     pub year    : u16,
@@ -25,7 +25,7 @@ pub struct DateTime {
 }
 
 /// Hours in either 12-hour (AM/PM) or 24-hour format
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Hours {
     /// AM [1-12]
     AM(u8),
