@@ -105,7 +105,7 @@ where
     fn read_data(&mut self, payload: &mut [u8]) -> Result<(), Error<Self::Error>> {
         let len = payload.len();
         self.i2c
-            .write_read(DEVICE_ADDRESS, &[payload[0]], &mut payload[1..=(len-1)])
+            .write_read(DEVICE_ADDRESS, &[payload[0]], &mut payload[1..len])
             .map_err(Error::Comm)
     }
 }
