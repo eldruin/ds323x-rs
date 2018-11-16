@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+...
+
+## [0.2.0] - 2018-11-16
+
 ### Added
-- Support for alarms 1 and 2.
+- Support for configuration of alarms 1 and 2.
 
 ### Changed
 - [breaking-change] `clear_has_been_stopped_flag()` always sets the value of the status register.
@@ -18,4 +22,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 This is the initial release to crates.io. All changes will be documented in
 this CHANGELOG.
 
-[Unreleased]: https://github.com/eldruin/ds323x-rs/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/eldruin/ds323x-rs/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/eldruin/ds323x-rs/compare/v0.1.0...v0.2.0
