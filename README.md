@@ -118,6 +118,38 @@ Datasheets:
 - [DS3232](https://datasheets.maximintegrated.com/en/ds/DS3232.pdf)
 - [DS3234](https://datasheets.maximintegrated.com/en/ds/DS3234.pdf)
 
+## Usage
+
+To use this driver, import this crate and an `embedded_hal` implementation,
+then instantiate the appropriate device.
+In the following example an instance of the device DS3231 will be created.
+Other devices can be created with similar methods like:
+`Ds323x::new_ds3234(...)`.
+
+```rust
+extern crate linux_embedded_hal as hal;
+extern crate ds323x;
+use ds323x::{ Ds323x, DateTime, Hours };
+
+fn main() {
+    let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+    let mut rtc = Ds323x::new_ds3231(dev);
+    let datetime = DateTime {
+                              year: 2018,
+                              month: 08,
+                              day: 20,
+                              weekday: 4,
+                              hour: Hours::H24(19),
+                              minute: 59,
+                              second: 58
+                  };
+    rtc.set_datetime(&datetime).unwrap();
+    // do something else...
+    let seconds = rtc.get_seconds().unwrap();
+    println!("Seconds: {}", seconds);
+}
+```
+
 ## License
 
 Licensed under either of
