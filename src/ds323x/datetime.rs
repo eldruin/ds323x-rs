@@ -229,10 +229,10 @@ fn year_from_registers(month: u8, year: u8) -> u16 {
     let century = month & BitFlags::CENTURY;
     let year = packed_bcd_to_decimal(year);
     if century != 0 {
-        2100 + (year as u16)
+        2100 + u16::from(year)
     }
     else {
-        2000 + (year as u16)
+        2000 + u16::from(year)
     }
 }
 

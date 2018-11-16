@@ -83,13 +83,13 @@ where
         let mut data = [Register::TEMP_MSB, 0, 0];
         self.iface.read_data(&mut data)?;
         let is_negative = (data[1] & 0b1000_0000) != 0;
-        let temp = ((data[1] as u16) << 2) | (data[2] >> 6) as u16;
+        let temp = (u16::from(data[1]) << 2) | u16::from(data[2] >> 6);
         if is_negative {
             let temp_sign_extended = temp | 0b1111_1100_0000_0000;
-            Ok(temp_sign_extended as i16 as f32 * 0.25)
+            Ok(f32::from(temp_sign_extended as i16) * 0.25)
         }
         else {
-            Ok(temp as f32 * 0.25)
+            Ok(f32::from(temp) * 0.25)
         }
     }
 }
