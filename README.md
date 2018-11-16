@@ -1,4 +1,8 @@
-# Rust DS3231, DS3232 and DS3234 Extremely Accurate Real-Time Clock Driver [![crates.io](https://img.shields.io/crates/v/ds323x.svg)](https://crates.io/crates/ds323x) [![Docs](https://docs.rs/ds323x/badge.svg)](https://docs.rs/ds323x) [![Build Status](https://travis-ci.org/eldruin/ds323x-rs.svg?branch=master)](https://travis-ci.org/eldruin/ds323x-rs)
+# Rust DS3231, DS3232 and DS3234 Extremely Accurate Real-Time Clock Driver
+
+[![crates.io](https://img.shields.io/crates/v/ds323x.svg)](https://crates.io/crates/ds323x)
+[![Docs](https://docs.rs/ds323x/badge.svg)](https://docs.rs/ds323x)
+[![Build Status](https://travis-ci.org/eldruin/ds323x-rs.svg?branch=master)](https://travis-ci.org/eldruin/ds323x-rs)
 
 This is a platform agnostic Rust driver for the DS3231, DS3232 and DS3234
 extremely accurate real-time clocks, based on the [`embedded-hal`] traits.
