@@ -21,4 +21,5 @@ fn main() {
     // do something else...
     let seconds = rtc.get_seconds().unwrap();
     println!("Seconds: {}", seconds);
+    let _dev = rtc.destroy_ds3231();
 }
