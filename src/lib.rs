@@ -436,9 +436,7 @@
 //! ```
 
 
-#![deny(unsafe_code)]
-#![deny(missing_docs)]
-#![deny(warnings)]
+#![deny(unsafe_code, missing_docs, warnings)]
 #![no_std]
 
 extern crate embedded_hal as hal;
