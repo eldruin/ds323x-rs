@@ -15,6 +15,7 @@ main() {
     if [ -z $DISABLE_EXAMPLES ] && [[ $TARGET =~ .*linux.* ]]; then
         cargo build --target $TARGET $FEATURES --examples
     fi
+    cargo doc --target $TARGET $FEATURES
 
     if [ -z $DISABLE_TESTS ] && [ $TRAVIS_RUST_VERSION = nightly ] && [[ $TARGET =~ .*linux.* ]]; then
         cargo test --target $TARGET $FEATURES
