@@ -18,7 +18,7 @@ main() {
     fi
     cargo doc $CARGO_OPTIONS
 
-    if [ -z $DISABLE_TESTS ] && [ $TRAVIS_RUST_VERSION = nightly ] && [[ $TARGET =~ .*linux.* ]]; then
+    if [ -z $DISABLE_TESTS ] && [[ $TARGET =~ .*linux.* ]]; then
         cargo test $CARGO_OPTIONS
     fi
 }
