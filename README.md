@@ -9,23 +9,26 @@ This driver allows you to:
 - Read and set date and time in 12-hour and 24-hour format. See: `get_datetime`.
 - Read and set date and time individual elements. For example, see: `get_year`.
 - Enable and disable the real-time clock. See: `enable`.
-- Read the temperature. See `get_temperature`.
-- Force a temperature conversion and time compensation. See `convert_temperature`.
 - Read the busy status. See `is_busy`.
 - Read whether the oscillator is or has been stopped. See `has_been_stopped`.
 - Clear the has-been-stopped flag. See `clear_has_been_stopped_flag`.
-- Set the aging offset. See `set_aging_offset`.
-- Enable and disable the 32kHz output. See `enable_32khz_output`.
+- Set and read the aging offset. See `set_aging_offset`.
 - Select the function of the INT/SQW output pin. See `use_int_sqw_output_as_interrupt`.
-- Enable and disable the square-wave generation. See `enable_square_wave`.
-- Select the square-wave frequency. See `set_square_wave_frequency`.
-- Set alarms 1 and 2 with several matching policies. See `set_alarm1_date`.
-- Read whether alarms 1 or 2 have matched. See `has_alarm1_matched`.
-- Clear flag indicating that alarms 1 or 2 have matched. See `clear_alarm1_matched_flag`.
-- Enable and disable alarms 1 and 2 interrupt generation. See `enable_alarm1_interrupts`.
-- Enable and disable the 32kHz output when battery-powered. See `enable_32khz_output_on_battery`.
-- Set the temperature conversion rate. See `set_temperature_conversion_rate`.
-- Enable and disable the temperature conversions when battery-powered. See `enable_temperature_conversions_on_battery`.
+- Wave generation:
+    - Enable and disable the square-wave generation. See `enable_square_wave`.
+    - Select the square-wave frequency. See `set_square_wave_frequency`.
+    - Enable and disable the 32kHz output. See `enable_32khz_output`.
+    - Enable and disable the 32kHz output when battery powered. See `enable_32khz_output_on_battery`.
+- Alarms:
+    - Set alarms 1 and 2 with several matching policies. See `set_alarm1_date`.
+    - Read whether alarms 1 or 2 have matched. See `has_alarm1_matched`.
+    - Clear flag indicating that alarms 1 or 2 have matched. See `clear_alarm1_matched_flag`.
+    - Enable and disable alarms 1 and 2 interrupt generation. See `enable_alarm1_interrupts`.
+- Temperature conversion:
+    - Read the temperature. See `get_temperature`.
+    - Force a temperature conversion and time compensation. See `convert_temperature`.
+    - Set the temperature conversion rate. See `set_temperature_conversion_rate`.
+    - Enable and disable the temperature conversions when battery-powered. See `enable_temperature_conversions_on_battery`.
 
 ## The devices
 
