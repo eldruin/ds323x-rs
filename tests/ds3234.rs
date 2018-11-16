@@ -1,5 +1,3 @@
-#[deny(warnings)]
-
 extern crate embedded_hal_mock as hal;
 use hal::spi::Transaction as SpiTrans;
 extern crate ds323x;

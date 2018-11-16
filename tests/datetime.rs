@@ -1,5 +1,3 @@
-#[deny(warnings)]
-
 extern crate embedded_hal_mock as hal;
 use hal::i2c::Transaction as I2cTrans;
 use hal::spi::Transaction as SpiTrans;
@@ -171,4 +169,3 @@ mod datetime {
     invalid_dt_test!(too_big_min,     2018, 8,  13, 2, Hours::H24(24), 60, 58);
     invalid_dt_test!(too_big_seconds, 2018, 8,  13, 2, Hours::H24(24), 59, 60);
 }
-

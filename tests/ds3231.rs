@@ -1,5 +1,3 @@
-#[deny(warnings)]
-
 extern crate embedded_hal_mock as hal;
 extern crate ds323x;
 use ds323x::Ds323x;
