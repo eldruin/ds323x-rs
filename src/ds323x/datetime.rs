@@ -126,7 +126,7 @@ where
     ///
     /// Will return an `Error::InvalidInputData` if the hours are out of range.
     pub fn set_hours(&mut self, hours: Hours) -> Result<(), Error<E>> {
-        let value = hours_to_register(&hours)?;
+        let value = hours_to_register(hours)?;
         self.iface.write_register(Register::HOURS, value)
     }
 
@@ -201,7 +201,7 @@ where
         let mut payload = [Register::SECONDS,
                            decimal_to_packed_bcd(datetime.second),
                            decimal_to_packed_bcd(datetime.minute),
-                           hours_to_register(&datetime.hour)?,
+                           hours_to_register(datetime.hour)?,
                            decimal_to_packed_bcd(datetime.weekday),
                            decimal_to_packed_bcd(datetime.day),
                            month, year];

@@ -17,8 +17,8 @@ fn packed_bcd_to_decimal(bcd: u8) -> u8 {
     (bcd >> 4) * 10 + (bcd & 0xF)
 }
 
-fn hours_to_register<E>(hours: &Hours) -> Result<u8, Error<E>> {
-    match *hours {
+fn hours_to_register<E>(hours: Hours) -> Result<u8, Error<E>> {
+    match hours {
         Hours::H24(h) if h > 23 => Err(Error::InvalidInputData),
         Hours::H24(h) => Ok(decimal_to_packed_bcd(h)),
         Hours::AM(h) if h < 1 || h > 12 => Err(Error::InvalidInputData),

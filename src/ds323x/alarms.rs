@@ -121,7 +121,7 @@ where
         let mut data = [ Register::ALARM1_SECONDS,
                          decimal_to_packed_bcd(when.second) | match_mask[0],
                          decimal_to_packed_bcd(when.minute) | match_mask[1],
-                         hours_to_register(&when.hour)?     | match_mask[2],
+                         hours_to_register(when.hour)?      | match_mask[2],
                          decimal_to_packed_bcd(when.date)   | match_mask[3]];
         self.iface.write_data(&mut data)
     }
@@ -139,7 +139,7 @@ where
         let mut data = [ Register::ALARM1_SECONDS,
                          decimal_to_packed_bcd(when.second)  | match_mask[0],
                          decimal_to_packed_bcd(when.minute)  | match_mask[1],
-                         hours_to_register(&when.hour)?      | match_mask[2],
+                         hours_to_register(when.hour)?       | match_mask[2],
                          decimal_to_packed_bcd(when.weekday) | match_mask[3] | BitFlags::WEEKDAY];
         self.iface.write_data(&mut data)
     }
@@ -155,7 +155,7 @@ where
         let match_mask = get_matching_mask_alarm2(matching);
         let mut data = [ Register::ALARM2_MINUTES,
                          decimal_to_packed_bcd(when.minute) | match_mask[0],
-                         hours_to_register(&when.hour)?     | match_mask[1],
+                         hours_to_register(when.hour)?      | match_mask[1],
                          decimal_to_packed_bcd(when.date)   | match_mask[2]];
         self.iface.write_data(&mut data)
     }
@@ -171,7 +171,7 @@ where
         let match_mask = get_matching_mask_alarm2(matching);
         let mut data = [ Register::ALARM2_MINUTES,
                          decimal_to_packed_bcd(when.minute)  | match_mask[0],
-                         hours_to_register(&when.hour)?      | match_mask[1],
+                         hours_to_register(when.hour)?       | match_mask[1],
                          decimal_to_packed_bcd(when.weekday) | match_mask[2] | BitFlags::WEEKDAY];
         self.iface.write_data(&mut data)
     }
