@@ -123,10 +123,8 @@ where
                          .transfer(&mut data)
                          .map_err(Error::Comm);
         self.cs.set_high();
-        match result {
-            Ok(result) => Ok(result[1]),
-            Err(e) => Err(e)
-        }
+        let result = result?;
+        Ok(result[1])
     }
 
     fn read_data(&mut self, mut payload: &mut [u8]) -> Result<(), Error<Self::Error>> {
