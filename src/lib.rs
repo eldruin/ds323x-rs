@@ -18,7 +18,7 @@
 //!     - Enable and disable the 32kHz output. See [`enable_32khz_output`].
 //!     - Enable and disable the 32kHz output when battery powered. See [`enable_32khz_output_on_battery`].
 //! - Alarms:
-//!     - Set alarms 1 and 2 with several matching policies. See [`set_alarm1_date`].
+//!     - Set alarms 1 and 2 with several matching policies. See [`set_alarm1_day`].
 //!     - Read whether alarms 1 or 2 have matched. See [`has_alarm1_matched`].
 //!     - Clear flag indicating that alarms 1 or 2 have matched. See [`clear_alarm1_matched_flag`].
 //!     - Enable and disable alarms 1 and 2 interrupt generation. See [`enable_alarm1_interrupts`].
@@ -41,7 +41,7 @@
 //! [`use_int_sqw_output_as_interrupt`]: struct.Ds323x.html#method.use_int_sqw_output_as_interrupt
 //! [`enable_square_wave`]: struct.Ds323x.html#method.enable_square_wave
 //! [`set_square_wave_frequency`]: struct.Ds323x.html#method.set_square_wave_frequency
-//! [`set_alarm1_date`]: struct.Ds323x.html#method.set_alarm1_date
+//! [`set_alarm1_day`]: struct.Ds323x.html#method.set_alarm1_day
 //! [`has_alarm1_matched`]: struct.Ds323x.html#method.has_alarm1_matched
 //! [`clear_alarm1_matched_flag`]: struct.Ds323x.html#method.clear_alarm1_matched_flag
 //! [`enable_alarm1_interrupts`]: struct.Ds323x.html#method.enable_alarm1_interrupts
@@ -419,17 +419,17 @@
 //! ```no_run
 //! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
-//! use ds323x::{ Ds323x, Hours, DateAlarm2, Alarm2Matching };
+//! use ds323x::{ Ds323x, Hours, DayAlarm2, Alarm2Matching };
 //!
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut rtc = Ds323x::new_ds3231(dev);
-//! let alarm2 = DateAlarm2 {
-//!     date: 1, // does not matter given the chosen matching
+//! let alarm2 = DayAlarm2 {
+//!     day: 1, // does not matter given the chosen matching
 //!     hour: Hours::AM(11),
 //!     minute: 2
 //! };
-//! rtc.set_alarm2_date(alarm2, Alarm2Matching::HoursAndMinutesMatch).unwrap();
+//! rtc.set_alarm2_day(alarm2, Alarm2Matching::HoursAndMinutesMatch).unwrap();
 //! rtc.use_int_sqw_output_as_interrupt().unwrap();
 //! rtc.enable_alarm2_interrupts().unwrap();
 //! # }
@@ -549,8 +549,8 @@ pub struct Ds323x<DI, IC> {
 
 pub mod interface;
 mod ds323x;
-pub use ds323x::{ Hours, DateTime, DateAlarm1, WeekdayAlarm1, Alarm1Matching,
-                  DateAlarm2, WeekdayAlarm2, Alarm2Matching };
+pub use ds323x::{ Hours, DateTime, DayAlarm1, WeekdayAlarm1, Alarm1Matching,
+                  DayAlarm2, WeekdayAlarm2, Alarm2Matching };
 mod ds3231;
 mod ds3232;
 mod ds3234;
