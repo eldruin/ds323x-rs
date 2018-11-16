@@ -19,16 +19,16 @@ This driver allows you to:
 - Clear the has-been-stopped flag. See `clear_has_been_stopped_flag`.
 - Set and read the aging offset. See `set_aging_offset`.
 - Select the function of the INT/SQW output pin. See `use_int_sqw_output_as_interrupt`.
-- Wave generation:
-    - Enable and disable the square-wave generation. See `enable_square_wave`.
-    - Select the square-wave frequency. See `set_square_wave_frequency`.
-    - Enable and disable the 32kHz output. See `enable_32khz_output`.
-    - Enable and disable the 32kHz output when battery powered. See `enable_32khz_output_on_battery`.
 - Alarms:
     - Set alarms 1 and 2 with several matching policies. See `set_alarm1_day`.
     - Read whether alarms 1 or 2 have matched. See `has_alarm1_matched`.
     - Clear flag indicating that alarms 1 or 2 have matched. See `clear_alarm1_matched_flag`.
     - Enable and disable alarms 1 and 2 interrupt generation. See `enable_alarm1_interrupts`.
+- Wave generation:
+    - Enable and disable the square-wave generation. See `enable_square_wave`.
+    - Select the square-wave frequency. See `set_square_wave_frequency`.
+    - Enable and disable the 32kHz output. See `enable_32khz_output`.
+    - Enable and disable the 32kHz output when battery powered. See `enable_32khz_output_on_battery`.
 - Temperature conversion:
     - Read the temperature. See `get_temperature`.
     - Force a temperature conversion and time compensation. See `convert_temperature`.
