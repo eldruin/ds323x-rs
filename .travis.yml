@@ -3,7 +3,7 @@ language: rust
 sudo: required
 
 before_script:
-  bash <(curl -s https://github.com/eldruin/rust-driver-ci-scripts/raw/master/global_before_script.sh)
+  git clone https://github.com/eldruin/rust-driver-ci-scripts ci
 
 matrix:
   include:
@@ -54,10 +54,10 @@ before_install:
   - rustup self update
 
 install:
-  bash <(curl -s https://github.com/eldruin/rust-driver-ci-scripts/raw/master/install.sh)
+  bash ci/install.sh
 
 script:
-  bash <(curl -s https://github.com/eldruin/rust-driver-ci-scripts/raw/master/script.sh)
+  bash ci/script.sh
 
 after_script: set +e
 
@@ -67,7 +67,7 @@ cache:
     - /home/travis/.cargo
 
 before_cache:
-  bash <(curl -s https://github.com/eldruin/rust-driver-ci-scripts/raw/master/before_cache.sh)
+  bash ci/before_cache.sh
 
 branches:
   only:
