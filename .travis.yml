@@ -3,7 +3,8 @@ language: rust
 sudo: required
 
 before_install:
-  git clone https://github.com/eldruin/rust-driver-ci-scripts ci
+  - git clone https://github.com/eldruin/rust-driver-ci-scripts ci
+  - bash ci/before_install.sh
 
 matrix:
   include:
@@ -48,10 +49,6 @@ matrix:
       rust: beta
     - env: TARGET=thumbv7m-none-eabi
       rust: beta
-
-before_install:
-  - set -e
-  - rustup self update
 
 install:
   bash ci/install.sh
