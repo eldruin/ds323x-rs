@@ -1,10 +1,11 @@
 language: rust
 # sudo is required to enable kcov to use the personality syscall
 sudo: required
-env: CI_SCRIPTS="https://github.com/eldruin/rust-driver-ci-scripts/raw/master"
+env:
+  - CI_SCRIPTS="https://github.com/eldruin/rust-driver-ci-scripts/raw/master"
 
 before_script:
-  bash <(curl -s $CI_SCRIPTS/global_before_script.sh)
+  bash <(curl -s "$CI_SCRIPTS/global_before_script.sh")
 
 matrix:
   include:
@@ -55,10 +56,10 @@ before_install:
   - rustup self update
 
 install:
-  bash <(curl -s $CI_SCRIPTS/install.sh)
+  bash <(curl -s "$CI_SCRIPTS/install.sh")
 
 script:
-  bash <(curl -s $CI_SCRIPTS/script.sh)
+  bash <(curl -s "$CI_SCRIPTS/script.sh")
 
 after_script: set +e
 
@@ -68,7 +69,7 @@ cache:
     - /home/travis/.cargo
 
 before_cache:
-  bash <(curl -s $CI_SCRIPTS/before_cache.sh)
+  bash <(curl -s "$CI_SCRIPTS/before_cache.sh")
 
 branches:
   only:
