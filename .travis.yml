@@ -10,11 +10,9 @@ matrix:
   include:
     - env: TARGET=x86_64-unknown-linux-gnu
       before_script:
-        - cargo install cargo-update   || echo "cargo-update already installed"
-        - cargo install cargo-travis   || echo "cargo-travis already installed"
-        - cargo install-update -a
+        - bash ci/coverage_before_script.sh
       after_success:
-        - cargo coveralls --verbose
+        - bash ci/coverage_after_success.sh
       addons:
         apt:
           packages:
@@ -65,12 +63,6 @@ cache:
 
 before_cache:
   bash ci/before_cache.sh
-
-branches:
-  only:
-    - master
-    - staging
-    - trying
 
 notifications:
   email:
