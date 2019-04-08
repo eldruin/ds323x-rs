@@ -10,7 +10,7 @@ fn main() {
     let mut rtc = Ds323x::new_ds3231(dev);
     let datetime = DateTime {
                               year: 2018,
-                              month: 08,
+                              month: 8,
                               day: 20,
                               weekday: 4,
                               hour: Hours::H24(19),
