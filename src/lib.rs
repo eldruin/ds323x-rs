@@ -146,6 +146,10 @@
 //! DS3231 as an example, except when using features specific to another IC,
 //! for example, RAM access which is not available in the DS3231 device.
 //!
+//! Please find additional examples using hardware in this repository: [driver-examples]
+//!
+//! [driver-examples]: https://github.com/eldruin/driver-examples
+//!
 //! ### Create a driver instance for the DS3231
 //!
 //! ```no_run

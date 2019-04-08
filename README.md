@@ -132,6 +132,10 @@ In the following example an instance of the device DS3231 will be created.
 Other devices can be created with similar methods like:
 `Ds323x::new_ds3234(...)`.
 
+Please find additional examples using hardware in this repository: [driver-examples]
+
+[driver-examples]: https://github.com/eldruin/driver-examples
+
 ```rust
 extern crate linux_embedded_hal as hal;
 extern crate ds323x;
