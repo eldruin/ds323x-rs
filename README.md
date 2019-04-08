@@ -156,6 +156,11 @@ fn main() {
 }
 ```
 
+## Support
+
+For questions, issues, feature requests, and other changes, please file an
+[issue in the github project](https://github.com/eldruin/ds323x-rs/issues).
+
 ## License
 
 Licensed under either of
