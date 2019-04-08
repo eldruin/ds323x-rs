@@ -11,12 +11,12 @@ categories = ["embedded", "hardware-support", "no-std"]
 homepage = "https://github.com/eldruin/ds323x-rs"
 documentation = "https://docs.rs/ds323x"
 include = [
-    "**/*.rs",
-    "Cargo.toml",
-    "README.md",
-    "CHANGELOG.md",
-    "LICENSE-MIT",
-    "LICENSE-APACHE",
+    "/**/*.rs",
+    "/Cargo.toml",
+    "/README.md",
+    "/CHANGELOG.md",
+    "/LICENSE-MIT",
+    "/LICENSE-APACHE",
 ]
 
 [badges]
