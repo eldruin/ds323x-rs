@@ -104,14 +104,14 @@ fn get_matching_mask_alarm2(matching: Alarm2Matching) -> [u8; 3] {
 }
 
 
-impl<DI, IC, E> Ds323x<DI, IC>
+impl<DI, IC, CommE, PinE> Ds323x<DI, IC>
 where
-    DI: ReadData<Error = E> + WriteData<Error = E>
+    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>
 {
     /// Set Alarm1 for day of the month.
     ///
     /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
-    pub fn set_alarm1_day(&mut self, when: DayAlarm1, matching: Alarm1Matching) -> Result<(), Error<E>> {
+    pub fn set_alarm1_day(&mut self, when: DayAlarm1, matching: Alarm1Matching) -> Result<(), Error<CommE, PinE>> {
         if when.day < 1    || when.day > 31 ||
            when.minute > 59 ||
            when.second > 59 {
@@ -129,7 +129,7 @@ where
     /// Set Alarm1 for weekday.
     ///
     /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
-    pub fn set_alarm1_weekday(&mut self, when: WeekdayAlarm1, matching: Alarm1Matching) -> Result<(), Error<E>> {
+    pub fn set_alarm1_weekday(&mut self, when: WeekdayAlarm1, matching: Alarm1Matching) -> Result<(), Error<CommE, PinE>> {
         if when.weekday < 1    || when.weekday > 7 ||
            when.minute > 59 ||
            when.second > 59 {
@@ -147,7 +147,7 @@ where
     /// Set Alarm2 for date (day of month).
     ///
     /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
-    pub fn set_alarm2_day(&mut self, when: DayAlarm2, matching: Alarm2Matching) -> Result<(), Error<E>> {
+    pub fn set_alarm2_day(&mut self, when: DayAlarm2, matching: Alarm2Matching) -> Result<(), Error<CommE, PinE>> {
         if when.day < 1    || when.day > 31 ||
            when.minute > 59 {
             return Err(Error::InvalidInputData);
@@ -163,7 +163,7 @@ where
     /// Set Alarm2 for weekday.
     ///
     /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
-    pub fn set_alarm2_weekday(&mut self, when: WeekdayAlarm2, matching: Alarm2Matching) -> Result<(), Error<E>> {
+    pub fn set_alarm2_weekday(&mut self, when: WeekdayAlarm2, matching: Alarm2Matching) -> Result<(), Error<CommE, PinE>> {
         if when.weekday < 1    || when.weekday > 7 ||
            when.minute > 59 {
             return Err(Error::InvalidInputData);

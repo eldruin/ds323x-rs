@@ -4,18 +4,18 @@ extern crate embedded_hal as hal;
 use super::super::{ Ds323x, Register, BitFlags, Error };
 use interface::{ ReadData, WriteData };
 
-impl<DI, IC, E> Ds323x<DI, IC>
+impl<DI, IC, CommE, PinE> Ds323x<DI, IC>
 where
-    DI: ReadData<Error = E> + WriteData<Error = E>
+    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>
 {
     /// Read whether the oscillator is running
-    pub fn is_running(&mut self) -> Result<bool, Error<E>> {
+    pub fn is_running(&mut self) -> Result<bool, Error<CommE, PinE>> {
         let control = self.iface.read_register(Register::CONTROL)?;
         Ok((control & BitFlags::EOSC) == 0)
     }
 
     /// Read the busy status
-    pub fn is_busy(&mut self) -> Result<bool, Error<E>> {
+    pub fn is_busy(&mut self) -> Result<bool, Error<CommE, PinE>> {
         let status = self.iface.read_register(Register::STATUS)?;
         Ok((status & BitFlags::BUSY) != 0)
     }
@@ -27,7 +27,7 @@ where
     ///
     /// Once this is true, it will stay as such until cleared with
     /// [`clear_has_been_stopped_flag()`](#method.clear_has_been_stopped_flag)
-    pub fn has_been_stopped(&mut self) -> Result<bool, Error<E>> {
+    pub fn has_been_stopped(&mut self) -> Result<bool, Error<CommE, PinE>> {
         let status = self.iface.read_register(Register::STATUS)?;
         Ok((status & BitFlags::OSC_STOP) != 0)
     }
@@ -36,7 +36,7 @@ where
     /// stopped at some point.
     ///
     /// See also: [`has_been_stopped()`](#method.has_been_stopped)
-    pub fn clear_has_been_stopped_flag(&mut self) -> Result<(), Error<E>> {
+    pub fn clear_has_been_stopped_flag(&mut self) -> Result<(), Error<CommE, PinE>> {
         let status = self.status & !BitFlags::OSC_STOP;
         self.write_status_without_clearing_alarm(status)
     }
@@ -45,7 +45,7 @@ where
     ///
     /// Once this is true, it will stay as such until cleared with
     /// [`clear_alarm1_matched_flag()`](#method.clear_alarm1_matched_flag)
-    pub fn has_alarm1_matched(&mut self) -> Result<bool, Error<E>> {
+    pub fn has_alarm1_matched(&mut self) -> Result<bool, Error<CommE, PinE>> {
         let status = self.iface.read_register(Register::STATUS)?;
         Ok((status & BitFlags::ALARM1F) != 0)
     }
@@ -53,7 +53,7 @@ where
     /// Clear flag signalling whether the Alarm1 has matched at some point.
     ///
     /// See also: [`has_alarm1_matched()`](#method.has_alarm1_matched)
-    pub fn clear_alarm1_matched_flag(&mut self) -> Result<(), Error<E>> {
+    pub fn clear_alarm1_matched_flag(&mut self) -> Result<(), Error<CommE, PinE>> {
         let status = self.status | BitFlags::ALARM2F;
         self.iface.write_register(Register::STATUS, status)
     }
@@ -62,7 +62,7 @@ where
     ///
     /// Once this is true, it will stay as such until cleared with
     /// [`clear_alarm2_matched_flag()`](#method.clear_alarm2_matched_flag)
-    pub fn has_alarm2_matched(&mut self) -> Result<bool, Error<E>> {
+    pub fn has_alarm2_matched(&mut self) -> Result<bool, Error<CommE, PinE>> {
         let status = self.iface.read_register(Register::STATUS)?;
         Ok((status & BitFlags::ALARM2F) != 0)
     }
@@ -70,7 +70,7 @@ where
     /// Clear flag signalling whether the Alarm2 has matched at some point.
     ///
     /// See also: [`has_alarm2_matched()`](#method.has_alarm2_matched)
-    pub fn clear_alarm2_matched_flag(&mut self) -> Result<(), Error<E>> {
+    pub fn clear_alarm2_matched_flag(&mut self) -> Result<(), Error<CommE, PinE>> {
         let status = self.status | BitFlags::ALARM1F;
         self.iface.write_register(Register::STATUS, status)
     }
@@ -79,7 +79,7 @@ where
     ///
     /// Note: It is possible to manually force a temperature conversion with
     /// [`convert_temperature()`](#method.convert_temperature)
-    pub fn get_temperature(&mut self) -> Result<f32, Error<E>> {
+    pub fn get_temperature(&mut self) -> Result<f32, Error<CommE, PinE>> {
         let mut data = [Register::TEMP_MSB, 0, 0];
         self.iface.read_data(&mut data)?;
         let is_negative = (data[1] & 0b1000_0000) != 0;

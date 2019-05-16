@@ -35,7 +35,7 @@ where
     /// [`enable_32khz_output()`](#method.enable_32khz_output).
     ///
     /// Note: This is only available for DS3232 and DS3234 devices.
-    pub fn enable_32khz_output_on_battery(&mut self) -> Result<(), Error<E>> {
+    pub fn enable_32khz_output_on_battery(&mut self) -> Result<(), Error<E, ()>> {
         let status = self.status | BitFlags::BB32KHZ;
         self.write_status_without_clearing_alarm(status)
     }
@@ -46,7 +46,7 @@ where
     /// it enabled. See [`enable_32khz_output()`](#method.enable_32khz_output).
     ///
     /// Note: This is only available for DS3232 and DS3234 devices.
-    pub fn disable_32khz_output_on_battery(&mut self) -> Result<(), Error<E>> {
+    pub fn disable_32khz_output_on_battery(&mut self) -> Result<(), Error<E, ()>> {
         let status = self.status & !BitFlags::BB32KHZ;
         self.write_status_without_clearing_alarm(status)
     }
@@ -58,7 +58,7 @@ where
     /// temperature changes will not be compensated for.
     ///
     /// Note: This is only available for DS3232 and DS3234 devices.
-    pub fn set_temperature_conversion_rate(&mut self, rate: TempConvRate) -> Result<(), Error<E>> {
+    pub fn set_temperature_conversion_rate(&mut self, rate: TempConvRate) -> Result<(), Error<E, ()>> {
         let status;
         match rate {
             TempConvRate::_64s  => status = self.status & !BitFlags::CRATE1 & !BitFlags::CRATE0,

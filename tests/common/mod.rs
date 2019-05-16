@@ -60,9 +60,10 @@ impl BitFlags {
 
 pub struct DummyOutputPin;
 
-impl embedded_hal::digital::OutputPin for DummyOutputPin {
-    fn set_low(&mut self) {}
-    fn set_high(&mut self) {}
+impl embedded_hal::digital::v2::OutputPin for DummyOutputPin {
+    type Error = ();
+    fn set_low(&mut self) -> Result<(), Self::Error> { Ok(()) }
+    fn set_high(&mut self) -> Result<(), Self::Error> { Ok(()) }
 }
 
 

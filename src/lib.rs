@@ -448,9 +448,11 @@ use core::marker::PhantomData;
 
 /// All possible errors in this crate
 #[derive(Debug)]
-pub enum Error<E> {
+pub enum Error<CommE, PinE> {
     /// I²C/SPI bus error
-    Comm(E),
+    Comm(CommE),
+    /// Pin setting error
+    Pin(PinE),
     /// Invalid input data provided
     InvalidInputData
 }

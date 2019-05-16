@@ -35,45 +35,45 @@ pub enum Hours {
     H24(u8),
 }
 
-impl<DI, IC, E> Ds323x<DI, IC>
+impl<DI, IC, CommE, PinE> Ds323x<DI, IC>
 where
-    DI: ReadData<Error = E> + WriteData<Error = E>
+    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>
 {
     /// Read the seconds.
-    pub fn get_seconds(&mut self) -> Result<u8, Error<E>> {
+    pub fn get_seconds(&mut self) -> Result<u8, Error<CommE, PinE>> {
         self.read_register_decimal(Register::SECONDS)
     }
 
     /// Read the minutes.
-    pub fn get_minutes(&mut self) -> Result<u8, Error<E>> {
+    pub fn get_minutes(&mut self) -> Result<u8, Error<CommE, PinE>> {
         self.read_register_decimal(Register::MINUTES)
     }
 
     /// Read the hours.
-    pub fn get_hours(&mut self) -> Result<Hours, Error<E>> {
+    pub fn get_hours(&mut self) -> Result<Hours, Error<CommE, PinE>> {
         let data = self.iface.read_register(Register::HOURS)?;
         Ok(hours_from_register(data))
     }
 
     /// Read the day of the week [1-7].
-    pub fn get_weekday(&mut self) -> Result<u8, Error<E>> {
+    pub fn get_weekday(&mut self) -> Result<u8, Error<CommE, PinE>> {
         self.read_register_decimal(Register::DOW)
     }
 
     /// Read the day of the month [1-31].
-    pub fn get_day(&mut self) -> Result<u8, Error<E>> {
+    pub fn get_day(&mut self) -> Result<u8, Error<CommE, PinE>> {
         self.read_register_decimal(Register::DOM)
     }
 
     /// Read the month [1-12].
-    pub fn get_month(&mut self) -> Result<u8, Error<E>> {
+    pub fn get_month(&mut self) -> Result<u8, Error<CommE, PinE>> {
         let data = self.iface.read_register(Register::MONTH)?;
         let value = data & !BitFlags::CENTURY;
         Ok(packed_bcd_to_decimal(value))
     }
 
     /// Read the year [2000-2100].
-    pub fn get_year(&mut self) -> Result<u16, Error<E>> {
+    pub fn get_year(&mut self) -> Result<u16, Error<CommE, PinE>> {
         let mut data = [0; 3];
         data[0] = Register::MONTH;
         self.iface.read_data(&mut data)?;
@@ -81,7 +81,7 @@ where
     }
 
     /// Read the date and time.
-    pub fn get_datetime(&mut self) -> Result<DateTime, Error<E>> {
+    pub fn get_datetime(&mut self) -> Result<DateTime, Error<CommE, PinE>> {
         let mut data = [0; 8];
         self.iface.read_data(&mut data)?;
         Ok(DateTime {
@@ -95,7 +95,7 @@ where
         })
     }
 
-    fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<E>> {
+    fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<CommE, PinE>> {
         let data = self.iface.read_register(register)?;
         Ok(packed_bcd_to_decimal(data))
     }
@@ -103,7 +103,7 @@ where
     /// Set the seconds [0-59].
     ///
     /// Will return an `Error::InvalidInputData` if the seconds are out of range.
-    pub fn set_seconds(&mut self, seconds: u8) -> Result<(), Error<E>> {
+    pub fn set_seconds(&mut self, seconds: u8) -> Result<(), Error<CommE, PinE>> {
         if seconds > 59 {
             return Err(Error::InvalidInputData);
         }
@@ -113,7 +113,7 @@ where
     /// Set the minutes [0-59].
     ///
     /// Will return an `Error::InvalidInputData` if the minutes are out of range.
-    pub fn set_minutes(&mut self, minutes: u8) -> Result<(), Error<E>> {
+    pub fn set_minutes(&mut self, minutes: u8) -> Result<(), Error<CommE, PinE>> {
         if minutes > 59 {
             return Err(Error::InvalidInputData);
         }
@@ -125,7 +125,7 @@ where
     /// Changes the operating mode to 12h/24h depending on the parameter.
     ///
     /// Will return an `Error::InvalidInputData` if the hours are out of range.
-    pub fn set_hours(&mut self, hours: Hours) -> Result<(), Error<E>> {
+    pub fn set_hours(&mut self, hours: Hours) -> Result<(), Error<CommE, PinE>> {
         let value = hours_to_register(hours)?;
         self.iface.write_register(Register::HOURS, value)
     }
@@ -133,7 +133,7 @@ where
     /// Set the day of week [1-7].
     ///
     /// Will return an `Error::InvalidInputData` if the day is out of range.
-    pub fn set_weekday(&mut self, weekday: u8) -> Result<(), Error<E>> {
+    pub fn set_weekday(&mut self, weekday: u8) -> Result<(), Error<CommE, PinE>> {
         if weekday < 1 || weekday > 7 {
             return Err(Error::InvalidInputData);
         }
@@ -143,7 +143,7 @@ where
     /// Set the day of month [1-31].
     ///
     /// Will return an `Error::InvalidInputData` if the day is out of range.
-    pub fn set_day(&mut self, day: u8) -> Result<(), Error<E>> {
+    pub fn set_day(&mut self, day: u8) -> Result<(), Error<CommE, PinE>> {
         if day < 1 || day > 7 {
             return Err(Error::InvalidInputData);
         }
@@ -153,7 +153,7 @@ where
     /// Set the month [1-12].
     ///
     /// Will return an `Error::InvalidInputData` if the month is out of range.
-    pub fn set_month(&mut self, month: u8) -> Result<(), Error<E>> {
+    pub fn set_month(&mut self, month: u8) -> Result<(), Error<CommE, PinE>> {
         if month < 1 || month > 12 {
             return Err(Error::InvalidInputData);
         }
@@ -166,7 +166,7 @@ where
     /// Set the year [2000-2100].
     ///
     /// Will return an `Error::InvalidInputData` if the year is out of range.
-    pub fn set_year(&mut self, year: u16) -> Result<(), Error<E>> {
+    pub fn set_year(&mut self, year: u16) -> Result<(), Error<CommE, PinE>> {
         if year < 2000 || year > 2100 {
             return Err(Error::InvalidInputData);
         }
@@ -188,7 +188,7 @@ where
     /// Set the date and time.
     ///
     /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
-    pub fn set_datetime(&mut self, datetime: &DateTime) -> Result<(), Error<E>> {
+    pub fn set_datetime(&mut self, datetime: &DateTime) -> Result<(), Error<CommE, PinE>> {
         if datetime.year < 2000 || datetime.year > 2100 ||
            datetime.month < 1   || datetime.month > 12  ||
            datetime.day < 1     || datetime.day > 31    ||
@@ -208,7 +208,7 @@ where
         self.iface.write_data(&mut payload)
 }
 
-    fn write_register_decimal(&mut self, register: u8, decimal_number: u8) -> Result<(), Error<E>> {
+    fn write_register_decimal(&mut self, register: u8, decimal_number: u8) -> Result<(), Error<CommE, PinE>> {
         self.iface.write_register(register, decimal_to_packed_bcd(decimal_number))
     }
 }
