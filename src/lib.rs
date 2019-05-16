@@ -567,3 +567,15 @@ pub use ds323x::{
 mod ds3231;
 mod ds3232;
 mod ds3234;
+
+mod private {
+    use super::{ic, interface};
+    pub trait Sealed {}
+
+    impl<SPI, CS> Sealed for interface::SpiInterface<SPI, CS> {}
+    impl<I2C> Sealed for interface::I2cInterface<I2C> {}
+
+    impl Sealed for ic::DS3231 {}
+    impl Sealed for ic::DS3232 {}
+    impl Sealed for ic::DS3234 {}
+}

@@ -1,6 +1,6 @@
 //! I2C/SPI interfaces
 
-use super::{Error, DEVICE_ADDRESS};
+use super::{private, Error, DEVICE_ADDRESS};
 use hal::blocking;
 
 /// I2C interface
@@ -17,7 +17,7 @@ pub struct SpiInterface<SPI, CS> {
 }
 
 /// Write data
-pub trait WriteData {
+pub trait WriteData: private::Sealed {
     /// Error type
     type Error;
     /// Write to an u8 register
@@ -72,7 +72,7 @@ where
 }
 
 /// Read data
-pub trait ReadData {
+pub trait ReadData: private::Sealed {
     /// Error type
     type Error;
     /// Read an u8 register
