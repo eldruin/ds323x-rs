@@ -25,7 +25,7 @@ coveralls = { repository = "eldruin/ds323x-rs", branch = "master", service = "gi
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-embedded-hal = "0.2"
+embedded-hal = "0.2.3"
 
 [dev-dependencies]
 linux-embedded-hal = "0.2"
