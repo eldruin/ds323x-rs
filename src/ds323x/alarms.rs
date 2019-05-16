@@ -1,6 +1,5 @@
 //! Alarm support
 
-extern crate embedded_hal as hal;
 use super::super::{BitFlags, Ds323x, Error, Hours, Register};
 use super::{decimal_to_packed_bcd, hours_to_register};
 use interface::{ReadData, WriteData};

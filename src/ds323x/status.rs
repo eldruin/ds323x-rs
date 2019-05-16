@@ -1,6 +1,5 @@
 //! Device status
 
-extern crate embedded_hal as hal;
 use super::super::{BitFlags, Ds323x, Error, Register};
 use interface::{ReadData, WriteData};
 

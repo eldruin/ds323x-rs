@@ -1,6 +1,4 @@
 //! Functions exclusive of DS3234
-
-extern crate embedded_hal as hal;
 use super::{ic, BitFlags, Ds323x, Error, Register, TempConvRate, CONTROL_POR_VALUE};
 use core::marker::PhantomData;
 use hal::blocking;

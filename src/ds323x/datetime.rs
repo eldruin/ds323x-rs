@@ -1,6 +1,5 @@
 //! Common implementation
 
-extern crate embedded_hal as hal;
 use super::super::{BitFlags, Ds323x, Error, Register};
 use super::{decimal_to_packed_bcd, hours_to_register, packed_bcd_to_decimal};
 use interface::{ReadData, WriteData};

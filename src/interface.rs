@@ -1,8 +1,5 @@
 //! I2C/SPI interfaces
 
-#![deny(missing_docs)]
-
-extern crate embedded_hal as hal;
 use super::{Error, DEVICE_ADDRESS};
 use hal::blocking;
 

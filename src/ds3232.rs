@@ -1,6 +1,5 @@
 //! Functions exclusive of DS3232
 
-extern crate embedded_hal as hal;
 use super::{ic, BitFlags, Ds323x, Error, TempConvRate, CONTROL_POR_VALUE};
 use core::marker::PhantomData;
 use hal::blocking;
