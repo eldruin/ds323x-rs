@@ -445,6 +445,12 @@
 
 extern crate embedded_hal as hal;
 use core::marker::PhantomData;
+use hal::spi::{Mode, MODE_1, MODE_3};
+
+/// SPI mode 1 (CPOL = 0, CPHA = 1)
+pub const SPI_MODE_1: Mode = MODE_1;
+/// SPI mode 3 (CPOL = 1, CPHA = 1)
+pub const SPI_MODE_3: Mode = MODE_3;
 
 /// All possible errors in this crate
 #[derive(Debug)]
