@@ -2,11 +2,12 @@ extern crate embedded_hal_mock as hal;
 use hal::i2c::Transaction as I2cTrans;
 use hal::spi::Transaction as SpiTrans;
 mod common;
-use common::{ DEVICE_ADDRESS as DEV_ADDR, Register, new_ds3231,
-              new_ds3232, new_ds3234, destroy_ds3231, destroy_ds3232,
-              destroy_ds3234 };
+use common::{
+    destroy_ds3231, destroy_ds3232, destroy_ds3234, new_ds3231, new_ds3232, new_ds3234, Register,
+    DEVICE_ADDRESS as DEV_ADDR,
+};
 extern crate ds323x;
-use ds323x::{ Hours, DateTime, Error };
+use ds323x::{DateTime, Error, Hours};
 
 macro_rules! set_param_write_array_test {
     ($name:ident, $method:ident, $value:expr, $register:ident, [ $( $exp_bin:expr ),+ ] ) => {
@@ -18,23 +19,51 @@ macro_rules! set_param_write_array_test {
 
 macro_rules! read_set_param_write_two_test {
     ($name:ident, $method:ident, $value:expr, $register:ident, $binary_value1_read:expr, $bin1:expr, $bin2:expr) => {
-        _set_param_test!($name, $method, $value,
-            [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$binary_value1_read]),
-              I2cTrans::write(DEV_ADDR, vec![Register::$register, $bin1, $bin2]) ],
-
-            [ SpiTrans::transfer(vec![Register::$register, 0], vec![Register::$register, $binary_value1_read]),
-              SpiTrans::write(vec![Register::$register + 0x80, $bin1, $bin2]) ]);
+        _set_param_test!(
+            $name,
+            $method,
+            $value,
+            [
+                I2cTrans::write_read(
+                    DEV_ADDR,
+                    vec![Register::$register],
+                    vec![$binary_value1_read]
+                ),
+                I2cTrans::write(DEV_ADDR, vec![Register::$register, $bin1, $bin2])
+            ],
+            [
+                SpiTrans::transfer(
+                    vec![Register::$register, 0],
+                    vec![Register::$register, $binary_value1_read]
+                ),
+                SpiTrans::write(vec![Register::$register + 0x80, $bin1, $bin2])
+            ]
+        );
     };
 }
 
 macro_rules! read_set_param_test {
     ($name:ident, $method:ident, $register:ident, $value:expr, $binary_value_read:expr, $binary_value_write:expr) => {
-        _set_param_test!($name, $method, $value,
-            [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$binary_value_read]),
-              I2cTrans::write(DEV_ADDR, vec![Register::$register, $binary_value_write]) ],
-
-            [ SpiTrans::transfer(vec![Register::$register, 0], vec![Register::$register, $binary_value_read]),
-              SpiTrans::write(vec![Register::$register + 0x80, $binary_value_write]) ]);
+        _set_param_test!(
+            $name,
+            $method,
+            $value,
+            [
+                I2cTrans::write_read(
+                    DEV_ADDR,
+                    vec![Register::$register],
+                    vec![$binary_value_read]
+                ),
+                I2cTrans::write(DEV_ADDR, vec![Register::$register, $binary_value_write])
+            ],
+            [
+                SpiTrans::transfer(
+                    vec![Register::$register, 0],
+                    vec![Register::$register, $binary_value_read]
+                ),
+                SpiTrans::write(vec![Register::$register + 0x80, $binary_value_write])
+            ]
+        );
     };
 }
 
@@ -42,9 +71,27 @@ macro_rules! set_invalid_param_test {
     ($name:ident, $method:ident, $value:expr) => {
         mod $name {
             use super::*;
-            set_invalid_test!(cannot_set_invalid_ds3231, $method, new_ds3231, destroy_ds3231, $value);
-            set_invalid_test!(cannot_set_invalid_ds3232, $method, new_ds3232, destroy_ds3232, $value);
-            set_invalid_test!(cannot_set_invalid_ds3234, $method, new_ds3234, destroy_ds3234, $value);
+            set_invalid_test!(
+                cannot_set_invalid_ds3231,
+                $method,
+                new_ds3231,
+                destroy_ds3231,
+                $value
+            );
+            set_invalid_test!(
+                cannot_set_invalid_ds3232,
+                $method,
+                new_ds3232,
+                destroy_ds3232,
+                $value
+            );
+            set_invalid_test!(
+                cannot_set_invalid_ds3234,
+                $method,
+                new_ds3234,
+                destroy_ds3234,
+                $value
+            );
         }
     };
 }
@@ -54,7 +101,7 @@ macro_rules! set_invalid_param_range_test {
         mod $name {
             use super::*;
             set_invalid_param_test!(too_small, $method, $too_small_value);
-            set_invalid_param_test!(too_big,   $method, $too_big_value);
+            set_invalid_param_test!(too_big, $method, $too_big_value);
         }
     };
 }
@@ -123,11 +170,41 @@ mod month {
 
 mod year {
     use super::*;
-    get_param_read_array_test!(century0_get, get_year, 2099, MONTH, [ 0, 0b1001_1001 ], [0, 0]);
-    read_set_param_write_two_test!(century0_set, set_year, 2099, MONTH, 0b1001_0010, 0b0001_0010, 0b1001_1001);
+    get_param_read_array_test!(
+        century0_get,
+        get_year,
+        2099,
+        MONTH,
+        [0, 0b1001_1001],
+        [0, 0]
+    );
+    read_set_param_write_two_test!(
+        century0_set,
+        set_year,
+        2099,
+        MONTH,
+        0b1001_0010,
+        0b0001_0010,
+        0b1001_1001
+    );
 
-    get_param_read_array_test!(century1_get, get_year, 2100, MONTH, [ 0b1000_0000, 0 ], [0, 0]);
-    read_set_param_write_two_test!(century1_set, set_year, 2100, MONTH, 0b0001_0010, 0b1001_0010, 0);
+    get_param_read_array_test!(
+        century1_get,
+        get_year,
+        2100,
+        MONTH,
+        [0b1000_0000, 0],
+        [0, 0]
+    );
+    read_set_param_write_two_test!(
+        century1_set,
+        set_year,
+        2100,
+        MONTH,
+        0b0001_0010,
+        0b1001_0010,
+        0
+    );
 
     set_invalid_param_range_test!(invalid, set_year, 1999, 2101);
 }
@@ -137,8 +214,15 @@ macro_rules! invalid_dt_test {
      $hour:expr, $minute:expr, $second:expr) => {
         mod $name {
             use super::*;
-            const DT : DateTime = DateTime { year: $year, month: $month, day: $day, weekday: $weekday,
-                                             hour: $hour, minute: $minute, second: $second };
+            const DT: DateTime = DateTime {
+                year: $year,
+                month: $month,
+                day: $day,
+                weekday: $weekday,
+                hour: $hour,
+                minute: $minute,
+                second: $second,
+            };
             set_invalid_param_test!($name, set_datetime, &DT);
         }
     };
@@ -146,26 +230,57 @@ macro_rules! invalid_dt_test {
 
 mod datetime {
     use super::*;
-    const DT : DateTime = DateTime { year: 2018, month: 8, day: 13, weekday: 2,
-                                     hour: Hours::H24(23), minute: 59, second: 58 };
-    get_param_read_array_test!(get, get_datetime, DT, SECONDS,
-        [0b0101_1000, 0b0101_1001, 0b0010_0011, 0b0000_0010,
-         0b0001_0011, 0b0000_1000, 0b0001_1000],
-        [0, 0, 0, 0, 0, 0, 0]);
+    const DT: DateTime = DateTime {
+        year: 2018,
+        month: 8,
+        day: 13,
+        weekday: 2,
+        hour: Hours::H24(23),
+        minute: 59,
+        second: 58,
+    };
+    get_param_read_array_test!(
+        get,
+        get_datetime,
+        DT,
+        SECONDS,
+        [
+            0b0101_1000,
+            0b0101_1001,
+            0b0010_0011,
+            0b0000_0010,
+            0b0001_0011,
+            0b0000_1000,
+            0b0001_1000
+        ],
+        [0, 0, 0, 0, 0, 0, 0]
+    );
 
-    set_param_write_array_test!(set, set_datetime, &DT, SECONDS,
-        [0b0101_1000, 0b0101_1001, 0b0010_0011, 0b0000_0010,
-         0b0001_0011, 0b0000_1000, 0b0001_1000]);
+    set_param_write_array_test!(
+        set,
+        set_datetime,
+        &DT,
+        SECONDS,
+        [
+            0b0101_1000,
+            0b0101_1001,
+            0b0010_0011,
+            0b0000_0010,
+            0b0001_0011,
+            0b0000_1000,
+            0b0001_1000
+        ]
+    );
 
-    invalid_dt_test!(too_small_year,  1999, 8,  13, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_big_year,    2101, 8,  13, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_small_month, 2018, 0,  13, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_big_month,   2018, 13, 13, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_small_day,   2018, 8,   0, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_big_day,     2018, 8,  32, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_small_wd,    2018, 8,  13, 0, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_big_wd,      2018, 8,  13, 8, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_big_hours,   2018, 8,  13, 2, Hours::H24(24), 59, 58);
-    invalid_dt_test!(too_big_min,     2018, 8,  13, 2, Hours::H24(24), 60, 58);
-    invalid_dt_test!(too_big_seconds, 2018, 8,  13, 2, Hours::H24(24), 59, 60);
+    invalid_dt_test!(too_small_year, 1999, 8, 13, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_big_year, 2101, 8, 13, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_small_month, 2018, 0, 13, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_big_month, 2018, 13, 13, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_small_day, 2018, 8, 0, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_big_day, 2018, 8, 32, 2, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_small_wd, 2018, 8, 13, 0, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_big_wd, 2018, 8, 13, 8, Hours::H24(23), 59, 58);
+    invalid_dt_test!(too_big_hours, 2018, 8, 13, 2, Hours::H24(24), 59, 58);
+    invalid_dt_test!(too_big_min, 2018, 8, 13, 2, Hours::H24(24), 60, 58);
+    invalid_dt_test!(too_big_seconds, 2018, 8, 13, 2, Hours::H24(24), 59, 60);
 }

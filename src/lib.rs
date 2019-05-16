@@ -439,7 +439,6 @@
 //! # }
 //! ```
 
-
 #![deny(unsafe_code, missing_docs)]
 #![no_std]
 
@@ -460,7 +459,7 @@ pub enum Error<CommE, PinE> {
     /// Pin setting error
     Pin(PinE),
     /// Invalid input data provided
-    InvalidInputData
+    InvalidInputData,
 }
 
 /// Square-wave output frequency
@@ -494,50 +493,50 @@ pub enum TempConvRate {
 struct Register;
 
 impl Register {
-    const SECONDS        : u8 = 0x00;
-    const MINUTES        : u8 = 0x01;
-    const HOURS          : u8 = 0x02;
-    const DOW            : u8 = 0x03;
-    const DOM            : u8 = 0x04;
-    const MONTH          : u8 = 0x05;
-    const YEAR           : u8 = 0x06;
-    const ALARM1_SECONDS : u8 = 0x07;
-    const ALARM2_MINUTES : u8 = 0x0B;
-    const CONTROL        : u8 = 0x0E;
-    const STATUS         : u8 = 0x0F;
-    const AGING_OFFSET   : u8 = 0x10;
-    const TEMP_MSB       : u8 = 0x11;
-    const TEMP_CONV      : u8 = 0x13;
+    const SECONDS: u8 = 0x00;
+    const MINUTES: u8 = 0x01;
+    const HOURS: u8 = 0x02;
+    const DOW: u8 = 0x03;
+    const DOM: u8 = 0x04;
+    const MONTH: u8 = 0x05;
+    const YEAR: u8 = 0x06;
+    const ALARM1_SECONDS: u8 = 0x07;
+    const ALARM2_MINUTES: u8 = 0x0B;
+    const CONTROL: u8 = 0x0E;
+    const STATUS: u8 = 0x0F;
+    const AGING_OFFSET: u8 = 0x10;
+    const TEMP_MSB: u8 = 0x11;
+    const TEMP_CONV: u8 = 0x13;
 }
 
 struct BitFlags;
 
 impl BitFlags {
-    const H24_H12       : u8 = 0b0100_0000;
-    const AM_PM         : u8 = 0b0010_0000;
-    const CENTURY       : u8 = 0b1000_0000;
-    const EOSC          : u8 = 0b1000_0000;
-    const BBSQW         : u8 = 0b0100_0000;
-    const TEMP_CONV     : u8 = 0b0010_0000;
-    const RS2           : u8 = 0b0001_0000;
-    const RS1           : u8 = 0b0000_1000;
-    const INTCN         : u8 = 0b0000_0100;
-    const ALARM2_INT_EN : u8 = 0b0000_0010;
-    const ALARM1_INT_EN : u8 = 0b0000_0001;
-    const OSC_STOP      : u8 = 0b1000_0000;
-    const BB32KHZ       : u8 = 0b0100_0000;
-    const CRATE1        : u8 = 0b0010_0000;
-    const CRATE0        : u8 = 0b0001_0000;
-    const EN32KHZ       : u8 = 0b0000_1000;
-    const BUSY          : u8 = 0b0000_0100;
-    const ALARM2F       : u8 = 0b0000_0010;
-    const ALARM1F       : u8 = 0b0000_0001;
-    const TEMP_CONV_BAT : u8 = 0b0000_0001;
-    const ALARM_MATCH   : u8 = 0b1000_0000;
-    const WEEKDAY       : u8 = 0b0100_0000;
+    const H24_H12: u8 = 0b0100_0000;
+    const AM_PM: u8 = 0b0010_0000;
+    const CENTURY: u8 = 0b1000_0000;
+    const EOSC: u8 = 0b1000_0000;
+    const BBSQW: u8 = 0b0100_0000;
+    const TEMP_CONV: u8 = 0b0010_0000;
+    const RS2: u8 = 0b0001_0000;
+    const RS1: u8 = 0b0000_1000;
+    const INTCN: u8 = 0b0000_0100;
+    const ALARM2_INT_EN: u8 = 0b0000_0010;
+    const ALARM1_INT_EN: u8 = 0b0000_0001;
+    const OSC_STOP: u8 = 0b1000_0000;
+    const BB32KHZ: u8 = 0b0100_0000;
+    const CRATE1: u8 = 0b0010_0000;
+    const CRATE0: u8 = 0b0001_0000;
+    const EN32KHZ: u8 = 0b0000_1000;
+    const BUSY: u8 = 0b0000_0100;
+    const ALARM2F: u8 = 0b0000_0010;
+    const ALARM1F: u8 = 0b0000_0001;
+    const TEMP_CONV_BAT: u8 = 0b0000_0001;
+    const ALARM_MATCH: u8 = 0b1000_0000;
+    const WEEKDAY: u8 = 0b0100_0000;
 }
 
-const DEVICE_ADDRESS   : u8 = 0b110_1000;
+const DEVICE_ADDRESS: u8 = 0b110_1000;
 const CONTROL_POR_VALUE: u8 = 0b0001_1100;
 
 /// IC markers
@@ -555,14 +554,16 @@ pub mod ic {
 pub struct Ds323x<DI, IC> {
     iface: DI,
     control: u8,
-    status : u8,
-    _ic: PhantomData<IC>
+    status: u8,
+    _ic: PhantomData<IC>,
 }
 
-pub mod interface;
 mod ds323x;
-pub use ds323x::{ Hours, DateTime, DayAlarm1, WeekdayAlarm1, Alarm1Matching,
-                  DayAlarm2, WeekdayAlarm2, Alarm2Matching };
+pub mod interface;
+pub use ds323x::{
+    Alarm1Matching, Alarm2Matching, DateTime, DayAlarm1, DayAlarm2, Hours, WeekdayAlarm1,
+    WeekdayAlarm2,
+};
 mod ds3231;
 mod ds3232;
 mod ds3234;

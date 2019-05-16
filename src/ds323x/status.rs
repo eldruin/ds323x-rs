@@ -1,12 +1,12 @@
 //! Device status
 
 extern crate embedded_hal as hal;
-use super::super::{ Ds323x, Register, BitFlags, Error };
-use interface::{ ReadData, WriteData };
+use super::super::{BitFlags, Ds323x, Error, Register};
+use interface::{ReadData, WriteData};
 
 impl<DI, IC, CommE, PinE> Ds323x<DI, IC>
 where
-    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>
+    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>,
 {
     /// Read whether the oscillator is running
     pub fn is_running(&mut self) -> Result<bool, Error<CommE, PinE>> {
@@ -87,8 +87,7 @@ where
         if is_negative {
             let temp_sign_extended = temp | 0b1111_1100_0000_0000;
             Ok(f32::from(temp_sign_extended as i16) * 0.25)
-        }
-        else {
+        } else {
             Ok(f32::from(temp) * 0.25)
         }
     }

@@ -2,12 +2,15 @@ extern crate embedded_hal_mock as hal;
 use hal::i2c::Transaction as I2cTrans;
 use hal::spi::Transaction as SpiTrans;
 mod common;
-use common::{ DEVICE_ADDRESS as DEV_ADDR, Register, new_ds3231,
-              new_ds3232, new_ds3234, destroy_ds3231, destroy_ds3232,
-              destroy_ds3234, BitFlags as BF };
+use common::{
+    destroy_ds3231, destroy_ds3232, destroy_ds3234, new_ds3231, new_ds3232, new_ds3234,
+    BitFlags as BF, Register, DEVICE_ADDRESS as DEV_ADDR,
+};
 extern crate ds323x;
-use ds323x::{ DayAlarm1, WeekdayAlarm1, Alarm1Matching as A1M, DayAlarm2,
-              WeekdayAlarm2, Alarm2Matching as A2M, Hours, Error };
+use ds323x::{
+    Alarm1Matching as A1M, Alarm2Matching as A2M, DayAlarm1, DayAlarm2, Error, Hours,
+    WeekdayAlarm1, WeekdayAlarm2,
+};
 
 #[macro_export]
 macro_rules! _set_invalid_alarm_test {

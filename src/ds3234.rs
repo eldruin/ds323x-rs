@@ -1,27 +1,27 @@
 //! Functions exclusive of DS3234
 
 extern crate embedded_hal as hal;
-use hal::blocking;
+use super::{ic, BitFlags, Ds323x, Error, Register, TempConvRate, CONTROL_POR_VALUE};
 use core::marker::PhantomData;
-use super::{ Ds323x, TempConvRate, Register, BitFlags, Error, ic, CONTROL_POR_VALUE };
-use interface::{ SpiInterface, WriteData };
+use hal::blocking;
+use interface::{SpiInterface, WriteData};
 
 impl<SPI, CS, CommE, PinE> Ds323x<SpiInterface<SPI, CS>, ic::DS3234>
 where
     SPI: blocking::spi::Transfer<u8, Error = CommE> + blocking::spi::Write<u8, Error = CommE>,
-    CS:  hal::digital::v2::OutputPin<Error = PinE>
+    CS: hal::digital::v2::OutputPin<Error = PinE>,
 {
     /// Create a new instance.
     pub fn new_ds3234(spi: SPI, chip_select: CS) -> Self {
-        const STATUS_POR_VALUE : u8 = BitFlags::OSC_STOP | BitFlags::BB32KHZ | BitFlags::EN32KHZ;
+        const STATUS_POR_VALUE: u8 = BitFlags::OSC_STOP | BitFlags::BB32KHZ | BitFlags::EN32KHZ;
         Ds323x {
             iface: SpiInterface {
                 spi,
-                cs: chip_select
+                cs: chip_select,
             },
             control: CONTROL_POR_VALUE,
             status: STATUS_POR_VALUE,
-            _ic: PhantomData
+            _ic: PhantomData,
         }
     }
 
@@ -59,13 +59,16 @@ where
     /// temperature changes will not be compensated for.
     ///
     /// Note: This is only available for DS3232 and DS3234 devices.
-    pub fn set_temperature_conversion_rate(&mut self, rate: TempConvRate) -> Result<(), Error<CommE, PinE>> {
+    pub fn set_temperature_conversion_rate(
+        &mut self,
+        rate: TempConvRate,
+    ) -> Result<(), Error<CommE, PinE>> {
         let status;
         match rate {
-            TempConvRate::_64s  => status = self.status & !BitFlags::CRATE1 & !BitFlags::CRATE0,
-            TempConvRate::_128s => status = self.status & !BitFlags::CRATE1 |  BitFlags::CRATE0,
-            TempConvRate::_256s => status = self.status |  BitFlags::CRATE1 & !BitFlags::CRATE0,
-            TempConvRate::_512s => status = self.status |  BitFlags::CRATE1 |  BitFlags::CRATE0,
+            TempConvRate::_64s => status = self.status & !BitFlags::CRATE1 & !BitFlags::CRATE0,
+            TempConvRate::_128s => status = self.status & !BitFlags::CRATE1 | BitFlags::CRATE0,
+            TempConvRate::_256s => status = self.status | BitFlags::CRATE1 & !BitFlags::CRATE0,
+            TempConvRate::_512s => status = self.status | BitFlags::CRATE1 | BitFlags::CRATE0,
         }
         self.write_status_without_clearing_alarm(status)
     }
@@ -81,6 +84,7 @@ where
     ///
     /// Note: This is only available for DS3234 devices.
     pub fn disable_temperature_conversions_on_battery(&mut self) -> Result<(), Error<CommE, PinE>> {
-        self.iface.write_register(Register::TEMP_CONV, BitFlags::TEMP_CONV_BAT)
+        self.iface
+            .write_register(Register::TEMP_CONV, BitFlags::TEMP_CONV_BAT)
     }
 }

@@ -1,12 +1,12 @@
-extern crate embedded_hal;
 extern crate ds323x;
-use self::ds323x::{ Ds323x, interface, ic };
+extern crate embedded_hal;
+use self::ds323x::{ic, interface, Ds323x};
 extern crate embedded_hal_mock as hal;
-use self::hal::i2c::{ Mock as I2cMock, Transaction as I2cTrans };
-use self::hal::spi::{ Mock as SpiMock, Transaction as SpiTrans };
+use self::hal::i2c::{Mock as I2cMock, Transaction as I2cTrans};
+use self::hal::spi::{Mock as SpiMock, Transaction as SpiTrans};
 
 #[allow(unused)]
-pub const DEVICE_ADDRESS   : u8 = 0b110_1000;
+pub const DEVICE_ADDRESS: u8 = 0b110_1000;
 #[allow(unused)]
 pub const CONTROL_POR_VALUE: u8 = 0b0001_1100;
 #[allow(unused)]
@@ -18,65 +18,73 @@ pub struct Register;
 
 #[allow(unused)]
 impl Register {
-    pub const SECONDS        : u8 = 0x00;
-    pub const MINUTES        : u8 = 0x01;
-    pub const HOURS          : u8 = 0x02;
-    pub const DOW            : u8 = 0x03;
-    pub const DOM            : u8 = 0x04;
-    pub const MONTH          : u8 = 0x05;
-    pub const ALARM1_SECONDS : u8 = 0x07;
-    pub const ALARM2_MINUTES : u8 = 0x0B;
-    pub const CONTROL        : u8 = 0x0E;
-    pub const STATUS         : u8 = 0x0F;
-    pub const AGING_OFFSET   : u8 = 0x10;
-    pub const TEMP_MSB       : u8 = 0x11;
-    pub const TEMP_CONV      : u8 = 0x13;
+    pub const SECONDS: u8 = 0x00;
+    pub const MINUTES: u8 = 0x01;
+    pub const HOURS: u8 = 0x02;
+    pub const DOW: u8 = 0x03;
+    pub const DOM: u8 = 0x04;
+    pub const MONTH: u8 = 0x05;
+    pub const ALARM1_SECONDS: u8 = 0x07;
+    pub const ALARM2_MINUTES: u8 = 0x0B;
+    pub const CONTROL: u8 = 0x0E;
+    pub const STATUS: u8 = 0x0F;
+    pub const AGING_OFFSET: u8 = 0x10;
+    pub const TEMP_MSB: u8 = 0x11;
+    pub const TEMP_CONV: u8 = 0x13;
 }
 
 pub struct BitFlags;
 
 #[allow(unused)]
 impl BitFlags {
-    pub const EOSC          : u8 = 0b1000_0000;
-    pub const BBSQW         : u8 = 0b0100_0000;
-    pub const TEMP_CONV     : u8 = 0b0010_0000;
-    pub const RS2           : u8 = 0b0001_0000;
-    pub const RS1           : u8 = 0b0000_1000;
-    pub const INTCN         : u8 = 0b0000_0100;
-    pub const ALARM2_INT_EN : u8 = 0b0000_0010;
-    pub const ALARM1_INT_EN : u8 = 0b0000_0001;
-    pub const OSC_STOP      : u8 = 0b1000_0000;
-    pub const BB32KHZ       : u8 = 0b0100_0000;
-    pub const CRATE1        : u8 = 0b0010_0000;
-    pub const CRATE0        : u8 = 0b0001_0000;
-    pub const EN32KHZ       : u8 = 0b0000_1000;
-    pub const BUSY          : u8 = 0b0000_0100;
-    pub const ALARM2F       : u8 = 0b0000_0010;
-    pub const ALARM1F       : u8 = 0b0000_0001;
-    pub const TEMP_CONV_BAT : u8 = 0b0000_0001;
-    pub const ALARM_MATCH   : u8 = 0b1000_0000;
-    pub const WEEKDAY       : u8 = 0b0100_0000;
+    pub const EOSC: u8 = 0b1000_0000;
+    pub const BBSQW: u8 = 0b0100_0000;
+    pub const TEMP_CONV: u8 = 0b0010_0000;
+    pub const RS2: u8 = 0b0001_0000;
+    pub const RS1: u8 = 0b0000_1000;
+    pub const INTCN: u8 = 0b0000_0100;
+    pub const ALARM2_INT_EN: u8 = 0b0000_0010;
+    pub const ALARM1_INT_EN: u8 = 0b0000_0001;
+    pub const OSC_STOP: u8 = 0b1000_0000;
+    pub const BB32KHZ: u8 = 0b0100_0000;
+    pub const CRATE1: u8 = 0b0010_0000;
+    pub const CRATE0: u8 = 0b0001_0000;
+    pub const EN32KHZ: u8 = 0b0000_1000;
+    pub const BUSY: u8 = 0b0000_0100;
+    pub const ALARM2F: u8 = 0b0000_0010;
+    pub const ALARM1F: u8 = 0b0000_0001;
+    pub const TEMP_CONV_BAT: u8 = 0b0000_0001;
+    pub const ALARM_MATCH: u8 = 0b1000_0000;
+    pub const WEEKDAY: u8 = 0b0100_0000;
 }
 
 pub struct DummyOutputPin;
 
 impl embedded_hal::digital::v2::OutputPin for DummyOutputPin {
     type Error = ();
-    fn set_low(&mut self) -> Result<(), Self::Error> { Ok(()) }
-    fn set_high(&mut self) -> Result<(), Self::Error> { Ok(()) }
+    fn set_low(&mut self) -> Result<(), Self::Error> {
+        Ok(())
+    }
+    fn set_high(&mut self) -> Result<(), Self::Error> {
+        Ok(())
+    }
 }
 
-
-pub fn new_ds3231(transactions: &[I2cTrans]) -> Ds323x<interface::I2cInterface<I2cMock>, ic::DS3231> {
+pub fn new_ds3231(
+    transactions: &[I2cTrans],
+) -> Ds323x<interface::I2cInterface<I2cMock>, ic::DS3231> {
     Ds323x::new_ds3231(I2cMock::new(&transactions))
 }
 
-pub fn new_ds3232(transactions: &[I2cTrans]) -> Ds323x<interface::I2cInterface<I2cMock>, ic::DS3232> {
+pub fn new_ds3232(
+    transactions: &[I2cTrans],
+) -> Ds323x<interface::I2cInterface<I2cMock>, ic::DS3232> {
     Ds323x::new_ds3232(I2cMock::new(&transactions))
 }
 
-pub fn new_ds3234(transactions: &[SpiTrans])
-    -> Ds323x<interface::SpiInterface<SpiMock, DummyOutputPin>, ic::DS3234> {
+pub fn new_ds3234(
+    transactions: &[SpiTrans],
+) -> Ds323x<interface::SpiInterface<SpiMock, DummyOutputPin>, ic::DS3234> {
     Ds323x::new_ds3234(SpiMock::new(&transactions), DummyOutputPin)
 }
 
@@ -123,7 +131,7 @@ macro_rules! assert_invalid_input_data {
     ($result:expr) => {
         match $result {
             Err(Error::InvalidInputData) => (),
-            _ => panic!("InvalidInputData error not returned.")
+            _ => panic!("InvalidInputData error not returned."),
         }
     };
 }
@@ -158,9 +166,30 @@ macro_rules! _get_param_test {
     ($name:ident, $method:ident, $value:expr, $i2c_transactions:expr, $spi_transactions:expr) => {
         mod $name {
             use super::*;
-            get_test!(can_get_ds3231, $method, new_ds3231, destroy_ds3231, $value, $i2c_transactions);
-            get_test!(can_get_ds3232, $method, new_ds3232, destroy_ds3232, $value, $i2c_transactions);
-            get_test!(can_get_ds3234, $method, new_ds3234, destroy_ds3234, $value, $spi_transactions);
+            get_test!(
+                can_get_ds3231,
+                $method,
+                new_ds3231,
+                destroy_ds3231,
+                $value,
+                $i2c_transactions
+            );
+            get_test!(
+                can_get_ds3232,
+                $method,
+                new_ds3232,
+                destroy_ds3232,
+                $value,
+                $i2c_transactions
+            );
+            get_test!(
+                can_get_ds3234,
+                $method,
+                new_ds3234,
+                destroy_ds3234,
+                $value,
+                $spi_transactions
+            );
         }
     };
 }
@@ -168,9 +197,20 @@ macro_rules! _get_param_test {
 #[macro_export]
 macro_rules! get_param_test {
     ($name:ident, $method:ident, $register:ident, $value:expr, $binary_value:expr) => {
-        _get_param_test!($name, $method, $value,
-            [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$binary_value]) ],
-            [ SpiTrans::transfer(vec![Register::$register, 0], vec![Register::$register, $binary_value]) ]);
+        _get_param_test!(
+            $name,
+            $method,
+            $value,
+            [I2cTrans::write_read(
+                DEV_ADDR,
+                vec![Register::$register],
+                vec![$binary_value]
+            )],
+            [SpiTrans::transfer(
+                vec![Register::$register, 0],
+                vec![Register::$register, $binary_value]
+            )]
+        );
     };
 }
 
@@ -188,9 +228,30 @@ macro_rules! _set_param_test {
     ($name:ident, $method:ident, $value:expr, $i2c_transactions:expr, $spi_transactions:expr) => {
         mod $name {
             use super::*;
-            set_test!(can_set_ds3231, $method, new_ds3231, destroy_ds3231, $value, $i2c_transactions);
-            set_test!(can_set_ds3232, $method, new_ds3232, destroy_ds3232, $value, $i2c_transactions);
-            set_test!(can_set_ds3234, $method, new_ds3234, destroy_ds3234, $value, $spi_transactions);
+            set_test!(
+                can_set_ds3231,
+                $method,
+                new_ds3231,
+                destroy_ds3231,
+                $value,
+                $i2c_transactions
+            );
+            set_test!(
+                can_set_ds3232,
+                $method,
+                new_ds3232,
+                destroy_ds3232,
+                $value,
+                $i2c_transactions
+            );
+            set_test!(
+                can_set_ds3234,
+                $method,
+                new_ds3234,
+                destroy_ds3234,
+                $value,
+                $spi_transactions
+            );
         }
     };
 }
@@ -198,8 +259,18 @@ macro_rules! _set_param_test {
 #[macro_export]
 macro_rules! set_param_test {
     ($name:ident, $method:ident, $register:ident, $value:expr, $binary_value:expr) => {
-        _set_param_test!($name, $method, $value,
-            [ I2cTrans::write(DEV_ADDR, vec![Register::$register, $binary_value]) ],
-            [ SpiTrans::write(vec![Register::$register + 0x80, $binary_value]) ]);
+        _set_param_test!(
+            $name,
+            $method,
+            $value,
+            [I2cTrans::write(
+                DEV_ADDR,
+                vec![Register::$register, $binary_value]
+            )],
+            [SpiTrans::write(vec![
+                Register::$register + 0x80,
+                $binary_value
+            ])]
+        );
     };
 }

@@ -6,27 +6,55 @@ extern crate ds323x;
 use ds323x::SqWFreq;
 
 mod common;
-use common::{ DEVICE_ADDRESS as DEV_ADDR, Register, new_ds3231,
-              new_ds3232, new_ds3234, destroy_ds3231, destroy_ds3232,
-              destroy_ds3234, BitFlags as BF, CONTROL_POR_VALUE,
-              DS3231_POR_STATUS, DS323X_POR_STATUS };
+use common::{
+    destroy_ds3231, destroy_ds3232, destroy_ds3234, new_ds3231, new_ds3232, new_ds3234,
+    BitFlags as BF, Register, CONTROL_POR_VALUE, DEVICE_ADDRESS as DEV_ADDR, DS3231_POR_STATUS,
+    DS323X_POR_STATUS,
+};
 
 macro_rules! call_triple_test {
     ($name:ident, $method:ident, $i2c_transactions:expr, $spi_transactions:expr) => {
         mod $name {
             use super::*;
-            call_test!(can_call_ds3231, $method, new_ds3231, destroy_ds3231, $i2c_transactions);
-            call_test!(can_call_ds3232, $method, new_ds3232, destroy_ds3232, $i2c_transactions);
-            call_test!(can_call_ds3234, $method, new_ds3234, destroy_ds3234, $spi_transactions);
+            call_test!(
+                can_call_ds3231,
+                $method,
+                new_ds3231,
+                destroy_ds3231,
+                $i2c_transactions
+            );
+            call_test!(
+                can_call_ds3232,
+                $method,
+                new_ds3232,
+                destroy_ds3232,
+                $i2c_transactions
+            );
+            call_test!(
+                can_call_ds3234,
+                $method,
+                new_ds3234,
+                destroy_ds3234,
+                $spi_transactions
+            );
         }
     };
 }
 
 macro_rules! call_method_test {
     ($name:ident, $method:ident, $register:ident, $value_enabled:expr) => {
-        call_triple_test!($name, $method,
-            [ I2cTrans::write(DEV_ADDR, vec![Register::$register, $value_enabled]) ],
-            [ SpiTrans::write(vec![Register::$register + 0x80, $value_enabled])    ]);
+        call_triple_test!(
+            $name,
+            $method,
+            [I2cTrans::write(
+                DEV_ADDR,
+                vec![Register::$register, $value_enabled]
+            )],
+            [SpiTrans::write(vec![
+                Register::$register + 0x80,
+                $value_enabled
+            ])]
+        );
     };
 }
 
@@ -34,12 +62,36 @@ macro_rules! call_method_status_test {
     ($name:ident, $method:ident, $value_ds3231:expr, $value_ds323x:expr) => {
         mod $name {
             use super::*;
-            call_test!(can_call_ds3231, $method, new_ds3231, destroy_ds3231,
-                [ I2cTrans::write(DEV_ADDR, vec![Register::STATUS, $value_ds3231]) ]);
-            call_test!(can_call_ds3232, $method, new_ds3232, destroy_ds3232,
-                [ I2cTrans::write(DEV_ADDR, vec![Register::STATUS, $value_ds323x]) ]);
-            call_test!(can_call_ds3234, $method, new_ds3234, destroy_ds3234,
-                [ SpiTrans::write(vec![Register::STATUS + 0x80, $value_ds323x]) ]);
+            call_test!(
+                can_call_ds3231,
+                $method,
+                new_ds3231,
+                destroy_ds3231,
+                [I2cTrans::write(
+                    DEV_ADDR,
+                    vec![Register::STATUS, $value_ds3231]
+                )]
+            );
+            call_test!(
+                can_call_ds3232,
+                $method,
+                new_ds3232,
+                destroy_ds3232,
+                [I2cTrans::write(
+                    DEV_ADDR,
+                    vec![Register::STATUS, $value_ds323x]
+                )]
+            );
+            call_test!(
+                can_call_ds3234,
+                $method,
+                new_ds3234,
+                destroy_ds3234,
+                [SpiTrans::write(vec![
+                    Register::STATUS + 0x80,
+                    $value_ds323x
+                ])]
+            );
         }
     };
 }
@@ -48,16 +100,39 @@ macro_rules! change_if_necessary_test {
     ($name:ident, $method:ident, $register:ident, $value_enabled:expr, $value_disabled:expr) => {
         mod $name {
             use super::*;
-            call_triple_test!(do_nothing_if_not_necessary, $method,
-                 [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$value_enabled]) ],
-                 [ SpiTrans::transfer(vec![Register::$register, 0], vec![Register::$register, $value_enabled]) ]);
+            call_triple_test!(
+                do_nothing_if_not_necessary,
+                $method,
+                [I2cTrans::write_read(
+                    DEV_ADDR,
+                    vec![Register::$register],
+                    vec![$value_enabled]
+                )],
+                [SpiTrans::transfer(
+                    vec![Register::$register, 0],
+                    vec![Register::$register, $value_enabled]
+                )]
+            );
 
-            call_triple_test!(change, $method,
-                [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$value_disabled]),
-                  I2cTrans::write(DEV_ADDR, vec![Register::$register, $value_enabled]) ],
-
-                [ SpiTrans::transfer(vec![Register::$register, 0], vec![Register::$register, $value_disabled]),
-                  SpiTrans::write(vec![Register::$register + 0x80, $value_enabled]) ]);
+            call_triple_test!(
+                change,
+                $method,
+                [
+                    I2cTrans::write_read(
+                        DEV_ADDR,
+                        vec![Register::$register],
+                        vec![$value_disabled]
+                    ),
+                    I2cTrans::write(DEV_ADDR, vec![Register::$register, $value_enabled])
+                ],
+                [
+                    SpiTrans::transfer(
+                        vec![Register::$register, 0],
+                        vec![Register::$register, $value_disabled]
+                    ),
+                    SpiTrans::write(vec![Register::$register + 0x80, $value_enabled])
+                ]
+            );
         }
     };
 }

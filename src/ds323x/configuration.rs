@@ -1,12 +1,12 @@
 //! Device configuration
 
 extern crate embedded_hal as hal;
-use super::super::{ Ds323x, SqWFreq, Register, BitFlags, Error };
-use interface::{ ReadData, WriteData };
+use super::super::{BitFlags, Ds323x, Error, Register, SqWFreq};
+use interface::{ReadData, WriteData};
 
 impl<DI, IC, CommE, PinE> Ds323x<DI, IC>
 where
-    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>
+    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>,
 {
     /// Enable the oscillator (set the clock running) (default).
     pub fn enable(&mut self) -> Result<(), Error<CommE, PinE>> {
@@ -27,7 +27,8 @@ where
         let control = self.iface.read_register(Register::CONTROL)?;
         // do not overwrite if a conversion is in progress
         if (control & BitFlags::TEMP_CONV) == 0 {
-            self.iface.write_register(Register::CONTROL, control | BitFlags::TEMP_CONV)?;
+            self.iface
+                .write_register(Register::CONTROL, control | BitFlags::TEMP_CONV)?;
         }
         Ok(())
     }
@@ -46,7 +47,8 @@ where
 
     /// Set the aging offset.
     pub fn set_aging_offset(&mut self, offset: i8) -> Result<(), Error<CommE, PinE>> {
-        self.iface.write_register(Register::AGING_OFFSET, offset as u8)
+        self.iface
+            .write_register(Register::AGING_OFFSET, offset as u8)
     }
 
     /// Read the aging offset.
@@ -83,10 +85,10 @@ where
     pub fn set_square_wave_frequency(&mut self, freq: SqWFreq) -> Result<(), Error<CommE, PinE>> {
         let new_control;
         match freq {
-            SqWFreq::_1Hz     => new_control = self.control & !BitFlags::RS2 & !BitFlags::RS1,
-            SqWFreq::_1_024Hz => new_control = self.control & !BitFlags::RS2 |  BitFlags::RS1,
-            SqWFreq::_4_096Hz => new_control = self.control |  BitFlags::RS2 & !BitFlags::RS1,
-            SqWFreq::_8_192Hz => new_control = self.control |  BitFlags::RS2 |  BitFlags::RS1,
+            SqWFreq::_1Hz => new_control = self.control & !BitFlags::RS2 & !BitFlags::RS1,
+            SqWFreq::_1_024Hz => new_control = self.control & !BitFlags::RS2 | BitFlags::RS1,
+            SqWFreq::_4_096Hz => new_control = self.control | BitFlags::RS2 & !BitFlags::RS1,
+            SqWFreq::_8_192Hz => new_control = self.control | BitFlags::RS2 | BitFlags::RS1,
         }
         self.write_control(new_control)
     }
@@ -121,7 +123,10 @@ where
         Ok(())
     }
 
-    pub(crate) fn write_status_without_clearing_alarm(&mut self, status: u8) -> Result<(), Error<CommE, PinE>> {
+    pub(crate) fn write_status_without_clearing_alarm(
+        &mut self,
+        status: u8,
+    ) -> Result<(), Error<CommE, PinE>> {
         // avoid clearing alarm flags
         let new_status = status | BitFlags::ALARM2F | BitFlags::ALARM1F;
         self.iface.write_register(Register::STATUS, new_status)?;

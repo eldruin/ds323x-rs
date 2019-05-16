@@ -1,11 +1,12 @@
+mod alarms;
 mod configuration;
 mod status;
-mod alarms;
-pub use self::alarms::{ DayAlarm1, WeekdayAlarm1, Alarm1Matching,
-                        DayAlarm2, WeekdayAlarm2, Alarm2Matching };
+pub use self::alarms::{
+    Alarm1Matching, Alarm2Matching, DayAlarm1, DayAlarm2, WeekdayAlarm1, WeekdayAlarm2,
+};
 mod datetime;
-pub use self::datetime::{ Hours, DateTime };
-use super::{ BitFlags, Error };
+pub use self::datetime::{DateTime, Hours};
+use super::{BitFlags, Error};
 
 // Transforms a decimal number to packed BCD format
 fn decimal_to_packed_bcd(dec: u8) -> u8 {
@@ -22,12 +23,11 @@ fn hours_to_register<CommE, PinE>(hours: Hours) -> Result<u8, Error<CommE, PinE>
         Hours::H24(h) if h > 23 => Err(Error::InvalidInputData),
         Hours::H24(h) => Ok(decimal_to_packed_bcd(h)),
         Hours::AM(h) if h < 1 || h > 12 => Err(Error::InvalidInputData),
-        Hours::AM(h) =>  Ok(BitFlags::H24_H12 | decimal_to_packed_bcd(h)),
+        Hours::AM(h) => Ok(BitFlags::H24_H12 | decimal_to_packed_bcd(h)),
         Hours::PM(h) if h < 1 || h > 12 => Err(Error::InvalidInputData),
-        Hours::PM(h) =>  Ok(BitFlags::H24_H12 | BitFlags::AM_PM | decimal_to_packed_bcd(h)),
+        Hours::PM(h) => Ok(BitFlags::H24_H12 | BitFlags::AM_PM | decimal_to_packed_bcd(h)),
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -35,9 +35,9 @@ mod tests {
 
     #[test]
     fn can_convert_packed_bcd_to_decimal() {
-        assert_eq!(0,  packed_bcd_to_decimal(0b0000_0000));
-        assert_eq!(1,  packed_bcd_to_decimal(0b0000_0001));
-        assert_eq!(9,  packed_bcd_to_decimal(0b0000_1001));
+        assert_eq!(0, packed_bcd_to_decimal(0b0000_0000));
+        assert_eq!(1, packed_bcd_to_decimal(0b0000_0001));
+        assert_eq!(9, packed_bcd_to_decimal(0b0000_1001));
         assert_eq!(10, packed_bcd_to_decimal(0b0001_0000));
         assert_eq!(11, packed_bcd_to_decimal(0b0001_0001));
         assert_eq!(19, packed_bcd_to_decimal(0b0001_1001));
@@ -48,9 +48,9 @@ mod tests {
 
     #[test]
     fn can_convert_decimal_to_packed_bcd() {
-        assert_eq!(0b0000_0000, decimal_to_packed_bcd( 0));
-        assert_eq!(0b0000_0001, decimal_to_packed_bcd( 1));
-        assert_eq!(0b0000_1001, decimal_to_packed_bcd( 9));
+        assert_eq!(0b0000_0000, decimal_to_packed_bcd(0));
+        assert_eq!(0b0000_0001, decimal_to_packed_bcd(1));
+        assert_eq!(0b0000_1001, decimal_to_packed_bcd(9));
         assert_eq!(0b0001_0000, decimal_to_packed_bcd(10));
         assert_eq!(0b0001_0001, decimal_to_packed_bcd(11));
         assert_eq!(0b0001_1001, decimal_to_packed_bcd(19));
