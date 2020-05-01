@@ -73,19 +73,19 @@ impl embedded_hal::digital::v2::OutputPin for DummyOutputPin {
 pub fn new_ds3231(
     transactions: &[I2cTrans],
 ) -> Ds323x<interface::I2cInterface<I2cMock>, ic::DS3231> {
-    Ds323x::new_ds3231(I2cMock::new(&transactions))
+    Ds323x::new_ds3231(I2cMock::new(transactions))
 }
 
 pub fn new_ds3232(
     transactions: &[I2cTrans],
 ) -> Ds323x<interface::I2cInterface<I2cMock>, ic::DS3232> {
-    Ds323x::new_ds3232(I2cMock::new(&transactions))
+    Ds323x::new_ds3232(I2cMock::new(transactions))
 }
 
 pub fn new_ds3234(
     transactions: &[SpiTrans],
 ) -> Ds323x<interface::SpiInterface<SpiMock, DummyOutputPin>, ic::DS3234> {
-    Ds323x::new_ds3234(SpiMock::new(&transactions), DummyOutputPin)
+    Ds323x::new_ds3234(SpiMock::new(transactions), DummyOutputPin)
 }
 
 pub fn destroy_ds3231(dev: Ds323x<interface::I2cInterface<I2cMock>, ic::DS3231>) {
