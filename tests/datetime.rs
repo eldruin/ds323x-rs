@@ -7,15 +7,7 @@ use common::{
     DEVICE_ADDRESS as DEV_ADDR,
 };
 extern crate ds323x;
-use ds323x::{DateTime, Error, Hours};
-
-macro_rules! set_param_write_array_test {
-    ($name:ident, $method:ident, $value:expr, $register:ident, [ $( $exp_bin:expr ),+ ] ) => {
-        _set_param_test!($name, $method, $value,
-            [ I2cTrans::write(DEV_ADDR, vec![Register::$register, $( $exp_bin ),*]) ],
-            [ SpiTrans::write(vec![Register::$register + 0x80, $( $exp_bin ),*]) ]);
-    };
-}
+use ds323x::{Error, Hours, NaiveDate, NaiveTime, Rtcc};
 
 macro_rules! read_set_param_write_two_test {
     ($name:ident, $method:ident, $value:expr, $register:ident, $binary_value1_read:expr, $bin1:expr, $bin2:expr) => {
@@ -105,6 +97,20 @@ macro_rules! set_invalid_param_range_test {
         }
     };
 }
+
+macro_rules! for_all {
+    ($name:ident) => {
+        mod $name {
+            use super::*;
+            $name!(for_ds3231, new_ds3231, destroy_ds3231);
+            $name!(for_ds3232, new_ds3232, destroy_ds3232);
+            $name!(for_ds3234, new_ds3234, destroy_ds3234);
+        }
+    };
+}
+
+// TODO set/get date
+// TODO set/get time
 
 mod seconds {
     use super::*;
@@ -210,77 +216,156 @@ mod year {
 }
 
 macro_rules! invalid_dt_test {
-    ($name:ident, $year:expr, $month:expr, $day:expr, $weekday:expr,
-     $hour:expr, $minute:expr, $second:expr) => {
+    ($name:ident, $create_method:ident, $destroy_method:ident) => {
         mod $name {
             use super::*;
-            const DT: DateTime = DateTime {
-                year: $year,
-                month: $month,
-                day: $day,
-                weekday: $weekday,
-                hour: $hour,
-                minute: $minute,
-                second: $second,
-            };
-            set_invalid_param_test!($name, set_datetime, &DT);
+            #[test]
+            fn too_small() {
+                let dt = NaiveDate::from_ymd(1999, 1, 2).and_hms(3, 4, 5);
+                let mut dev = $create_method(&[]);
+                assert_invalid_input_data!(dev.set_datetime(&dt));
+                $destroy_method(dev);
+            }
+            #[test]
+            fn too_big() {
+                let dt = NaiveDate::from_ymd(2101, 1, 2).and_hms(3, 4, 5);
+                let mut dev = $create_method(&[]);
+                assert_invalid_input_data!(dev.set_datetime(&dt));
+                $destroy_method(dev);
+            }
+        }
+    };
+}
+
+macro_rules! transactions_i2c_write {
+    ($register:ident, [ $( $exp_bin:expr ),+ ]) => {
+        [ I2cTrans::write(DEV_ADDR, vec![Register::$register, $( $exp_bin ),*]) ]
+    };
+}
+
+macro_rules! transactions_spi_write {
+    ($register:ident, [ $( $exp_bin:expr ),+ ]) => {
+            [ SpiTrans::write(vec![Register::$register + 0x80, $( $exp_bin ),*]) ]
+    };
+}
+
+macro_rules! dt_test {
+    ($name:ident, $create_method:ident, $destroy_method:ident,
+    $mac_trans_read:ident, $mac_trans_write:ident) => {
+        mod $name {
+            use super::*;
+            #[test]
+            fn get_datetime() {
+                let dt = NaiveDate::from_ymd(2018, 8, 13).and_hms(23, 59, 58);
+                let mut dev = $create_method(&$mac_trans_read!(
+                    SECONDS,
+                    [
+                        0b0101_1000,
+                        0b0101_1001,
+                        0b0010_0011,
+                        0b0000_0010,
+                        0b0001_0011,
+                        0b0000_1000,
+                        0b0001_1000
+                    ],
+                    [0, 0, 0, 0, 0, 0, 0]
+                ));
+                assert_eq!(dt, dev.get_datetime().unwrap());
+                $destroy_method(dev);
+            }
+
+            #[test]
+            fn set_datetime() {
+                let dt = NaiveDate::from_ymd(2018, 8, 13).and_hms(23, 59, 58);
+                let mut dev = $create_method(&$mac_trans_write!(
+                    SECONDS,
+                    [
+                        0b0101_1000,
+                        0b0101_1001,
+                        0b0010_0011,
+                        0b0000_0010,
+                        0b0001_0011,
+                        0b0000_1000,
+                        0b0001_1000
+                    ]
+                ));
+                dev.set_datetime(&dt).unwrap();
+                $destroy_method(dev);
+            }
+
+            #[test]
+            fn get_date() {
+                let d = NaiveDate::from_ymd(2018, 8, 13);
+                let mut dev = $create_method(&$mac_trans_read!(
+                    DOM,
+                    [0b0001_0011, 0b0000_1000, 0b0001_1000],
+                    [0, 0, 0]
+                ));
+                assert_eq!(d, dev.get_date().unwrap());
+                $destroy_method(dev);
+            }
+
+            #[test]
+            fn set_date() {
+                let d = NaiveDate::from_ymd(2018, 8, 13);
+                let mut dev = $create_method(&$mac_trans_write!(
+                    DOW,
+                    [0b0000_0010, 0b0001_0011, 0b0000_1000, 0b0001_1000]
+                ));
+                dev.set_date(&d).unwrap();
+                $destroy_method(dev);
+            }
+
+            #[test]
+            fn get_time() {
+                let t = NaiveTime::from_hms(23, 59, 58);
+                let mut dev = $create_method(&$mac_trans_read!(
+                    SECONDS,
+                    [0b0101_1000, 0b0101_1001, 0b0010_0011],
+                    [0, 0, 0]
+                ));
+                assert_eq!(t, dev.get_time().unwrap());
+                $destroy_method(dev);
+            }
+
+            #[test]
+            fn set_time() {
+                let t = NaiveTime::from_hms(23, 59, 58);
+                let mut dev = $create_method(&$mac_trans_write!(
+                    SECONDS,
+                    [0b0101_1000, 0b0101_1001, 0b0010_0011]
+                ));
+                dev.set_time(&t).unwrap();
+                $destroy_method(dev);
+            }
         }
     };
 }
 
 mod datetime {
     use super::*;
-    const DT: DateTime = DateTime {
-        year: 2018,
-        month: 8,
-        day: 13,
-        weekday: 2,
-        hour: Hours::H24(23),
-        minute: 59,
-        second: 58,
-    };
-    get_param_read_array_test!(
-        get,
-        get_datetime,
-        DT,
-        SECONDS,
-        [
-            0b0101_1000,
-            0b0101_1001,
-            0b0010_0011,
-            0b0000_0010,
-            0b0001_0011,
-            0b0000_1000,
-            0b0001_1000
-        ],
-        [0, 0, 0, 0, 0, 0, 0]
+
+    dt_test!(
+        for_ds3231,
+        new_ds3231,
+        destroy_ds3231,
+        transactions_i2c_read,
+        transactions_i2c_write
+    );
+    dt_test!(
+        for_ds3232,
+        new_ds3232,
+        destroy_ds3232,
+        transactions_i2c_read,
+        transactions_i2c_write
+    );
+    dt_test!(
+        for_ds3234,
+        new_ds3234,
+        destroy_ds3234,
+        transactions_spi_read,
+        transactions_spi_write
     );
 
-    set_param_write_array_test!(
-        set,
-        set_datetime,
-        &DT,
-        SECONDS,
-        [
-            0b0101_1000,
-            0b0101_1001,
-            0b0010_0011,
-            0b0000_0010,
-            0b0001_0011,
-            0b0000_1000,
-            0b0001_1000
-        ]
-    );
-
-    invalid_dt_test!(too_small_year, 1999, 8, 13, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_big_year, 2101, 8, 13, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_small_month, 2018, 0, 13, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_big_month, 2018, 13, 13, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_small_day, 2018, 8, 0, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_big_day, 2018, 8, 32, 2, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_small_wd, 2018, 8, 13, 0, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_big_wd, 2018, 8, 13, 8, Hours::H24(23), 59, 58);
-    invalid_dt_test!(too_big_hours, 2018, 8, 13, 2, Hours::H24(24), 59, 58);
-    invalid_dt_test!(too_big_min, 2018, 8, 13, 2, Hours::H24(24), 60, 58);
-    invalid_dt_test!(too_big_seconds, 2018, 8, 13, 2, Hours::H24(24), 59, 60);
+    for_all!(invalid_dt_test);
 }

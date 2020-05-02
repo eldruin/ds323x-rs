@@ -28,57 +28,401 @@ macro_rules! set_invalid_alarm_test {
     ($name:ident, $method:ident, $alarm:expr, $matching:expr) => {
         mod $name {
             use super::*;
-            _set_invalid_alarm_test!(cannot_set_invalid_ds3231, $method, new_ds3231, destroy_ds3231, $alarm, $matching);
-            _set_invalid_alarm_test!(cannot_set_invalid_ds3232, $method, new_ds3232, destroy_ds3232, $alarm, $matching);
-            _set_invalid_alarm_test!(cannot_set_invalid_ds3234, $method, new_ds3234, destroy_ds3234, $alarm, $matching);
+            _set_invalid_alarm_test!(
+                cannot_set_invalid_ds3231,
+                $method,
+                new_ds3231,
+                destroy_ds3231,
+                $alarm,
+                $matching
+            );
+            _set_invalid_alarm_test!(
+                cannot_set_invalid_ds3232,
+                $method,
+                new_ds3232,
+                destroy_ds3232,
+                $alarm,
+                $matching
+            );
+            _set_invalid_alarm_test!(
+                cannot_set_invalid_ds3234,
+                $method,
+                new_ds3234,
+                destroy_ds3234,
+                $alarm,
+                $matching
+            );
         }
     };
 }
 
 mod alarm1 {
     use super::*;
-    set_invalid_alarm_test!(day_invalid_s,   set_alarm1_day, DayAlarm1{ day: 1,  hour: Hours::H24(1),  minute: 1,  second: 60 }, A1M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_min, set_alarm1_day, DayAlarm1{ day: 1,  hour: Hours::H24(1),  minute: 60, second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_h,   set_alarm1_day, DayAlarm1{ day: 1,  hour: Hours::H24(24), minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_am1, set_alarm1_day, DayAlarm1{ day: 1,  hour: Hours::AM(0),   minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_am2, set_alarm1_day, DayAlarm1{ day: 1,  hour: Hours::AM(13),  minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_pm1, set_alarm1_day, DayAlarm1{ day: 1,  hour: Hours::PM(0),   minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_pm2, set_alarm1_day, DayAlarm1{ day: 1,  hour: Hours::PM(13),  minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_d1,  set_alarm1_day, DayAlarm1{ day: 0,  hour: Hours::H24(1),  minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_d2,  set_alarm1_day, DayAlarm1{ day: 32, hour: Hours::H24(1),  minute: 1,  second: 1 },  A1M::AllMatch);
+    set_invalid_alarm_test!(
+        day_invalid_s,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::H24(1),
+            minute: 1,
+            second: 60
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_min,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::H24(1),
+            minute: 60,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_h,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::H24(24),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_am1,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::AM(0),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_am2,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::AM(13),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_pm1,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::PM(0),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_pm2,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::PM(13),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_d1,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 0,
+            hour: Hours::H24(1),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_d2,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 32,
+            hour: Hours::H24(1),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
 
-    set_invalid_alarm_test!(wd_invalid_s,   set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::H24(1),  minute: 1,  second: 60 }, A1M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_min, set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::H24(1),  minute: 60, second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_h,   set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::H24(24), minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_am1, set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::AM(0),   minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_am2, set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::AM(13),  minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_pm1, set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::PM(0),   minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_pm2, set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::PM(13),  minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_d1,  set_alarm1_weekday, WeekdayAlarm1{ weekday: 0,  hour: Hours::H24(1),  minute: 1,  second: 1 },  A1M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_d2,  set_alarm1_weekday, WeekdayAlarm1{ weekday: 32, hour: Hours::H24(1),  minute: 1,  second: 1 },  A1M::AllMatch);
+    set_invalid_alarm_test!(
+        wd_invalid_s,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::H24(1),
+            minute: 1,
+            second: 60
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_min,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::H24(1),
+            minute: 60,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_h,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::H24(24),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_am1,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::AM(0),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_am2,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::AM(13),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_pm1,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::PM(0),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_pm2,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::PM(13),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_d1,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 0,
+            hour: Hours::H24(1),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_d2,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 32,
+            hour: Hours::H24(1),
+            minute: 1,
+            second: 1
+        },
+        A1M::AllMatch
+    );
 }
 
 mod alarm2 {
     use super::*;
-    set_invalid_alarm_test!(day_invalid_min, set_alarm2_day, DayAlarm2{ day: 1,  hour: Hours::H24(1),  minute: 60 }, A2M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_h,   set_alarm2_day, DayAlarm2{ day: 1,  hour: Hours::H24(24), minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_am1, set_alarm2_day, DayAlarm2{ day: 1,  hour: Hours::AM(0),   minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_am2, set_alarm2_day, DayAlarm2{ day: 1,  hour: Hours::AM(13),  minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_pm1, set_alarm2_day, DayAlarm2{ day: 1,  hour: Hours::PM(0),   minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_pm2, set_alarm2_day, DayAlarm2{ day: 1,  hour: Hours::PM(13),  minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_d1,  set_alarm2_day, DayAlarm2{ day: 0,  hour: Hours::H24(1),  minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(day_invalid_d2,  set_alarm2_day, DayAlarm2{ day: 32, hour: Hours::H24(1),  minute: 1  }, A2M::AllMatch);
+    set_invalid_alarm_test!(
+        day_invalid_min,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::H24(1),
+            minute: 60
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_h,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::H24(24),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_am1,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::AM(0),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_am2,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::AM(13),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_pm1,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::PM(0),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_pm2,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::PM(13),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_d1,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 0,
+            hour: Hours::H24(1),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        day_invalid_d2,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 32,
+            hour: Hours::H24(1),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
 
-    set_invalid_alarm_test!(wd_invalid_min, set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::H24(1),  minute: 60 }, A2M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_h,   set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::H24(24), minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_am1, set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::AM(0),   minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_am2, set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::AM(13),  minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_pm1, set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::PM(0),   minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_pm2, set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::PM(13),  minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_d1,  set_alarm2_weekday, WeekdayAlarm2{ weekday: 0,  hour: Hours::H24(1),  minute: 1  }, A2M::AllMatch);
-    set_invalid_alarm_test!(wd_invalid_d2,  set_alarm2_weekday, WeekdayAlarm2{ weekday: 32, hour: Hours::H24(1),  minute: 1  }, A2M::AllMatch);
+    set_invalid_alarm_test!(
+        wd_invalid_min,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::H24(1),
+            minute: 60
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_h,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::H24(24),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_am1,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::AM(0),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_am2,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::AM(13),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_pm1,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::PM(0),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_pm2,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::PM(13),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_d1,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 0,
+            hour: Hours::H24(1),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
+    set_invalid_alarm_test!(
+        wd_invalid_d2,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 32,
+            hour: Hours::H24(1),
+            minute: 1
+        },
+        A2M::AllMatch
+    );
 }
-
 
 macro_rules! _set_values_test {
     ($name:ident, $method:ident, $create_method:ident, $destroy_method:ident, $value1:expr, $value2:expr, $transactions:expr) => {
@@ -96,9 +440,33 @@ macro_rules! set_values_test {
     ($name:ident, $method:ident, $value1:expr, $value2:expr, $i2c_transactions:expr, $spi_transactions:expr) => {
         mod $name {
             use super::*;
-            _set_values_test!(can_set_ds3231, $method, new_ds3231, destroy_ds3231, $value1, $value2, $i2c_transactions);
-            _set_values_test!(can_set_ds3232, $method, new_ds3232, destroy_ds3232, $value1, $value2, $i2c_transactions);
-            _set_values_test!(can_set_ds3234, $method, new_ds3234, destroy_ds3234, $value1, $value2, $spi_transactions);
+            _set_values_test!(
+                can_set_ds3231,
+                $method,
+                new_ds3231,
+                destroy_ds3231,
+                $value1,
+                $value2,
+                $i2c_transactions
+            );
+            _set_values_test!(
+                can_set_ds3232,
+                $method,
+                new_ds3232,
+                destroy_ds3232,
+                $value1,
+                $value2,
+                $i2c_transactions
+            );
+            _set_values_test!(
+                can_set_ds3234,
+                $method,
+                new_ds3234,
+                destroy_ds3234,
+                $value1,
+                $value2,
+                $spi_transactions
+            );
         }
     };
 }
@@ -111,76 +479,350 @@ macro_rules! set_alarm_test {
     };
 }
 
-const AM : u8 = BF::ALARM_MATCH;
+const AM: u8 = BF::ALARM_MATCH;
 
 mod alarm1_day {
     use super::*;
-    set_alarm_test!(h24, set_alarm1_day, DayAlarm1{ day: 1, hour: Hours::H24(2), minute: 3, second: 4 }, A1M::AllMatch,
-                    ALARM1_SECONDS, [4, 3, 2, 1]);
-    set_alarm_test!(am,  set_alarm1_day, DayAlarm1{ day: 1, hour: Hours::AM(2),  minute: 3, second: 4 }, A1M::AllMatch,
-                    ALARM1_SECONDS, [4, 3, 0b0100_0010, 1]);
-    set_alarm_test!(pm,  set_alarm1_day, DayAlarm1{ day: 1, hour: Hours::PM(2),  minute: 3, second: 4 }, A1M::AllMatch,
-                    ALARM1_SECONDS, [4, 3, 0b0110_0010, 1]);
+    set_alarm_test!(
+        h24,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::H24(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::AllMatch,
+        ALARM1_SECONDS,
+        [4, 3, 2, 1]
+    );
+    set_alarm_test!(
+        am,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::AM(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::AllMatch,
+        ALARM1_SECONDS,
+        [4, 3, 0b0100_0010, 1]
+    );
+    set_alarm_test!(
+        pm,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::PM(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::AllMatch,
+        ALARM1_SECONDS,
+        [4, 3, 0b0110_0010, 1]
+    );
 
-    set_alarm_test!(match_hms, set_alarm1_day, DayAlarm1{ day: 1,  hour: Hours::H24(2), minute: 3, second: 4 }, A1M::HoursMinutesAndSecondsMatch,
-                    ALARM1_SECONDS, [     4,      3,      2, AM | 1]);
-    set_alarm_test!(match_ms,  set_alarm1_day, DayAlarm1{ day: 1,  hour: Hours::H24(2), minute: 3, second: 4 }, A1M::MinutesAndSecondsMatch,
-                    ALARM1_SECONDS, [     4,      3, AM | 2, AM | 1]);
-    set_alarm_test!(match_s,   set_alarm1_day, DayAlarm1{ day: 1,  hour: Hours::H24(2), minute: 3, second: 4 }, A1M::SecondsMatch,
-                    ALARM1_SECONDS, [     4, AM | 3, AM | 2, AM | 1]);
-    set_alarm_test!(match_ops, set_alarm1_day, DayAlarm1{ day: 1,  hour: Hours::H24(2), minute: 3, second: 4 }, A1M::OncePerSecond,
-                    ALARM1_SECONDS, [AM | 4, AM | 3, AM | 2, AM | 1]);
+    set_alarm_test!(
+        match_hms,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::H24(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::HoursMinutesAndSecondsMatch,
+        ALARM1_SECONDS,
+        [4, 3, 2, AM | 1]
+    );
+    set_alarm_test!(
+        match_ms,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::H24(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::MinutesAndSecondsMatch,
+        ALARM1_SECONDS,
+        [4, 3, AM | 2, AM | 1]
+    );
+    set_alarm_test!(
+        match_s,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::H24(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::SecondsMatch,
+        ALARM1_SECONDS,
+        [4, AM | 3, AM | 2, AM | 1]
+    );
+    set_alarm_test!(
+        match_ops,
+        set_alarm1_day,
+        DayAlarm1 {
+            day: 1,
+            hour: Hours::H24(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::OncePerSecond,
+        ALARM1_SECONDS,
+        [AM | 4, AM | 3, AM | 2, AM | 1]
+    );
 }
 
 mod alarm1_weekday {
     use super::*;
-    set_alarm_test!(h24, set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::H24(2), minute: 3, second: 4 }, A1M::AllMatch,
-                    ALARM1_SECONDS, [4, 3, 2,           BF::WEEKDAY | 1]);
-    set_alarm_test!(am,  set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::AM(2),  minute: 3, second: 4 }, A1M::AllMatch,
-                    ALARM1_SECONDS, [4, 3, 0b0100_0010, BF::WEEKDAY | 1]);
-    set_alarm_test!(pm,  set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::PM(2),  minute: 3, second: 4 }, A1M::AllMatch,
-                    ALARM1_SECONDS, [4, 3, 0b0110_0010, BF::WEEKDAY | 1]);
+    set_alarm_test!(
+        h24,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::H24(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::AllMatch,
+        ALARM1_SECONDS,
+        [4, 3, 2, BF::WEEKDAY | 1]
+    );
+    set_alarm_test!(
+        am,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::AM(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::AllMatch,
+        ALARM1_SECONDS,
+        [4, 3, 0b0100_0010, BF::WEEKDAY | 1]
+    );
+    set_alarm_test!(
+        pm,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::PM(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::AllMatch,
+        ALARM1_SECONDS,
+        [4, 3, 0b0110_0010, BF::WEEKDAY | 1]
+    );
 
-    set_alarm_test!(match_hms, set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::H24(2), minute: 3, second: 4 }, A1M::HoursMinutesAndSecondsMatch,
-                    ALARM1_SECONDS, [     4,      3,      2, AM | BF::WEEKDAY | 1]);
-    set_alarm_test!(match_ms,  set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::H24(2), minute: 3, second: 4 }, A1M::MinutesAndSecondsMatch,
-                    ALARM1_SECONDS, [     4,      3, AM | 2, AM | BF::WEEKDAY | 1]);
-    set_alarm_test!(match_s,   set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::H24(2), minute: 3, second: 4 }, A1M::SecondsMatch,
-                    ALARM1_SECONDS, [     4, AM | 3, AM | 2, AM | BF::WEEKDAY | 1]);
-    set_alarm_test!(match_ops, set_alarm1_weekday, WeekdayAlarm1{ weekday: 1,  hour: Hours::H24(2), minute: 3, second: 4 }, A1M::OncePerSecond,
-                    ALARM1_SECONDS, [AM | 4, AM | 3, AM | 2, AM | BF::WEEKDAY | 1]);
+    set_alarm_test!(
+        match_hms,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::H24(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::HoursMinutesAndSecondsMatch,
+        ALARM1_SECONDS,
+        [4, 3, 2, AM | BF::WEEKDAY | 1]
+    );
+    set_alarm_test!(
+        match_ms,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::H24(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::MinutesAndSecondsMatch,
+        ALARM1_SECONDS,
+        [4, 3, AM | 2, AM | BF::WEEKDAY | 1]
+    );
+    set_alarm_test!(
+        match_s,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::H24(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::SecondsMatch,
+        ALARM1_SECONDS,
+        [4, AM | 3, AM | 2, AM | BF::WEEKDAY | 1]
+    );
+    set_alarm_test!(
+        match_ops,
+        set_alarm1_weekday,
+        WeekdayAlarm1 {
+            weekday: 1,
+            hour: Hours::H24(2),
+            minute: 3,
+            second: 4
+        },
+        A1M::OncePerSecond,
+        ALARM1_SECONDS,
+        [AM | 4, AM | 3, AM | 2, AM | BF::WEEKDAY | 1]
+    );
 }
 
 mod alarm2_day {
     use super::*;
-    set_alarm_test!(h24, set_alarm2_day, DayAlarm2{ day: 1, hour: Hours::H24(2), minute: 3 }, A2M::AllMatch,
-                    ALARM2_MINUTES, [3, 2, 1]);
-    set_alarm_test!(am,  set_alarm2_day, DayAlarm2{ day: 1, hour: Hours::AM(2),  minute: 3 }, A2M::AllMatch,
-                    ALARM2_MINUTES, [3, 0b0100_0010, 1]);
-    set_alarm_test!(pm,  set_alarm2_day, DayAlarm2{ day: 1, hour: Hours::PM(2),  minute: 3 }, A2M::AllMatch,
-                    ALARM2_MINUTES, [3, 0b0110_0010, 1]);
+    set_alarm_test!(
+        h24,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::H24(2),
+            minute: 3
+        },
+        A2M::AllMatch,
+        ALARM2_MINUTES,
+        [3, 2, 1]
+    );
+    set_alarm_test!(
+        am,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::AM(2),
+            minute: 3
+        },
+        A2M::AllMatch,
+        ALARM2_MINUTES,
+        [3, 0b0100_0010, 1]
+    );
+    set_alarm_test!(
+        pm,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::PM(2),
+            minute: 3
+        },
+        A2M::AllMatch,
+        ALARM2_MINUTES,
+        [3, 0b0110_0010, 1]
+    );
 
-    set_alarm_test!(match_hm,  set_alarm2_day, DayAlarm2{ day: 1,  hour: Hours::H24(2), minute: 3 }, A2M::HoursAndMinutesMatch,
-                    ALARM2_MINUTES, [     3,      2, AM | 1]);
-    set_alarm_test!(match_m,   set_alarm2_day, DayAlarm2{ day: 1,  hour: Hours::H24(2), minute: 3 }, A2M::MinutesMatch,
-                    ALARM2_MINUTES, [     3, AM | 2, AM | 1]);
-    set_alarm_test!(match_opm, set_alarm2_day, DayAlarm2{ day: 1,  hour: Hours::H24(2), minute: 3 }, A2M::OncePerMinute,
-                    ALARM2_MINUTES, [AM | 3, AM | 2, AM | 1]);
+    set_alarm_test!(
+        match_hm,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::H24(2),
+            minute: 3
+        },
+        A2M::HoursAndMinutesMatch,
+        ALARM2_MINUTES,
+        [3, 2, AM | 1]
+    );
+    set_alarm_test!(
+        match_m,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::H24(2),
+            minute: 3
+        },
+        A2M::MinutesMatch,
+        ALARM2_MINUTES,
+        [3, AM | 2, AM | 1]
+    );
+    set_alarm_test!(
+        match_opm,
+        set_alarm2_day,
+        DayAlarm2 {
+            day: 1,
+            hour: Hours::H24(2),
+            minute: 3
+        },
+        A2M::OncePerMinute,
+        ALARM2_MINUTES,
+        [AM | 3, AM | 2, AM | 1]
+    );
 }
 
 mod alarm2_weekday {
     use super::*;
-    set_alarm_test!(h24, set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::H24(2), minute: 3 }, A2M::AllMatch,
-                    ALARM2_MINUTES, [3, 2,           BF::WEEKDAY | 1]);
-    set_alarm_test!(am,  set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::AM(2),  minute: 3 }, A2M::AllMatch,
-                    ALARM2_MINUTES, [3, 0b0100_0010, BF::WEEKDAY | 1]);
-    set_alarm_test!(pm,  set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::PM(2),  minute: 3 }, A2M::AllMatch,
-                    ALARM2_MINUTES, [3, 0b0110_0010, BF::WEEKDAY | 1]);
+    set_alarm_test!(
+        h24,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::H24(2),
+            minute: 3
+        },
+        A2M::AllMatch,
+        ALARM2_MINUTES,
+        [3, 2, BF::WEEKDAY | 1]
+    );
+    set_alarm_test!(
+        am,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::AM(2),
+            minute: 3
+        },
+        A2M::AllMatch,
+        ALARM2_MINUTES,
+        [3, 0b0100_0010, BF::WEEKDAY | 1]
+    );
+    set_alarm_test!(
+        pm,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::PM(2),
+            minute: 3
+        },
+        A2M::AllMatch,
+        ALARM2_MINUTES,
+        [3, 0b0110_0010, BF::WEEKDAY | 1]
+    );
 
-    set_alarm_test!(match_hm,  set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::H24(2), minute: 3 }, A2M::HoursAndMinutesMatch,
-                    ALARM2_MINUTES, [     3,      2, AM | BF::WEEKDAY | 1]);
-    set_alarm_test!(match_m,   set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::H24(2), minute: 3 }, A2M::MinutesMatch,
-                    ALARM2_MINUTES, [     3, AM | 2, AM | BF::WEEKDAY | 1]);
-    set_alarm_test!(match_opm, set_alarm2_weekday, WeekdayAlarm2{ weekday: 1,  hour: Hours::H24(2), minute: 3 }, A2M::OncePerMinute,
-                    ALARM2_MINUTES, [AM | 3, AM | 2, AM | BF::WEEKDAY | 1]);
+    set_alarm_test!(
+        match_hm,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::H24(2),
+            minute: 3
+        },
+        A2M::HoursAndMinutesMatch,
+        ALARM2_MINUTES,
+        [3, 2, AM | BF::WEEKDAY | 1]
+    );
+    set_alarm_test!(
+        match_m,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::H24(2),
+            minute: 3
+        },
+        A2M::MinutesMatch,
+        ALARM2_MINUTES,
+        [3, AM | 2, AM | BF::WEEKDAY | 1]
+    );
+    set_alarm_test!(
+        match_opm,
+        set_alarm2_weekday,
+        WeekdayAlarm2 {
+            weekday: 1,
+            hour: Hours::H24(2),
+            minute: 3
+        },
+        A2M::OncePerMinute,
+        ALARM2_MINUTES,
+        [AM | 3, AM | 2, AM | BF::WEEKDAY | 1]
+    );
 }

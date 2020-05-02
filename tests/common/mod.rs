@@ -215,11 +215,25 @@ macro_rules! get_param_test {
 }
 
 #[macro_export]
+macro_rules! transactions_i2c_read {
+    ($register1:ident, [ $( $read_bin:expr ),+ ], [ $( $read_bin2:expr ),* ]) => {
+        [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register1], vec![$( $read_bin ),*]) ]
+    }
+}
+
+#[macro_export]
+macro_rules! transactions_spi_read {
+    ($register1:ident, [ $( $read_bin:expr ),+ ], [ $( $read_bin2:expr ),+ ]) => {
+        [ SpiTrans::transfer(vec![Register::$register1, $( $read_bin2 ),*], vec![Register::$register1, $( $read_bin ),*]) ]
+    }
+}
+
+#[macro_export]
 macro_rules! get_param_read_array_test {
     ($name:ident, $method:ident, $value:expr, $register1:ident, [ $( $read_bin:expr ),+ ], [ $( $read_bin2:expr ),+ ]) => {
         _get_param_test!($name, $method, $value,
-            [ I2cTrans::write_read(DEV_ADDR, vec![Register::$register1], vec![$( $read_bin ),*]) ],
-            [ SpiTrans::transfer(vec![Register::$register1, $( $read_bin2 ),*], vec![Register::$register1, $( $read_bin ),*]) ]);
+            transactions_i2c_read!($register1, [ $( $read_bin ),* ], [ ]),
+            transactions_spi_read!($register1, [ $( $read_bin ),* ], [ $( $read_bin2 ),* ]) );
     };
 }
 

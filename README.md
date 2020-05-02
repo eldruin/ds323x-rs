@@ -137,26 +137,20 @@ Please find additional examples using hardware in this repository: [driver-examp
 [driver-examples]: https://github.com/eldruin/driver-examples
 
 ```rust
-extern crate linux_embedded_hal as hal;
 extern crate ds323x;
-use ds323x::{ Ds323x, DateTime, Hours };
+extern crate linux_embedded_hal as hal;
+use ds323x::{Ds323x, NaiveDate, Rtcc};
 
 fn main() {
     let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
     let mut rtc = Ds323x::new_ds3231(dev);
-    let datetime = DateTime {
-                              year: 2018,
-                              month: 8,
-                              day: 20,
-                              weekday: 4,
-                              hour: Hours::H24(19),
-                              minute: 59,
-                              second: 58
-                  };
+    let datetime = NaiveDate::from_ymd(2020, 5, 1).and_hms(19, 59, 58);
     rtc.set_datetime(&datetime).unwrap();
     // do something else...
-    let seconds = rtc.get_seconds().unwrap();
-    println!("Seconds: {}", seconds);
+    let time = rtc.get_time().unwrap();
+    println!("Time: {}", time);
+
+    let _dev = rtc.destroy_ds3231();
 }
 ```
 

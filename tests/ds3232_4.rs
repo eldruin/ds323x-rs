@@ -80,17 +80,42 @@ macro_rules! set_param_test_2_4 {
 
 const DEFAULT_WRITE_STATUS: u8 = DS323X_POR_STATUS | BF::ALARM2F | BF::ALARM1F;
 
-call_method_status_test!(can_en_32khz_bat, enable_32khz_output_on_battery,
-    DEFAULT_WRITE_STATUS |  BF::BB32KHZ );
-call_method_status_test!(can_dis_32khz_bat, disable_32khz_output_on_battery,
-    DEFAULT_WRITE_STATUS & !BF::BB32KHZ);
+call_method_status_test!(
+    can_en_32khz_bat,
+    enable_32khz_output_on_battery,
+    DEFAULT_WRITE_STATUS | BF::BB32KHZ
+);
+call_method_status_test!(
+    can_dis_32khz_bat,
+    disable_32khz_output_on_battery,
+    DEFAULT_WRITE_STATUS & !BF::BB32KHZ
+);
 
-set_param_test_2_4!(can_set_cr_64s, set_temperature_conversion_rate, STATUS, TempConvRate::_64s,
-    DEFAULT_WRITE_STATUS & !BF::CRATE1 & !BF::CRATE0);
-set_param_test_2_4!(can_set_cr_128s, set_temperature_conversion_rate, STATUS, TempConvRate::_128s,
-    DEFAULT_WRITE_STATUS & !BF::CRATE1 |  BF::CRATE0);
-set_param_test_2_4!(can_set_cr_256s, set_temperature_conversion_rate, STATUS, TempConvRate::_256s,
-    DEFAULT_WRITE_STATUS |  BF::CRATE1 & !BF::CRATE0);
-set_param_test_2_4!(can_set_cr_512s, set_temperature_conversion_rate, STATUS, TempConvRate::_512s,
-    DEFAULT_WRITE_STATUS |  BF::CRATE1 |  BF::CRATE0);
-
+set_param_test_2_4!(
+    can_set_cr_64s,
+    set_temperature_conversion_rate,
+    STATUS,
+    TempConvRate::_64s,
+    DEFAULT_WRITE_STATUS & !BF::CRATE1 & !BF::CRATE0
+);
+set_param_test_2_4!(
+    can_set_cr_128s,
+    set_temperature_conversion_rate,
+    STATUS,
+    TempConvRate::_128s,
+    DEFAULT_WRITE_STATUS & !BF::CRATE1 | BF::CRATE0
+);
+set_param_test_2_4!(
+    can_set_cr_256s,
+    set_temperature_conversion_rate,
+    STATUS,
+    TempConvRate::_256s,
+    DEFAULT_WRITE_STATUS | BF::CRATE1 & !BF::CRATE0
+);
+set_param_test_2_4!(
+    can_set_cr_512s,
+    set_temperature_conversion_rate,
+    STATUS,
+    TempConvRate::_512s,
+    DEFAULT_WRITE_STATUS | BF::CRATE1 | BF::CRATE0
+);

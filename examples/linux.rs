@@ -1,26 +1,15 @@
 extern crate ds323x;
-extern crate embedded_hal;
-extern crate linux_embedded_hal;
-
-use ds323x::{DateTime, Ds323x, Hours};
-use linux_embedded_hal::I2cdev;
+extern crate linux_embedded_hal as hal;
+use ds323x::{Ds323x, NaiveDate, Rtcc};
 
 fn main() {
-    let dev = I2cdev::new("/dev/i2c-1").unwrap();
+    let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
     let mut rtc = Ds323x::new_ds3231(dev);
-    let datetime = DateTime {
-        year: 2018,
-        month: 8,
-        day: 20,
-        weekday: 4,
-        hour: Hours::H24(19),
-        minute: 59,
-        second: 58,
-    };
+    let datetime = NaiveDate::from_ymd(2020, 5, 1).and_hms(19, 59, 58);
     rtc.set_datetime(&datetime).unwrap();
     // do something else...
-    let seconds = rtc.get_seconds().unwrap();
-    println!("Seconds: {}", seconds);
+    let time = rtc.get_time().unwrap();
+    println!("Time: {}", time);
 
     let _dev = rtc.destroy_ds3231();
 }

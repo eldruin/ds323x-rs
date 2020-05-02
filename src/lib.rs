@@ -153,8 +153,8 @@
 //! ### Create a driver instance for the DS3231
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
+//! extern crate linux_embedded_hal as hal;
 //! use ds323x::Ds323x;
 //!
 //! # fn main() {
@@ -170,8 +170,8 @@
 //! ### Create a driver instance for the DS3232
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
+//! extern crate linux_embedded_hal as hal;
 //! use ds323x::Ds323x;
 //!
 //! # fn main() {
@@ -187,8 +187,8 @@
 //! ### Create a driver instance for the DS3234
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
+//! extern crate linux_embedded_hal as hal;
 //! use ds323x::Ds323x;
 //!
 //! # fn main() {
@@ -205,22 +205,14 @@
 //! ### Set the current date and time at once
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
-//! use ds323x::{ Ds323x, DateTime, Hours };
+//! extern crate linux_embedded_hal as hal;
+//! use ds323x::{Ds323x, NaiveDate, Rtcc};
 //!
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut rtc = Ds323x::new_ds3231(dev);
-//! let datetime = DateTime {
-//!                           year: 2018,
-//!                           month: 8,
-//!                           day: 15,
-//!                           weekday: 4,
-//!                           hour: Hours::H24(19),
-//!                           minute: 59,
-//!                           second: 58
-//!                };
+//! let datetime = NaiveDate::from_ymd(2020, 5, 1).and_hms(19, 59, 58);
 //! rtc.set_datetime(&datetime).unwrap();
 //! # }
 //! ```
@@ -228,38 +220,27 @@
 //! ### Get the current date and time at once
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
-//! use ds323x::{ Ds323x, Hours };
+//! extern crate linux_embedded_hal as hal;
+//! use ds323x::{Ds323x, Rtcc};
 //!
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut rtc = Ds323x::new_ds3231(dev);
-//!
-//! let datetime = rtc.get_datetime().unwrap();
-//!
-//! // The hours depend on the RTC running mode
-//! match datetime.hour {
-//!     Hours::H24(h) => println!("{}-{}-{}, {} {}:{}:{}", datetime.year,
-//!                               datetime.month, datetime.day, datetime.weekday,
-//!                               h, datetime.minute, datetime.second),
-//!     Hours::AM(h) => println!("{}-{}-{}, {} {}:{}:{} AM", datetime.year,
-//!                               datetime.month, datetime.day, datetime.weekday,
-//!                               h, datetime.minute, datetime.second),
-//!     Hours::PM(h) => println!("{}-{}-{}, {} {}:{}:{} PM", datetime.year,
-//!                               datetime.month, datetime.day, datetime.weekday,
-//!                               h, datetime.minute, datetime.second),
-//! }
-//! // This will print something like: 2018-08-15, 4 19:59:58
+//! let dt = rtc.get_datetime().unwrap();
+//! println!("{}", dt);
+//! // This will print something like: 2020-05-01 19:59:58
 //! # }
 //! ```
 //!
 //! ### Get the year
 //!
+//! Similar methods exist for month, day, weekday, hours, minutes and seconds.
+//!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
-//! use ds323x::{ Ds323x, Hours };
+//! extern crate linux_embedded_hal as hal;
+//! use ds323x::{Ds323x, Rtcc};
 //!
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
@@ -268,14 +249,15 @@
 //! println!("Year: {}", year);
 //! # }
 //! ```
-//! Similar methods exist for month, day, weekday, hours, minutes and seconds.
 //!
 //! ### Set the year
 //!
+//! Similar methods exist for month, day, weekday, hours, minutes and seconds.
+//!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
-//! use ds323x::{ Ds323x, Hours };
+//! extern crate linux_embedded_hal as hal;
+//! use ds323x::{Ds323x, Rtcc};
 //!
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
@@ -283,13 +265,12 @@
 //! rtc.set_year(2018).unwrap();
 //! # }
 //! ```
-//! Similar methods exist for month, day, weekday, hours, minutes and seconds.
 //!
 //! ### Enable/disable the device
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
+//! extern crate linux_embedded_hal as hal;
 //! use ds323x::Ds323x;
 //!
 //! # fn main() {
@@ -306,8 +287,8 @@
 //! ### Read the temperature
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
+//! extern crate linux_embedded_hal as hal;
 //! use ds323x::Ds323x;
 //!
 //! # fn main() {
@@ -320,8 +301,8 @@
 //! ### Read busy status
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
+//! extern crate linux_embedded_hal as hal;
 //! use ds323x::Ds323x;
 //!
 //! # fn main() {
@@ -334,9 +315,9 @@
 //! ### Enable the square-wave output with a frequency of 4.096Hz
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
-//! use ds323x::{ Ds323x, SqWFreq };
+//! extern crate linux_embedded_hal as hal;
+//! use ds323x::{Ds323x, SqWFreq};
 //!
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
@@ -354,9 +335,9 @@
 //! available for the devices DS3232 and DS3234.
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
-//! use ds323x::{ Ds323x, SqWFreq };
+//! extern crate linux_embedded_hal as hal;
+//! use ds323x::{Ds323x, SqWFreq};
 //!
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
@@ -369,8 +350,8 @@
 //! ### Set the aging offset
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
+//! extern crate linux_embedded_hal as hal;
 //! use ds323x::Ds323x;
 //!
 //! # fn main() {
@@ -385,9 +366,9 @@
 //! This is only available for the devices DS3232 and DS3234.
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
-//! use ds323x::{ Ds323x, TempConvRate };
+//! extern crate linux_embedded_hal as hal;
+//! use ds323x::{Ds323x, TempConvRate};
 //!
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
@@ -399,9 +380,9 @@
 //! ### Set the Alarm1 to each week on a week day at a specific time
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
-//! use ds323x::{ Ds323x, Hours, WeekdayAlarm1, Alarm1Matching };
+//! extern crate linux_embedded_hal as hal;
+//! use ds323x::{Ds323x, Hours, WeekdayAlarm1, Alarm1Matching};
 //!
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
@@ -421,9 +402,9 @@
 //! The INT/SQW output pin will be set to 1 when it the alarm matches.
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
 //! extern crate ds323x;
-//! use ds323x::{ Ds323x, Hours, DayAlarm2, Alarm2Matching };
+//! extern crate linux_embedded_hal as hal;
+//! use ds323x::{Ds323x, Hours, DayAlarm2, Alarm2Matching};
 //!
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
@@ -445,6 +426,8 @@
 extern crate embedded_hal as hal;
 use core::marker::PhantomData;
 use hal::spi::{Mode, MODE_1, MODE_3};
+extern crate rtcc;
+pub use self::rtcc::{Datelike, Hours, NaiveDate, NaiveDateTime, NaiveTime, Rtcc, Timelike};
 
 /// SPI mode 1 (CPOL = 0, CPHA = 1)
 pub const SPI_MODE_1: Mode = MODE_1;
@@ -561,8 +544,7 @@ pub struct Ds323x<DI, IC> {
 mod ds323x;
 pub mod interface;
 pub use ds323x::{
-    Alarm1Matching, Alarm2Matching, DateTime, DayAlarm1, DayAlarm2, Hours, WeekdayAlarm1,
-    WeekdayAlarm2,
+    Alarm1Matching, Alarm2Matching, DayAlarm1, DayAlarm2, WeekdayAlarm1, WeekdayAlarm2,
 };
 mod ds3231;
 mod ds3232;

@@ -26,6 +26,7 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 embedded-hal = "0.2.3"
+rtcc = "0.2"
 
 [dev-dependencies]
 linux-embedded-hal = "0.3"
