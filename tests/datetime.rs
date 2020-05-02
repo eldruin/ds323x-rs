@@ -222,17 +222,31 @@ macro_rules! invalid_dt_test {
         mod $name {
             use super::*;
             #[test]
-            fn too_small() {
+            fn datetime_too_small() {
                 let dt = NaiveDate::from_ymd(1999, 1, 2).and_hms(3, 4, 5);
                 let mut dev = $create_method(&[]);
                 assert_invalid_input_data!(dev.set_datetime(&dt));
                 $destroy_method(dev);
             }
             #[test]
-            fn too_big() {
+            fn datetime_too_big() {
                 let dt = NaiveDate::from_ymd(2101, 1, 2).and_hms(3, 4, 5);
                 let mut dev = $create_method(&[]);
                 assert_invalid_input_data!(dev.set_datetime(&dt));
+                $destroy_method(dev);
+            }
+            #[test]
+            fn date_too_small() {
+                let d = NaiveDate::from_ymd(1999, 1, 2);
+                let mut dev = $create_method(&[]);
+                assert_invalid_input_data!(dev.set_date(&d));
+                $destroy_method(dev);
+            }
+            #[test]
+            fn date_too_big() {
+                let d = NaiveDate::from_ymd(2101, 1, 2);
+                let mut dev = $create_method(&[]);
+                assert_invalid_input_data!(dev.set_date(&d));
                 $destroy_method(dev);
             }
         }
@@ -313,6 +327,17 @@ macro_rules! dt_test {
                 let mut dev = $create_method(&$mac_trans_write!(
                     DOW,
                     [0b0000_0010, 0b0001_0011, 0b0000_1000, 0b0001_1000]
+                ));
+                dev.set_date(&d).unwrap();
+                $destroy_method(dev);
+            }
+
+            #[test]
+            fn set_date_century() {
+                let d = NaiveDate::from_ymd(2100, 8, 13);
+                let mut dev = $create_method(&$mac_trans_write!(
+                    DOW,
+                    [0b0000_0110, 0b0001_0011, 0b1000_1000, 0]
                 ));
                 dev.set_date(&d).unwrap();
                 $destroy_method(dev);
