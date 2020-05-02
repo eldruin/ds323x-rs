@@ -58,13 +58,12 @@ where
         &mut self,
         rate: TempConvRate,
     ) -> Result<(), Error<E, ()>> {
-        let status;
-        match rate {
-            TempConvRate::_64s => status = self.status & !BitFlags::CRATE1 & !BitFlags::CRATE0,
-            TempConvRate::_128s => status = self.status & !BitFlags::CRATE1 | BitFlags::CRATE0,
-            TempConvRate::_256s => status = self.status | BitFlags::CRATE1 & !BitFlags::CRATE0,
-            TempConvRate::_512s => status = self.status | BitFlags::CRATE1 | BitFlags::CRATE0,
-        }
+        let status = match rate {
+            TempConvRate::_64s => self.status & !BitFlags::CRATE1 & !BitFlags::CRATE0,
+            TempConvRate::_128s => self.status & !BitFlags::CRATE1 | BitFlags::CRATE0,
+            TempConvRate::_256s => self.status | BitFlags::CRATE1 & !BitFlags::CRATE0,
+            TempConvRate::_512s => self.status | BitFlags::CRATE1 | BitFlags::CRATE0,
+        };
         self.write_status_without_clearing_alarm(status)
     }
 }
