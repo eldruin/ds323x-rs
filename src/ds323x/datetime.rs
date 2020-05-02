@@ -31,13 +31,8 @@ where
         let minute = packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]);
         let second = packed_bcd_to_decimal(data[Register::SECONDS as usize + 1]);
 
-        let h24 = match hour {
-            Hours::H24(h) => h,
-            Hours::AM(h) => h,
-            Hours::PM(h) => h + 12,
-        };
         Ok(NaiveTime::from_hms(
-            h24.into(),
+            get_h24(hour).into(),
             minute.into(),
             second.into(),
         ))
@@ -94,14 +89,9 @@ where
         let minute = packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]);
         let second = packed_bcd_to_decimal(data[Register::SECONDS as usize + 1]);
 
-        let h24 = match hour {
-            Hours::H24(h) => h,
-            Hours::AM(h) => h,
-            Hours::PM(h) => h + 12,
-        };
         Ok(
             rtcc::NaiveDate::from_ymd(year.into(), month.into(), day.into()).and_hms(
-                h24.into(),
+                get_h24(hour).into(),
                 minute.into(),
                 second.into(),
             ),
@@ -279,4 +269,32 @@ fn is_24h_format(hours_data: u8) -> bool {
 
 fn is_am(hours_data: u8) -> bool {
     hours_data & BitFlags::AM_PM == 0
+}
+
+fn get_h24(hour: Hours) -> u8 {
+    match hour {
+        Hours::H24(h) => h,
+        Hours::AM(h) => h,
+        Hours::PM(h) => h + 12,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn can_convert_to_h24() {
+        assert_eq!(0, get_h24(Hours::H24(0)));
+        assert_eq!(0, get_h24(Hours::AM(0)));
+        assert_eq!(12, get_h24(Hours::PM(0)));
+
+        assert_eq!(1, get_h24(Hours::H24(1)));
+        assert_eq!(1, get_h24(Hours::AM(1)));
+        assert_eq!(13, get_h24(Hours::PM(1)));
+
+        assert_eq!(23, get_h24(Hours::H24(23)));
+        assert_eq!(12, get_h24(Hours::AM(12)));
+        assert_eq!(23, get_h24(Hours::PM(11)));
+    }
 }
