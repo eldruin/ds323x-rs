@@ -7,7 +7,9 @@ use common::{
     DEVICE_ADDRESS as DEV_ADDR,
 };
 extern crate ds323x;
-use ds323x::{Error, Hours, NaiveDate, NaiveTime, Rtcc};
+use ds323x::{Error, Hours, NaiveDate, NaiveTime};
+#[allow(unused)] // Rust 1.31.0 is confused due to the macros
+use ds323x::Rtcc;
 
 macro_rules! read_set_param_write_two_test {
     ($name:ident, $method:ident, $value:expr, $register:ident, $binary_value1_read:expr, $bin1:expr, $bin2:expr) => {
