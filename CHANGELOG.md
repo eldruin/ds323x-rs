@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+...
+
+## [0.3.0] - 2020-05-02
+
 ### Changed
 - [breaking-change] Renamed `is_busy()` and `is_running()` methods `busy()` and `running()`
   due to Rust naming conventions.
@@ -41,5 +45,6 @@ this CHANGELOG.
 [`chrono`]: https://crates.io/crates/chrono
 [`rtcc`]: https://crates.io/crates/rtcc
 
-[Unreleased]: https://github.com/eldruin/ds323x-rs/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/eldruin/ds323x-rs/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/eldruin/ds323x-rs/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/eldruin/ds323x-rs/compare/v0.1.0...v0.2.0
