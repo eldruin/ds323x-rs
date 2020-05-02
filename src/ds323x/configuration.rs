@@ -21,7 +21,7 @@ where
 
     /// Force a temperature conversion and time compensation with TXCO algorithm.
     ///
-    /// The *busy* status should be checked before doing this. See [`is_busy()`](#method.is_busy)
+    /// The *busy* status should be checked before doing this. See [`busy()`](#method.busy)
     pub fn convert_temperature(&mut self) -> Result<(), Error<CommE, PinE>> {
         let control = self.iface.read_register(Register::CONTROL)?;
         // do not overwrite if a conversion is in progress

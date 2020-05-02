@@ -15,7 +15,7 @@ This driver allows you to:
 - Read and set date and time in 12-hour and 24-hour format. See: `get_datetime`.
 - Read and set date and time individual elements. For example, see: `get_year`.
 - Enable and disable the real-time clock. See: `enable`.
-- Read the busy status. See `is_busy`.
+- Read the busy status. See `busy`.
 - Read whether the oscillator is or has been stopped. See `has_been_stopped`.
 - Clear the has-been-stopped flag. See `clear_has_been_stopped_flag`.
 - Set and read the aging offset. See `set_aging_offset`.

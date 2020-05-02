@@ -7,7 +7,7 @@
 //! - Read and set date and time in 12-hour and 24-hour format. See: [`get_datetime`].
 //! - Read and set date and time individual elements. For example, see: [`get_year`].
 //! - Enable and disable the real-time clock. See: [`enable`].
-//! - Read the busy status. See [`is_busy`].
+//! - Read the busy status. See [`busy`].
 //! - Read whether the oscillator is or has been stopped. See [`has_been_stopped`].
 //! - Clear the has-been-stopped flag. See [`clear_has_been_stopped_flag`].
 //! - Set and read the aging offset. See [`set_aging_offset`].
@@ -33,7 +33,7 @@
 //! [`enable`]: struct.Ds323x.html#method.enable
 //! [`get_temperature`]: struct.Ds323x.html#method.get_temperature
 //! [`convert_temperature`]: struct.Ds323x.html#method.convert_temperature
-//! [`is_busy`]: struct.Ds323x.html#method.is_busy
+//! [`busy`]: struct.Ds323x.html#method.busy
 //! [`has_been_stopped`]: struct.Ds323x.html#method.has_been_stopped
 //! [`clear_has_been_stopped_flag`]: struct.Ds323x.html#method.clear_has_been_stopped_flag
 //! [`set_aging_offset`]: struct.Ds323x.html#method.set_aging_offset
@@ -277,10 +277,10 @@
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut rtc = Ds323x::new_ds3231(dev);
 //! rtc.disable().unwrap(); // stops the clock
-//! let is_running = rtc.is_running().unwrap();
-//! println!("Is running: {}", is_running); // will print false
+//! let running = rtc.running().unwrap();
+//! println!("Is running: {}", running); // will print false
 //! rtc.enable().unwrap(); // set clock to run
-//! println!("Is running: {}", is_running); // will print true
+//! println!("Is running: {}", running); // will print true
 //! # }
 //! ```
 //!
@@ -308,7 +308,7 @@
 //! # fn main() {
 //! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut rtc = Ds323x::new_ds3231(dev);
-//! let is_busy = rtc.is_busy().unwrap();
+//! let busy = rtc.busy().unwrap();
 //! # }
 //! ```
 //!

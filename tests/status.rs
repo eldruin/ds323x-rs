@@ -7,11 +7,11 @@ use common::{
     BitFlags as BF, Register, DEVICE_ADDRESS as DEV_ADDR,
 };
 
-get_param_test!(is_running, is_running, CONTROL, true, 0);
-get_param_test!(is_not_running, is_running, CONTROL, false, BF::EOSC);
+get_param_test!(running, running, CONTROL, true, 0);
+get_param_test!(is_not_running, running, CONTROL, false, BF::EOSC);
 
-get_param_test!(is_busy, is_busy, STATUS, true, 0xFF);
-get_param_test!(is_not_busy, is_busy, STATUS, false, !BF::BUSY);
+get_param_test!(busy, busy, STATUS, true, 0xFF);
+get_param_test!(is_not_busy, busy, STATUS, false, !BF::BUSY);
 
 get_param_test!(stopped, has_been_stopped, STATUS, true, 0xFF);
 get_param_test!(not_stopped, has_been_stopped, STATUS, false, !BF::OSC_STOP);

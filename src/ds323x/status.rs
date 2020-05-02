@@ -8,13 +8,13 @@ where
     DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>,
 {
     /// Read whether the oscillator is running
-    pub fn is_running(&mut self) -> Result<bool, Error<CommE, PinE>> {
+    pub fn running(&mut self) -> Result<bool, Error<CommE, PinE>> {
         let control = self.iface.read_register(Register::CONTROL)?;
         Ok((control & BitFlags::EOSC) == 0)
     }
 
     /// Read the busy status
-    pub fn is_busy(&mut self) -> Result<bool, Error<CommE, PinE>> {
+    pub fn busy(&mut self) -> Result<bool, Error<CommE, PinE>> {
         let status = self.iface.read_register(Register::STATUS)?;
         Ok((status & BitFlags::BUSY) != 0)
     }
