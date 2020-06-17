@@ -8,7 +8,7 @@ use common::{
 };
 extern crate ds323x;
 use ds323x::{
-    Alarm1Matching as A1M, Alarm2Matching as A2M, DayAlarm1, DayAlarm2, Error, Hours,
+    Alarm1Matching as A1M, Alarm2Matching as A2M, DayAlarm1, DayAlarm2, Error, Hours, NaiveTime,
     WeekdayAlarm1, WeekdayAlarm2,
 };
 
@@ -635,7 +635,13 @@ mod alarm1_day {
         },
         A1M::AllMatch
     );
-
+    set_alarm_test!(
+        match_hms_naivetime,
+        set_alarm1_hms,
+        ALARM1_SECONDS,
+        [4, 3, 2, AM | 1],
+        NaiveTime::from_hms(2, 3, 4)
+    );
     set_alarm_test!(
         match_hms,
         set_alarm1_day,
@@ -914,7 +920,13 @@ mod alarm2_day {
         },
         A2M::AllMatch
     );
-
+    set_alarm_test!(
+        match_hm_naivetime,
+        set_alarm2_hm,
+        ALARM2_MINUTES,
+        [3, 2, AM | 1],
+        NaiveTime::from_hms(2, 3, 0)
+    );
     set_alarm_test!(
         match_hm,
         set_alarm2_day,
