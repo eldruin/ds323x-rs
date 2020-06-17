@@ -2,6 +2,7 @@
 
 use super::super::{BitFlags, Ds323x, Error, Hours, Register};
 use super::{decimal_to_packed_bcd, hours_to_register};
+use crate::ds323x::{NaiveTime, Timelike};
 use interface::{ReadData, WriteData};
 
 /// Parameters for setting Alarm1 on a day of the month
@@ -195,6 +196,20 @@ where
         self.iface.write_data(&mut data)
     }
 
+    /// Set Alarm1 for a time (fires when hours, minutes and seconds match).
+    ///
+    /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
+    /// day is not used by the matching strategy but is set to 1.
+    pub fn set_alarm1_hms(&mut self, when: NaiveTime) -> Result<(), Error<CommE, PinE>> {
+        let alarm = DayAlarm1 {
+            day: 1,
+            hour: Hours::H24(when.hour() as u8),
+            minute: when.minute() as u8,
+            second: when.second() as u8,
+        };
+        self.set_alarm1_day(alarm, Alarm1Matching::HoursMinutesAndSecondsMatch)
+    }
+
     /// Set Alarm1 for weekday.
     ///
     /// Will return an `Error::InvalidInputData` if any of the used parameters
@@ -272,6 +287,19 @@ where
             decimal_to_packed_bcd(day) | match_mask[2],
         ];
         self.iface.write_data(&mut data)
+    }
+
+    /// Set Alarm2 for a time (fires when hours, minutes and seconds match).
+    ///
+    /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
+    /// day is not used by the matching strategy but is set to 1.
+    pub fn set_alarm2_hm(&mut self, when: NaiveTime) -> Result<(), Error<CommE, PinE>> {
+        let alarm = DayAlarm2 {
+            day: 1,
+            hour: Hours::H24(when.hour() as u8),
+            minute: when.minute() as u8,
+        };
+        self.set_alarm2_day(alarm, Alarm2Matching::HoursAndMinutesMatch)
     }
 
     /// Set Alarm2 for weekday.
