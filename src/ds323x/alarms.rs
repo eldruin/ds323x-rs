@@ -5,6 +5,12 @@ use super::{decimal_to_packed_bcd, hours_to_register};
 use interface::{ReadData, WriteData};
 
 /// Parameters for setting Alarm1 on a day of the month
+///
+/// Depending on the matching strategy, some fields may not be relevant. In this
+/// case, invalid values are ignored and basic values are used instead to
+/// configure the alarm:
+/// - second, minute and hour : 0
+/// - day: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DayAlarm1 {
     /// Day of the month [1-31]
@@ -18,6 +24,12 @@ pub struct DayAlarm1 {
 }
 
 /// Parameters for setting Alarm1 on a weekday
+///
+/// Depending on the matching strategy, some fields may not be relevant. In this
+/// case, invalid values are ignored and basic values are used instead to
+/// configure the alarm:
+/// - second, minute and hour : 0
+/// - weekday: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct WeekdayAlarm1 {
     /// Weekday [1-7]
@@ -46,6 +58,12 @@ pub enum Alarm1Matching {
 }
 
 /// Parameters for setting Alarm2 on a day of the month
+///
+/// Depending on the matching strategy, some fields may not be relevant. In this
+/// case, invalid values are ignored and basic values are used instead to
+/// configure the alarm:
+/// - minute and hour : 0
+/// - day: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DayAlarm2 {
     /// Day of month [1-31]
@@ -57,6 +75,12 @@ pub struct DayAlarm2 {
 }
 
 /// Parameters for setting Alarm2 on a weekday
+///
+/// Depending on the matching strategy, some fields may not be relevant. In this
+/// case, invalid values are ignored and basic values are used instead to
+/// configure the alarm:
+/// - minute and hour : 0
+/// - weekday: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct WeekdayAlarm2 {
     /// Weekday [1-7]
@@ -101,92 +125,187 @@ fn get_matching_mask_alarm2(matching: Alarm2Matching) -> [u8; 3] {
     }
 }
 
+/// Test if hours value is valid
+///
+/// Will return true if valid, false if not
+fn is_hour_valid(hours: Hours) -> bool {
+    match hours {
+        Hours::H24(h) if h > 23 => true,
+        Hours::AM(h) if h < 1 || h > 12 => true,
+        Hours::PM(h) if h < 1 || h > 12 => true,
+        _ => false,
+    }
+}
+
+/// Relax the hour value by changing an incorrect value by 0
+fn relax_hour(hours: Hours) -> Hours {
+    match hours {
+        Hours::H24(h) if h > 23 => Hours::H24(0),
+        Hours::H24(h) => Hours::H24(h),
+        Hours::AM(h) if h < 1 || h > 12 => Hours::AM(1),
+        Hours::AM(h) => Hours::AM(h),
+        Hours::PM(h) if h < 1 || h > 12 => Hours::PM(1),
+        Hours::PM(h) => Hours::PM(h),
+    }
+}
+
 impl<DI, IC, CommE, PinE> Ds323x<DI, IC>
 where
     DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>,
 {
     /// Set Alarm1 for day of the month.
     ///
-    /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
+    /// Will return an `Error::InvalidInputData` if any of the used parameters
+    /// (depending on the matching startegy) is out of range. Any unused
+    /// parameter is set to basic valid value:
+    /// - second, minute, hour: 0
+    /// - day: 1
     pub fn set_alarm1_day(
         &mut self,
         when: DayAlarm1,
         matching: Alarm1Matching,
     ) -> Result<(), Error<CommE, PinE>> {
-        if when.day < 1 || when.day > 31 || when.minute > 59 || when.second > 59 {
+        let day_invalid = when.day < 1 || when.day > 31;
+        let hour_invalid = is_hour_valid(when.hour);
+        let minute_invalid = when.minute > 59;
+        let second_invalid = when.second > 59;
+
+        let day = if day_invalid { 1 } else { when.day };
+        let hour = relax_hour(when.hour);
+        let minute = if minute_invalid { 0 } else { when.minute };
+
+        if (matching == Alarm1Matching::AllMatch && (day_invalid || hour_invalid))
+            || (hour_invalid && matching == Alarm1Matching::HoursMinutesAndSecondsMatch)
+            || ((matching != Alarm1Matching::SecondsMatch
+                && matching != Alarm1Matching::OncePerSecond)
+                && minute_invalid)
+            || second_invalid
+        {
             return Err(Error::InvalidInputData);
         }
+
         let match_mask = get_matching_mask_alarm1(matching);
         let mut data = [
             Register::ALARM1_SECONDS,
             decimal_to_packed_bcd(when.second) | match_mask[0],
-            decimal_to_packed_bcd(when.minute) | match_mask[1],
-            hours_to_register(when.hour)? | match_mask[2],
-            decimal_to_packed_bcd(when.day) | match_mask[3],
+            decimal_to_packed_bcd(minute) | match_mask[1],
+            hours_to_register(hour)? | match_mask[2],
+            decimal_to_packed_bcd(day) | match_mask[3],
         ];
         self.iface.write_data(&mut data)
     }
 
     /// Set Alarm1 for weekday.
     ///
-    /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
+    /// Will return an `Error::InvalidInputData` if any of the used parameters
+    /// (depending on the matching startegy) is out of range. Any unused
+    /// parameter is set to basic valid value:
+    /// - second, minute, hour: 0
+    /// - weekday: 1
     pub fn set_alarm1_weekday(
         &mut self,
         when: WeekdayAlarm1,
         matching: Alarm1Matching,
     ) -> Result<(), Error<CommE, PinE>> {
-        if when.weekday < 1 || when.weekday > 7 || when.minute > 59 || when.second > 59 {
+        let weekday_invalid = when.weekday < 1 || when.weekday > 7;
+        let hour_invalid = is_hour_valid(when.hour);
+        let minute_invalid = when.minute > 59;
+        let second_invalid = when.second > 59;
+
+        let weekday = if weekday_invalid { 1 } else { when.weekday };
+        let hour = relax_hour(when.hour);
+        let minute = if minute_invalid { 0 } else { when.minute };
+        let second = if second_invalid { 0 } else { when.second };
+
+        if ((hour_invalid || weekday_invalid) && matching == Alarm1Matching::AllMatch)
+            || (hour_invalid && matching == Alarm1Matching::HoursMinutesAndSecondsMatch)
+            || (minute_invalid
+                && (matching != Alarm1Matching::OncePerSecond
+                    && matching != Alarm1Matching::SecondsMatch))
+            || (second_invalid && matching != Alarm1Matching::OncePerSecond)
+        {
             return Err(Error::InvalidInputData);
         }
         let match_mask = get_matching_mask_alarm1(matching);
         let mut data = [
             Register::ALARM1_SECONDS,
-            decimal_to_packed_bcd(when.second) | match_mask[0],
-            decimal_to_packed_bcd(when.minute) | match_mask[1],
-            hours_to_register(when.hour)? | match_mask[2],
-            decimal_to_packed_bcd(when.weekday) | match_mask[3] | BitFlags::WEEKDAY,
+            decimal_to_packed_bcd(second) | match_mask[0],
+            decimal_to_packed_bcd(minute) | match_mask[1],
+            hours_to_register(hour)? | match_mask[2],
+            decimal_to_packed_bcd(weekday) | match_mask[3] | BitFlags::WEEKDAY,
         ];
         self.iface.write_data(&mut data)
     }
 
     /// Set Alarm2 for date (day of month).
     ///
-    /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
+    /// Will return an `Error::InvalidInputData` if any of the used parameters
+    /// (depending on the matching startegy) is out of range. Any unused
+    /// parameter is set to basic valid value:
+    /// - minute, hour: 0
+    /// - day: 1
     pub fn set_alarm2_day(
         &mut self,
         when: DayAlarm2,
         matching: Alarm2Matching,
     ) -> Result<(), Error<CommE, PinE>> {
-        if when.day < 1 || when.day > 31 || when.minute > 59 {
+        let day_invalid = when.day < 1 || when.day > 31;
+        let hour_invalid = is_hour_valid(when.hour);
+        let minute_invalid = when.minute > 59;
+
+        let day = if day_invalid { 1 } else { when.day };
+        let hour = relax_hour(when.hour);
+        let minute = if minute_invalid { 0 } else { when.minute };
+
+        if ((day_invalid || hour_invalid) && matching == Alarm2Matching::AllMatch)
+            || (hour_invalid && matching == Alarm2Matching::HoursAndMinutesMatch)
+            || (matching != Alarm2Matching::OncePerMinute && minute_invalid)
+        {
             return Err(Error::InvalidInputData);
         }
+
         let match_mask = get_matching_mask_alarm2(matching);
         let mut data = [
             Register::ALARM2_MINUTES,
-            decimal_to_packed_bcd(when.minute) | match_mask[0],
-            hours_to_register(when.hour)? | match_mask[1],
-            decimal_to_packed_bcd(when.day) | match_mask[2],
+            decimal_to_packed_bcd(minute) | match_mask[0],
+            hours_to_register(hour)? | match_mask[1],
+            decimal_to_packed_bcd(day) | match_mask[2],
         ];
         self.iface.write_data(&mut data)
     }
 
     /// Set Alarm2 for weekday.
     ///
-    /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
+    /// Will return an `Error::InvalidInputData` if any of the used parameters
+    /// (depending on the matching startegy) is out of range. Any unused
+    /// parameter is set to basic valid value:
+    /// - minute, hour: 0
+    /// - weekday: 1
     pub fn set_alarm2_weekday(
         &mut self,
         when: WeekdayAlarm2,
         matching: Alarm2Matching,
     ) -> Result<(), Error<CommE, PinE>> {
-        if when.weekday < 1 || when.weekday > 7 || when.minute > 59 {
+        let weekday_invalid = when.weekday < 1 || when.weekday > 7;
+        let hour_invalid = is_hour_valid(when.hour);
+        let minute_invalid = when.minute > 59;
+
+        let weekday = if weekday_invalid { 1 } else { when.weekday };
+        let hour = relax_hour(when.hour);
+        let minute = if minute_invalid { 0 } else { when.minute };
+
+        if (matching == Alarm2Matching::AllMatch && (weekday_invalid || hour_invalid))
+            || (matching == Alarm2Matching::HoursAndMinutesMatch && hour_invalid)
+            || (minute_invalid && matching != Alarm2Matching::OncePerMinute)
+        {
             return Err(Error::InvalidInputData);
         }
         let match_mask = get_matching_mask_alarm2(matching);
         let mut data = [
             Register::ALARM2_MINUTES,
-            decimal_to_packed_bcd(when.minute) | match_mask[0],
-            hours_to_register(when.hour)? | match_mask[1],
-            decimal_to_packed_bcd(when.weekday) | match_mask[2] | BitFlags::WEEKDAY,
+            decimal_to_packed_bcd(minute) | match_mask[0],
+            hours_to_register(hour)? | match_mask[1],
+            decimal_to_packed_bcd(weekday) | match_mask[2] | BitFlags::WEEKDAY,
         ];
         self.iface.write_data(&mut data)
     }
