@@ -8,10 +8,10 @@ use interface::{ReadData, WriteData};
 /// Parameters for setting Alarm1 on a day of the month
 ///
 /// Depending on the matching strategy, some fields may not be relevant. In this
-/// case, invalid values are ignored and basic values are used instead to
+/// case, invalid values are ignored and the minimum valid values are used instead to
 /// configure the alarm:
-/// - second, minute and hour : 0
-/// - day: 1
+/// - Second, minute and hour: 0
+/// - Day: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DayAlarm1 {
     /// Day of the month [1-31]
@@ -27,10 +27,10 @@ pub struct DayAlarm1 {
 /// Parameters for setting Alarm1 on a weekday
 ///
 /// Depending on the matching strategy, some fields may not be relevant. In this
-/// case, invalid values are ignored and basic values are used instead to
+/// case, invalid values are ignored and the minimum valid values are used instead to
 /// configure the alarm:
-/// - second, minute and hour : 0
-/// - weekday: 1
+/// - Second, minute and hour: 0
+/// - Weekday: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct WeekdayAlarm1 {
     /// Weekday [1-7]
@@ -61,10 +61,10 @@ pub enum Alarm1Matching {
 /// Parameters for setting Alarm2 on a day of the month
 ///
 /// Depending on the matching strategy, some fields may not be relevant. In this
-/// case, invalid values are ignored and basic values are used instead to
+/// case, invalid values are ignored and the minimum valid values are used instead to
 /// configure the alarm:
-/// - minute and hour : 0
-/// - day: 1
+/// - Minute and hour: 0
+/// - Day: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DayAlarm2 {
     /// Day of month [1-31]
@@ -78,10 +78,10 @@ pub struct DayAlarm2 {
 /// Parameters for setting Alarm2 on a weekday
 ///
 /// Depending on the matching strategy, some fields may not be relevant. In this
-/// case, invalid values are ignored and basic values are used instead to
+/// case, invalid values are ignored and the minimum valid values are used instead to
 /// configure the alarm:
-/// - minute and hour : 0
-/// - weekday: 1
+/// - Minute and hour: 0
+/// - Weekday: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct WeekdayAlarm2 {
     /// Weekday [1-7]
@@ -126,9 +126,7 @@ fn get_matching_mask_alarm2(matching: Alarm2Matching) -> [u8; 3] {
     }
 }
 
-/// Test if hours value is valid
-///
-/// Will return true if valid, false if not
+/// Test if hour value is valid
 fn is_hour_valid(hours: Hours) -> bool {
     match hours {
         Hours::H24(h) if h > 23 => true,
@@ -138,8 +136,8 @@ fn is_hour_valid(hours: Hours) -> bool {
     }
 }
 
-/// Relax the hour value by changing an incorrect value by 0
-fn relax_hour(hours: Hours) -> Hours {
+/// Amend invalid hour values
+fn amend_hour(hours: Hours) -> Hours {
     match hours {
         Hours::H24(h) if h > 23 => Hours::H24(0),
         Hours::H24(h) => Hours::H24(h),
@@ -158,9 +156,9 @@ where
     ///
     /// Will return an `Error::InvalidInputData` if any of the used parameters
     /// (depending on the matching startegy) is out of range. Any unused
-    /// parameter is set to basic valid value:
-    /// - second, minute, hour: 0
-    /// - day: 1
+    /// parameter is set to the corresponding minimum valid value:
+    /// - Second, minute, hour: 0
+    /// - Day: 1
     pub fn set_alarm1_day(
         &mut self,
         when: DayAlarm1,
@@ -172,7 +170,7 @@ where
         let second_invalid = when.second > 59;
 
         let day = if day_invalid { 1 } else { when.day };
-        let hour = relax_hour(when.hour);
+        let hour = amend_hour(when.hour);
         let minute = if minute_invalid { 0 } else { when.minute };
 
         if (matching == Alarm1Matching::AllMatch && (day_invalid || hour_invalid))
@@ -199,7 +197,7 @@ where
     /// Set Alarm1 for a time (fires when hours, minutes and seconds match).
     ///
     /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
-    /// day is not used by the matching strategy but is set to 1.
+    /// The day is not used by this matching strategy and is set to 1.
     pub fn set_alarm1_hms(&mut self, when: NaiveTime) -> Result<(), Error<CommE, PinE>> {
         let alarm = DayAlarm1 {
             day: 1,
@@ -214,9 +212,9 @@ where
     ///
     /// Will return an `Error::InvalidInputData` if any of the used parameters
     /// (depending on the matching startegy) is out of range. Any unused
-    /// parameter is set to basic valid value:
-    /// - second, minute, hour: 0
-    /// - weekday: 1
+    /// parameter is set to the corresponding minimum valid value:
+    /// - Second, minute, hour: 0
+    /// - Weekday: 1
     pub fn set_alarm1_weekday(
         &mut self,
         when: WeekdayAlarm1,
@@ -228,7 +226,7 @@ where
         let second_invalid = when.second > 59;
 
         let weekday = if weekday_invalid { 1 } else { when.weekday };
-        let hour = relax_hour(when.hour);
+        let hour = amend_hour(when.hour);
         let minute = if minute_invalid { 0 } else { when.minute };
         let second = if second_invalid { 0 } else { when.second };
 
@@ -256,9 +254,9 @@ where
     ///
     /// Will return an `Error::InvalidInputData` if any of the used parameters
     /// (depending on the matching startegy) is out of range. Any unused
-    /// parameter is set to basic valid value:
-    /// - minute, hour: 0
-    /// - day: 1
+    /// parameter is set to the corresponding minimum valid value:
+    /// - Minute, hour: 0
+    /// - Day: 1
     pub fn set_alarm2_day(
         &mut self,
         when: DayAlarm2,
@@ -269,7 +267,7 @@ where
         let minute_invalid = when.minute > 59;
 
         let day = if day_invalid { 1 } else { when.day };
-        let hour = relax_hour(when.hour);
+        let hour = amend_hour(when.hour);
         let minute = if minute_invalid { 0 } else { when.minute };
 
         if ((day_invalid || hour_invalid) && matching == Alarm2Matching::AllMatch)
@@ -289,10 +287,10 @@ where
         self.iface.write_data(&mut data)
     }
 
-    /// Set Alarm2 for a time (fires when hours, minutes and seconds match).
+    /// Set Alarm2 for a time (fires when hours and minutes match).
     ///
     /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
-    /// day is not used by the matching strategy but is set to 1.
+    /// The day is not used by this matching strategy and is set to 1.
     pub fn set_alarm2_hm(&mut self, when: NaiveTime) -> Result<(), Error<CommE, PinE>> {
         let alarm = DayAlarm2 {
             day: 1,
@@ -306,9 +304,9 @@ where
     ///
     /// Will return an `Error::InvalidInputData` if any of the used parameters
     /// (depending on the matching startegy) is out of range. Any unused
-    /// parameter is set to basic valid value:
-    /// - minute, hour: 0
-    /// - weekday: 1
+    /// parameter is set to the corresponding minimum valid value:
+    /// - Minute, hour: 0
+    /// - Weekday: 1
     pub fn set_alarm2_weekday(
         &mut self,
         when: WeekdayAlarm2,
@@ -319,7 +317,7 @@ where
         let minute_invalid = when.minute > 59;
 
         let weekday = if weekday_invalid { 1 } else { when.weekday };
-        let hour = relax_hour(when.hour);
+        let hour = amend_hour(when.hour);
         let minute = if minute_invalid { 0 } else { when.minute };
 
         if (matching == Alarm2Matching::AllMatch && (weekday_invalid || hour_invalid))
