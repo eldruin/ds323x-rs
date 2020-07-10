@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ...
 
+## [0.3.1] - 2020-07-10
+
+### Added
+- Added methods to set alarms 1 and 2 with a `chrono::NaiveTime`: `set_alarm1_hms()`
+  and `set_alarm2_hm()`.
+
+### Changed
+- Changed alarm setting methods to automatically correct invalid values to irrelevant
+  input parameters due to the selected matching strategy.
+
 ## [0.3.0] - 2020-05-02
 
 ### Changed
@@ -45,6 +55,7 @@ this CHANGELOG.
 [`chrono`]: https://crates.io/crates/chrono
 [`rtcc`]: https://crates.io/crates/rtcc
 
-[Unreleased]: https://github.com/eldruin/ds323x-rs/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/eldruin/ds323x-rs/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/eldruin/ds323x-rs/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/eldruin/ds323x-rs/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/eldruin/ds323x-rs/compare/v0.1.0...v0.2.0
