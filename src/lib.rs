@@ -386,6 +386,7 @@
 //! rtc.set_alarm1_hms(time).unwrap();
 //! ```
 
+#![doc(html_root_url = "https://docs.rs/ds323x/0.3.1")]
 #![deny(unsafe_code, missing_docs)]
 #![no_std]
 
