@@ -14,6 +14,7 @@
 //! - Select the function of the INT/SQW output pin. See [`use_int_sqw_output_as_interrupt`].
 //! - Alarms:
 //!     - Set alarms 1 and 2 with several matching policies. See [`set_alarm1_day`].
+//!     - Set alarms 1 and 2 for a time. See [`set_alarm1_hms`].
 //!     - Read whether alarms 1 or 2 have matched. See [`has_alarm1_matched`].
 //!     - Clear flag indicating that alarms 1 or 2 have matched. See [`clear_alarm1_matched_flag`].
 //!     - Enable and disable alarms 1 and 2 interrupt generation. See [`enable_alarm1_interrupts`].
@@ -42,6 +43,7 @@
 //! [`enable_square_wave`]: struct.Ds323x.html#method.enable_square_wave
 //! [`set_square_wave_frequency`]: struct.Ds323x.html#method.set_square_wave_frequency
 //! [`set_alarm1_day`]: struct.Ds323x.html#method.set_alarm1_day
+//! [`set_alarm1_hms`]: struct.Ds323x.html#method.set_alarm1_hms
 //! [`has_alarm1_matched`]: struct.Ds323x.html#method.has_alarm1_matched
 //! [`clear_alarm1_matched_flag`]: struct.Ds323x.html#method.clear_alarm1_matched_flag
 //! [`enable_alarm1_interrupts`]: struct.Ds323x.html#method.enable_alarm1_interrupts

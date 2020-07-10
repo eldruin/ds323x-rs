@@ -21,6 +21,7 @@ This driver allows you to:
 - Select the function of the INT/SQW output pin. See `use_int_sqw_output_as_interrupt`.
 - Alarms:
     - Set alarms 1 and 2 with several matching policies. See `set_alarm1_day`.
+    - Set alarms 1 and 2 for a time. See `set_alarm1_hms`.
     - Read whether alarms 1 or 2 have matched. See `has_alarm1_matched`.
     - Clear flag indicating that alarms 1 or 2 have matched. See `clear_alarm1_matched_flag`.
     - Enable and disable alarms 1 and 2 interrupt generation. See `enable_alarm1_interrupts`.
