@@ -4,7 +4,6 @@
 [![Docs](https://docs.rs/ds323x/badge.svg)](https://docs.rs/ds323x)
 [![Build Status](https://travis-ci.org/eldruin/ds323x-rs.svg?branch=master)](https://travis-ci.org/eldruin/ds323x-rs)
 [![Coverage Status](https://coveralls.io/repos/eldruin/ds323x-rs/badge.svg?branch=master)](https://coveralls.io/r/eldruin/ds323x-rs?branch=master)
-![Maintenance Intention](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
 
 This is a platform agnostic Rust driver for the DS3231, DS3232 and DS3234
 extremely accurate real-time clocks, based on the [`embedded-hal`] traits.
