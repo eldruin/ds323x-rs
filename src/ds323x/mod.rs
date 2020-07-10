@@ -5,8 +5,7 @@ pub use self::alarms::{
     Alarm1Matching, Alarm2Matching, DayAlarm1, DayAlarm2, WeekdayAlarm1, WeekdayAlarm2,
 };
 mod datetime;
-use super::{BitFlags, Error};
-use super::{Datelike, Hours, NaiveDate, NaiveDateTime, NaiveTime, Rtcc, Timelike};
+use crate::{BitFlags, Error, Hours, NaiveTime, Timelike};
 
 // Transforms a decimal number to packed BCD format
 fn decimal_to_packed_bcd(dec: u8) -> u8 {

@@ -1,7 +1,9 @@
 //! Device configuration
 
-use super::super::{BitFlags, Ds323x, Error, Register, SqWFreq};
-use interface::{ReadData, WriteData};
+use crate::{
+    interface::{ReadData, WriteData},
+    BitFlags, Ds323x, Error, Register, SqWFreq,
+};
 
 impl<DI, IC, CommE, PinE> Ds323x<DI, IC>
 where

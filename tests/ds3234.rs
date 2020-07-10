@@ -1,5 +1,4 @@
-extern crate embedded_hal_mock as hal;
-use hal::spi::Transaction as SpiTrans;
+use embedded_hal_mock::spi::Transaction as SpiTrans;
 
 #[allow(unused)]
 mod common;

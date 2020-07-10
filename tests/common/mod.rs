@@ -1,9 +1,8 @@
-extern crate ds323x;
-extern crate embedded_hal;
-use self::ds323x::{ic, interface, Ds323x};
-extern crate embedded_hal_mock as hal;
-use self::hal::i2c::{Mock as I2cMock, Transaction as I2cTrans};
-use self::hal::spi::{Mock as SpiMock, Transaction as SpiTrans};
+use ds323x::{ic, interface, Ds323x};
+use embedded_hal_mock::{
+    i2c::{Mock as I2cMock, Transaction as I2cTrans},
+    spi::{Mock as SpiMock, Transaction as SpiTrans},
+};
 
 #[allow(unused)]
 pub const DEVICE_ADDRESS: u8 = 0b110_1000;

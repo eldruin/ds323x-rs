@@ -1,9 +1,11 @@
 //! Common implementation
 
-use super::super::{BitFlags, Ds323x, Error, Register};
 use super::{decimal_to_packed_bcd, hours_to_register, packed_bcd_to_decimal};
-use super::{Datelike, Hours, NaiveDate, NaiveDateTime, NaiveTime, Rtcc, Timelike};
-use interface::{ReadData, WriteData};
+use crate::{
+    interface::{ReadData, WriteData},
+    BitFlags, Datelike, Ds323x, Error, Hours, NaiveDate, NaiveDateTime, NaiveTime, Register, Rtcc,
+    Timelike,
+};
 
 impl<DI, IC, CommE, PinE> Rtcc for Ds323x<DI, IC>
 where

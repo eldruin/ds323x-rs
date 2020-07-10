@@ -1,7 +1,10 @@
 //! I2C/SPI interfaces
 
-use super::{private, Error, DEVICE_ADDRESS};
-use hal::blocking;
+use crate::{private, Error, DEVICE_ADDRESS};
+use embedded_hal::{
+    blocking::{i2c, spi},
+    digital::v2::OutputPin,
+};
 
 /// I2C interface
 #[derive(Debug, Default)]
@@ -28,7 +31,7 @@ pub trait WriteData: private::Sealed {
 
 impl<I2C, E> WriteData for I2cInterface<I2C>
 where
-    I2C: blocking::i2c::Write<Error = E>,
+    I2C: i2c::Write<Error = E>,
 {
     type Error = Error<E, ()>;
     fn write_register(&mut self, register: u8, data: u8) -> Result<(), Self::Error> {
@@ -47,8 +50,8 @@ where
 
 impl<SPI, CS, CommE, PinE> WriteData for SpiInterface<SPI, CS>
 where
-    SPI: blocking::spi::Write<u8, Error = CommE>,
-    CS: hal::digital::v2::OutputPin<Error = PinE>,
+    SPI: spi::Write<u8, Error = CommE>,
+    CS: OutputPin<Error = PinE>,
 {
     type Error = Error<CommE, PinE>;
     fn write_register(&mut self, register: u8, data: u8) -> Result<(), Self::Error> {
@@ -83,7 +86,7 @@ pub trait ReadData: private::Sealed {
 
 impl<I2C, E> ReadData for I2cInterface<I2C>
 where
-    I2C: blocking::i2c::WriteRead<Error = E>,
+    I2C: i2c::WriteRead<Error = E>,
 {
     type Error = Error<E, ()>;
     fn read_register(&mut self, register: u8) -> Result<u8, Self::Error> {
@@ -104,8 +107,8 @@ where
 
 impl<SPI, CS, CommE, PinE> ReadData for SpiInterface<SPI, CS>
 where
-    SPI: blocking::spi::Transfer<u8, Error = CommE>,
-    CS: hal::digital::v2::OutputPin<Error = PinE>,
+    SPI: spi::Transfer<u8, Error = CommE>,
+    CS: OutputPin<Error = PinE>,
 {
     type Error = Error<CommE, PinE>;
     fn read_register(&mut self, register: u8) -> Result<u8, Self::Error> {

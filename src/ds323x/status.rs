@@ -1,7 +1,9 @@
 //! Device status
 
-use super::super::{BitFlags, Ds323x, Error, Register};
-use interface::{ReadData, WriteData};
+use crate::{
+    interface::{ReadData, WriteData},
+    BitFlags, Ds323x, Error, Register,
+};
 
 impl<DI, IC, CommE, PinE> Ds323x<DI, IC>
 where

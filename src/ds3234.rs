@@ -1,13 +1,13 @@
 //! Functions exclusive of DS3234
-use super::{ic, BitFlags, Ds323x, Error, Register, TempConvRate, CONTROL_POR_VALUE};
+use crate::interface::{SpiInterface, WriteData};
+use crate::{ic, BitFlags, Ds323x, Error, Register, TempConvRate, CONTROL_POR_VALUE};
 use core::marker::PhantomData;
-use hal::blocking;
-use interface::{SpiInterface, WriteData};
+use embedded_hal::{blocking::spi, digital::v2::OutputPin};
 
 impl<SPI, CS, CommE, PinE> Ds323x<SpiInterface<SPI, CS>, ic::DS3234>
 where
-    SPI: blocking::spi::Transfer<u8, Error = CommE> + blocking::spi::Write<u8, Error = CommE>,
-    CS: hal::digital::v2::OutputPin<Error = PinE>,
+    SPI: spi::Transfer<u8, Error = CommE> + spi::Write<u8, Error = CommE>,
+    CS: OutputPin<Error = PinE>,
 {
     /// Create a new instance.
     pub fn new_ds3234(spi: SPI, chip_select: CS) -> Self {

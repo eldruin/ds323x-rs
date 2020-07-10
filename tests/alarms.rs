@@ -1,12 +1,9 @@
-extern crate embedded_hal_mock as hal;
-use hal::i2c::Transaction as I2cTrans;
-use hal::spi::Transaction as SpiTrans;
+use embedded_hal_mock::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTrans};
 mod common;
 use common::{
     destroy_ds3231, destroy_ds3232, destroy_ds3234, new_ds3231, new_ds3232, new_ds3234,
     BitFlags as BF, Register, DEVICE_ADDRESS as DEV_ADDR,
 };
-extern crate ds323x;
 use ds323x::{
     Alarm1Matching as A1M, Alarm2Matching as A2M, DayAlarm1, DayAlarm2, Error, Hours, NaiveTime,
     WeekdayAlarm1, WeekdayAlarm2,

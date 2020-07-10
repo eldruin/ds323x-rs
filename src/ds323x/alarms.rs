@@ -1,9 +1,11 @@
 //! Alarm support
 
-use super::super::{BitFlags, Ds323x, Error, Hours, Register};
 use super::{decimal_to_packed_bcd, hours_to_register};
-use crate::ds323x::{NaiveTime, Timelike};
-use interface::{ReadData, WriteData};
+use crate::{
+    ds323x::{NaiveTime, Timelike},
+    interface::{ReadData, WriteData},
+    BitFlags, Ds323x, Error, Hours, Register,
+};
 
 /// Parameters for setting Alarm1 on a day of the month
 ///

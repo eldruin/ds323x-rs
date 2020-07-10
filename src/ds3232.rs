@@ -1,13 +1,14 @@
 //! Functions exclusive of DS3232
 
-use super::{ic, BitFlags, Ds323x, Error, TempConvRate, CONTROL_POR_VALUE};
+use crate::{
+    ic, interface::I2cInterface, BitFlags, Ds323x, Error, TempConvRate, CONTROL_POR_VALUE,
+};
 use core::marker::PhantomData;
-use hal::blocking;
-use interface::I2cInterface;
+use embedded_hal::blocking::i2c;
 
 impl<I2C, E> Ds323x<I2cInterface<I2C>, ic::DS3232>
 where
-    I2C: blocking::i2c::Write<Error = E> + blocking::i2c::WriteRead<Error = E>,
+    I2C: i2c::Write<Error = E> + i2c::WriteRead<Error = E>,
 {
     /// Create a new instance of the DS3232 device.
     pub fn new_ds3232(i2c: I2C) -> Self {
