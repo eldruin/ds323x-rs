@@ -2,7 +2,7 @@ use embedded_hal_mock::spi::Transaction as SpiTrans;
 
 #[allow(unused)]
 mod common;
-use common::{destroy_ds3234, new_ds3234, BitFlags, Register};
+use self::common::{destroy_ds3234, new_ds3234, BitFlags, Register};
 
 call_test!(
     can_en_temp_conv_bat,

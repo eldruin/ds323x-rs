@@ -3,7 +3,7 @@ use embedded_hal_mock::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTra
 
 #[allow(unused)]
 mod common;
-use common::{
+use self::common::{
     destroy_ds3232, destroy_ds3234, new_ds3232, new_ds3234, BitFlags as BF, Register,
     DEVICE_ADDRESS as DEV_ADDR, DS323X_POR_STATUS,
 };

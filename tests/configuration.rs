@@ -2,7 +2,7 @@ use ds323x::SqWFreq;
 use embedded_hal_mock::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTrans};
 
 mod common;
-use common::{
+use self::common::{
     destroy_ds3231, destroy_ds3232, destroy_ds3234, new_ds3231, new_ds3232, new_ds3234,
     BitFlags as BF, Register, CONTROL_POR_VALUE, DEVICE_ADDRESS as DEV_ADDR, DS3231_POR_STATUS,
     DS323X_POR_STATUS,

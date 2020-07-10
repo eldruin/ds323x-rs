@@ -1,5 +1,7 @@
 mod common;
-use common::{destroy_ds3231, destroy_ds3232, destroy_ds3234, new_ds3231, new_ds3232, new_ds3234};
+use self::common::{
+    destroy_ds3231, destroy_ds3232, destroy_ds3234, new_ds3231, new_ds3232, new_ds3234,
+};
 
 macro_rules! construction_test {
     ($name:ident, $create:ident, $destroy:ident) => {
