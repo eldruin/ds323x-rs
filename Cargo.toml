@@ -27,6 +27,7 @@ coveralls = { repository = "eldruin/ds323x-rs", branch = "master", service = "gi
 [dependencies]
 embedded-hal = "0.2.3"
 rtcc = "0.2"
+embedded-time = "0.7.1"
 
 [dev-dependencies]
 linux-embedded-hal = "0.3"
@@ -34,3 +35,6 @@ embedded-hal-mock = "0.7"
 
 [profile.release]
 lto = true
+
+[patch.crates-io]
+embedded-time = { git="https://github.com/eldruin/embedded-time.git", branch="remove-error-trait" }

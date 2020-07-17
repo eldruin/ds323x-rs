@@ -400,7 +400,7 @@ pub const SPI_MODE_1: Mode = MODE_1;
 pub const SPI_MODE_3: Mode = MODE_3;
 
 /// All possible errors in this crate
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Error<CommE, PinE> {
     /// I²C/SPI bus error
     Comm(CommE),
@@ -514,6 +514,8 @@ pub use crate::ds323x::{
 mod ds3231;
 mod ds3232;
 mod ds3234;
+mod embedded_time;
+pub use crate::embedded_time::{Ds323xWrapper, WrapperError};
 
 mod private {
     use super::{ic, interface};
