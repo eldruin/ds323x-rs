@@ -4,7 +4,7 @@ use crate::{
     interface::{ReadData, WriteData},
     Ds323x, Error, Rtcc,
 };
-use core::cell::RefCell;
+use core::cell::{RefCell, RefMut};
 use core::convert::From;
 use embedded_time::{clock, Clock, Instant, Period};
 
@@ -33,11 +33,8 @@ where
 
     fn now(&self) -> Result<Instant<Self>, clock::Error<Self::ImplError>> {
         let datetime = self
-            .dev
-            .try_borrow_mut()
-            .map_err(|_| clock::Error::Other(Self::ImplError::CouldNotAcquireDevice))?
-            .get_datetime()
-            .map_err(|e| clock::Error::Other(Self::ImplError::Other(e)))?;
+            .do_on_inner(|mut dev| dev.get_datetime())
+            .map_err(clock::Error::Other)?;
         Ok(Instant::new((datetime.timestamp_millis() as u64) / 1_000))
     }
 }
@@ -59,13 +56,13 @@ impl<DI, IC> Ds323xWrapper<DI, IC> {
         self.dev.into_inner()
     }
 }
-/*
+
 impl<CommE, PinE, DI, IC> Ds323xWrapper<DI, IC>
 where
     DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>,
 {
     /// Run function on mutable borrowed inner device
-    pub fn do_on_borrow_mut<R>(
+    pub fn do_on_inner<R>(
         &self,
         f: impl FnOnce(RefMut<Ds323x<DI, IC>>) -> Result<R, Error<CommE, PinE>>,
     ) -> Result<R, WrapperError<CommE, PinE>> {
@@ -76,4 +73,3 @@ where
         f(dev).map_err(WrapperError::Other)
     }
 }
-*/
