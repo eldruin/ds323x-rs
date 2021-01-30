@@ -20,10 +20,6 @@ include = [
 ]
 edition = "2018"
 
-[badges]
-travis-ci = { repository = "eldruin/ds323x-rs", branch = "master" }
-coveralls = { repository = "eldruin/ds323x-rs", branch = "master", service = "github" }
-
 [dependencies]
 embedded-hal = "0.2.3"
 rtcc = "0.2"

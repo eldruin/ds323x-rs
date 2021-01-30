@@ -2,7 +2,7 @@
 
 [![crates.io](https://img.shields.io/crates/v/ds323x.svg)](https://crates.io/crates/ds323x)
 [![Docs](https://docs.rs/ds323x/badge.svg)](https://docs.rs/ds323x)
-[![Build Status](https://travis-ci.org/eldruin/ds323x-rs.svg?branch=master)](https://travis-ci.org/eldruin/ds323x-rs)
+[![Build Status](https://github.com/eldruin/ds323x-rs/workflows/Build/badge.svg)](https://github.com/eldruin/ds323x-rs/actions?query=workflow%3ABuild)
 [![Coverage Status](https://coveralls.io/repos/eldruin/ds323x-rs/badge.svg?branch=master)](https://coveralls.io/r/eldruin/ds323x-rs?branch=master)
 
 This is a platform agnostic Rust driver for the DS3231, DS3232 and DS3234
