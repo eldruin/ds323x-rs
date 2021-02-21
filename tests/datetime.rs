@@ -157,7 +157,7 @@ mod day {
     use super::*;
     get_param_test!(get, get_day, DOM, 1, 1);
     set_param_test!(set, set_day, DOM, 1, 1);
-    set_invalid_param_range_test!(invalid, set_day, 0, 8);
+    set_invalid_param_range_test!(invalid, set_day, 0, 32);
 }
 
 mod month {

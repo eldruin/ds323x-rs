@@ -137,7 +137,7 @@ where
     }
 
     fn set_day(&mut self, day: u8) -> Result<(), Self::Error> {
-        if day < 1 || day > 7 {
+        if day < 1 || day > 31 {
             return Err(Error::InvalidInputData);
         }
         self.iface.write_register(Register::DOM, day)
