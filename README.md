@@ -41,16 +41,18 @@ This driver allows you to:
 This driver is compatible with the DS3231 and DS3232 I2C devices and the
 DS3234 SPI device.
 
-### DS3231
-The DS3231 is a low-cost, extremely accurate I2C real-time clock (RTC) with
-an integrated temperature-compensated crystal oscillator (TCXO) and crystal.
+These devices are low-cost temperature-compensated crystal oscillator (TCXO)
+with a very accurate, temperature-compensated, integrated real-time clock
+(RTC) including 236/256 bytes of battery-backed SRAM, depending on the model.
 
-The device incorporates a battery input, and maintains accurate timekeeping
-when main power to the device is interrupted. The integration of the
-crystal resonator enhances the long-term accuracy of the device as well as
+### DS3231 and DS3232 details
+
+The devices incorporate a battery input, and maintain accurate timekeeping
+when main power to the devices is interrupted. The integration of the
+crystal resonator enhances the long-term accuracy of the devices as well as
 reduces the piece-part count in a manufacturing line.
-The DS3231 is available in commercial and industrial temperature ranges,
-and is offered in a 16-pin, 300-mil SO package.
+The devices are available in commercial and industrial temperature ranges,
+and are offered in a 16-pin, 300-mil SO package.
 
 The RTC maintains seconds, minutes, hours, day, date, month, and year
 information. The date at the end of the month is automatically adjusted for
@@ -66,36 +68,7 @@ reset output, and to automatically switch to the backup supply when
 necessary. Additionally, the RST pin is monitored as a pushbutton
 input for generating a μP reset.
 
-### DS3232
-The DS3232 is a low-cost temperature-compensated crystal oscillator (TCXO)
-with a very accurate, temperature-compensated, integrated real-time clock
-(RTC) and 236 bytes of battery-backed SRAM.
-
-Additionally, the DS3232 incorporates a battery input and maintains
-accurate timekeeping when main power to the device is interrupted. The
-integration of the crystal resonator enhances the long-term accuracy of the
-device as well as reduces the piece-part count in a manufacturing line.
-The DS3232 is available in commercial and industrial temperature ranges,
-and is offered in an industry-standard 20-pin, 300-mil SO package.
-
-The RTC maintains seconds, minutes, hours, day, date, month, and year
-information. The date at the end of the month is automatically adjusted for
-months with fewer than 31 days, including corrections for leap year. The
-clock operates in either the 24-hour or 12-hour format with an AM/PM
-indicator. Two programmable time-of-day alarms and a programmable
-square-wave output are provided. Address and data are transferred serially
-through an I2C bidirectional bus.
-
-A precision temperature-compensated voltage reference and comparator
-circuit monitors the status of VCC to detect power failures, to provide a
-reset output, and to automatically switch to the backup supply when
-necessary. Additionally, the RST pin is monitored as a pushbutton input for
-generating a μP reset.
-
-### DS3234
-The DS3234 is a low-cost, extremely accurate SPI bus real-time clock (RTC)
-with an integrated temperature-compensated crystal oscillator (TCXO) and
-crystal.
+### DS3234 details
 
 The DS3234 incorporates a precision, temperature-compensated voltage
 reference and comparator circuit to monitor VCC. When VCC drops below the
