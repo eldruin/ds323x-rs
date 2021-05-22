@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+...
+
+## [0.4.0] - 2021-05-22
+
 ### Changed
 - [breaking-change] Return `Error::InvalidDeviceState` if it was not possible to read the
   date and/or time from the device because the state of the device corresponds to
@@ -64,7 +68,8 @@ this CHANGELOG.
 [`chrono`]: https://crates.io/crates/chrono
 [`rtcc`]: https://crates.io/crates/rtcc
 
-[Unreleased]: https://github.com/eldruin/ds323x-rs/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/eldruin/ds323x-rs/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/eldruin/ds323x-rs/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/eldruin/ds323x-rs/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/eldruin/ds323x-rs/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/eldruin/ds323x-rs/compare/v0.2.0...v0.3.0
