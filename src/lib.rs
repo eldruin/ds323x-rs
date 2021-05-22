@@ -408,6 +408,11 @@ pub enum Error<CommE, PinE> {
     Pin(PinE),
     /// Invalid input data provided
     InvalidInputData,
+    /// Internal device state is invalid.
+    ///
+    /// It was not possible to read a valid date and/or time.
+    /// The device is probably missing initialization.
+    InvalidDeviceState,
 }
 
 /// Square-wave output frequency

@@ -1,6 +1,8 @@
 //! Common implementation
 
-use super::{decimal_to_packed_bcd, hours_to_register, packed_bcd_to_decimal};
+use super::{
+    decimal_to_packed_bcd, hours_to_register, packed_bcd_to_decimal, some_or_invalid_error,
+};
 use crate::{
     interface::{ReadData, WriteData},
     BitFlags, Datelike, Ds323x, Error, Hours, NaiveDate, NaiveDateTime, NaiveTime, Register, Rtcc,
@@ -33,11 +35,8 @@ where
         let minute = packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]);
         let second = packed_bcd_to_decimal(data[Register::SECONDS as usize + 1]);
 
-        Ok(NaiveTime::from_hms(
-            get_h24(hour).into(),
-            minute.into(),
-            second.into(),
-        ))
+        let time = NaiveTime::from_hms_opt(get_h24(hour).into(), minute.into(), second.into());
+        some_or_invalid_error(time)
     }
 
     fn get_weekday(&mut self) -> Result<u8, Self::Error> {
@@ -74,7 +73,8 @@ where
         let month =
             packed_bcd_to_decimal(data[Register::MONTH as usize + 1 - offset] & !BitFlags::CENTURY);
         let day = packed_bcd_to_decimal(data[Register::DOM as usize + 1 - offset]);
-        Ok(NaiveDate::from_ymd(year.into(), month.into(), day.into()))
+        let date = NaiveDate::from_ymd_opt(year.into(), month.into(), day.into());
+        some_or_invalid_error(date)
     }
 
     fn get_datetime(&mut self) -> Result<NaiveDateTime, Self::Error> {
@@ -91,13 +91,10 @@ where
         let minute = packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]);
         let second = packed_bcd_to_decimal(data[Register::SECONDS as usize + 1]);
 
-        Ok(
-            rtcc::NaiveDate::from_ymd(year.into(), month.into(), day.into()).and_hms(
-                get_h24(hour).into(),
-                minute.into(),
-                second.into(),
-            ),
-        )
+        let date = NaiveDate::from_ymd_opt(year.into(), month.into(), day.into());
+        let date = some_or_invalid_error(date)?;
+        let datetime = date.and_hms_opt(get_h24(hour).into(), minute.into(), second.into());
+        some_or_invalid_error(datetime)
     }
 
     fn set_seconds(&mut self, seconds: u8) -> Result<(), Self::Error> {

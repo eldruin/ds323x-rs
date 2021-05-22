@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-...
+### Changed
+- [breaking-change] Return `Error::InvalidDeviceState` if it was not possible to read the
+  date and/or time from the device because the state of the device corresponds to
+  an invalid date and/or time.
 
 ## [0.3.2] - 2021-02-22
 
