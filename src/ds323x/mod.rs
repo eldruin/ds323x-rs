@@ -21,9 +21,9 @@ fn hours_to_register<CommE, PinE>(hours: Hours) -> Result<u8, Error<CommE, PinE>
     match hours {
         Hours::H24(h) if h > 23 => Err(Error::InvalidInputData),
         Hours::H24(h) => Ok(decimal_to_packed_bcd(h)),
-        Hours::AM(h) if h < 1 || h > 12 => Err(Error::InvalidInputData),
+        Hours::AM(h) if !(1..=12).contains(&h) => Err(Error::InvalidInputData),
         Hours::AM(h) => Ok(BitFlags::H24_H12 | decimal_to_packed_bcd(h)),
-        Hours::PM(h) if h < 1 || h > 12 => Err(Error::InvalidInputData),
+        Hours::PM(h) if !(1..=12).contains(&h) => Err(Error::InvalidInputData),
         Hours::PM(h) => Ok(BitFlags::H24_H12 | BitFlags::AM_PM | decimal_to_packed_bcd(h)),
     }
 }

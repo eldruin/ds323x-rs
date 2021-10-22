@@ -184,7 +184,7 @@
 //!
 //! ```no_run
 //! use ds323x::Ds323x;
-//! use linux_embedded_hal::{Pin, Spidev};
+//! use linux_embedded_hal::{SysfsPin as Pin, Spidev};
 //!
 //! let dev = Spidev::open("/dev/spidev0.0").unwrap();
 //! let chip_select = Pin::new(24);
