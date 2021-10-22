@@ -127,21 +127,21 @@ where
     }
 
     fn set_weekday(&mut self, weekday: u8) -> Result<(), Self::Error> {
-        if weekday < 1 || weekday > 7 {
+        if !(1..=7).contains(&weekday) {
             return Err(Error::InvalidInputData);
         }
         self.iface.write_register(Register::DOW, weekday)
     }
 
     fn set_day(&mut self, day: u8) -> Result<(), Self::Error> {
-        if day < 1 || day > 31 {
+        if !(1..=31).contains(&day) {
             return Err(Error::InvalidInputData);
         }
         self.iface.write_register(Register::DOM, day)
     }
 
     fn set_month(&mut self, month: u8) -> Result<(), Self::Error> {
-        if month < 1 || month > 12 {
+        if !(1..=12).contains(&month) {
             return Err(Error::InvalidInputData);
         }
         // keep the century bit
@@ -151,7 +151,7 @@ where
     }
 
     fn set_year(&mut self, year: u16) -> Result<(), Self::Error> {
-        if year < 2000 || year > 2100 {
+        if !(2000..=2100).contains(&year) {
             return Err(Error::InvalidInputData);
         }
         let data = self.iface.read_register(Register::MONTH)?;

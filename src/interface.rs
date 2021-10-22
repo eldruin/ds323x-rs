@@ -42,9 +42,7 @@ where
     }
 
     fn write_data(&mut self, payload: &mut [u8]) -> Result<(), Self::Error> {
-        self.i2c
-            .write(DEVICE_ADDRESS, &payload)
-            .map_err(Error::Comm)
+        self.i2c.write(DEVICE_ADDRESS, payload).map_err(Error::Comm)
     }
 }
 
@@ -67,7 +65,7 @@ where
     fn write_data(&mut self, payload: &mut [u8]) -> Result<(), Self::Error> {
         self.cs.set_low().map_err(Error::Pin)?;
         payload[0] += 0x80;
-        let result = self.spi.write(&payload).map_err(Error::Comm);
+        let result = self.spi.write(payload).map_err(Error::Comm);
 
         self.cs.set_high().map_err(Error::Pin)?;
         result
@@ -119,9 +117,9 @@ where
         Ok(result?[1])
     }
 
-    fn read_data(&mut self, mut payload: &mut [u8]) -> Result<(), Self::Error> {
+    fn read_data(&mut self, payload: &mut [u8]) -> Result<(), Self::Error> {
         self.cs.set_low().map_err(Error::Pin)?;
-        let result = self.spi.transfer(&mut payload).map_err(Error::Comm);
+        let result = self.spi.transfer(payload).map_err(Error::Comm);
         self.cs.set_high().map_err(Error::Pin)?;
         result?;
         Ok(())

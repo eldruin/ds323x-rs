@@ -132,8 +132,8 @@ fn get_matching_mask_alarm2(matching: Alarm2Matching) -> [u8; 3] {
 fn is_hour_valid(hours: Hours) -> bool {
     match hours {
         Hours::H24(h) if h > 23 => true,
-        Hours::AM(h) if h < 1 || h > 12 => true,
-        Hours::PM(h) if h < 1 || h > 12 => true,
+        Hours::AM(h) if !(1..=12).contains(&h) => true,
+        Hours::PM(h) if !(1..=12).contains(&h) => true,
         _ => false,
     }
 }
@@ -143,9 +143,9 @@ fn amend_hour(hours: Hours) -> Hours {
     match hours {
         Hours::H24(h) if h > 23 => Hours::H24(0),
         Hours::H24(h) => Hours::H24(h),
-        Hours::AM(h) if h < 1 || h > 12 => Hours::AM(1),
+        Hours::AM(h) if !(1..=12).contains(&h) => Hours::AM(1),
         Hours::AM(h) => Hours::AM(h),
-        Hours::PM(h) if h < 1 || h > 12 => Hours::PM(1),
+        Hours::PM(h) if !(1..=12).contains(&h) => Hours::PM(1),
         Hours::PM(h) => Hours::PM(h),
     }
 }
