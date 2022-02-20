@@ -669,7 +669,7 @@ mod alarm1_day {
         match_ms_ignore_invalid_hour,
         set_alarm1_day,
         ALARM1_SECONDS,
-        [4, 3, AM | 0, AM | 1],
+        [4, 3, AM, AM | 1],
         DayAlarm1 {
             day: 1,
             hour: Hours::H24(24),
@@ -721,7 +721,7 @@ mod alarm1_day {
         match_s_ignore_incorrect_min,
         set_alarm1_day,
         ALARM1_SECONDS,
-        [4, AM | 0, AM | 2, AM | 1],
+        [4, AM, AM | 2, AM | 1],
         DayAlarm1 {
             day: 1,
             hour: Hours::H24(2),
@@ -842,7 +842,7 @@ mod alarm1_weekday {
         match_s_ignore_incorrect_min,
         set_alarm1_weekday,
         ALARM1_SECONDS,
-        [4, AM | 0, AM | 2, AM | BF::WEEKDAY | 1],
+        [4, AM, AM | 2, AM | BF::WEEKDAY | 1],
         WeekdayAlarm1 {
             weekday: 1,
             hour: Hours::H24(2),
@@ -868,7 +868,7 @@ mod alarm1_weekday {
         match_ops_ignore_incorrect_sec,
         set_alarm1_weekday,
         ALARM1_SECONDS,
-        [AM | 0, AM | 3, AM | 2, AM | BF::WEEKDAY | 1],
+        [AM, AM | 3, AM | 2, AM | BF::WEEKDAY | 1],
         WeekdayAlarm1 {
             weekday: 1,
             hour: Hours::H24(2),
@@ -964,7 +964,7 @@ mod alarm2_day {
         match_m_ignore_invalid_h,
         set_alarm2_day,
         ALARM2_MINUTES,
-        [3, AM | 0, AM | 1],
+        [3, AM, AM | 1],
         DayAlarm2 {
             day: 1,
             hour: Hours::H24(25),
@@ -988,7 +988,7 @@ mod alarm2_day {
         match_opm_ignore_incorrect_min,
         set_alarm2_day,
         ALARM2_MINUTES,
-        [AM | 0, AM | 2, AM | 1],
+        [AM, AM | 2, AM | 1],
         DayAlarm2 {
             day: 1,
             hour: Hours::H24(2),
@@ -1076,7 +1076,7 @@ mod alarm2_weekday {
         match_m_ignore_invalid_hour,
         set_alarm2_weekday,
         ALARM2_MINUTES,
-        [3, AM | 0, AM | BF::WEEKDAY | 1],
+        [3, AM, AM | BF::WEEKDAY | 1],
         WeekdayAlarm2 {
             weekday: 1,
             hour: Hours::H24(24),
@@ -1100,7 +1100,7 @@ mod alarm2_weekday {
         match_opm_ignore_incorrect_min,
         set_alarm2_weekday,
         ALARM2_MINUTES,
-        [AM | 0, AM | 2, AM | BF::WEEKDAY | 1],
+        [AM, AM | 2, AM | BF::WEEKDAY | 1],
         WeekdayAlarm2 {
             weekday: 1,
             hour: Hours::H24(2),
