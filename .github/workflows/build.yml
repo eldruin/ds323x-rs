@@ -1,8 +1,6 @@
 on:
   push:
   pull_request:
-  schedule:
-    - cron: 0 0 * * 0
 
 name: Build
 
@@ -15,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        rust: [stable, beta, nightly, 1.31.0]
+        rust: [stable, beta, 1.31.0]
         TARGET:
           - x86_64-unknown-linux-gnu
           - x86_64-unknown-linux-musl
@@ -26,11 +24,6 @@ jobs:
           - thumbv7em-none-eabi
           - thumbv7em-none-eabihf
           - thumbv7m-none-eabi
-
-        include:
-          # Test nightly but don't fail
-          - rust: nightly
-            experimental: true
 
     steps:
       - uses: actions/checkout@v2
