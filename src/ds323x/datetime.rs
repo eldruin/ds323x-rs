@@ -5,79 +5,17 @@ use super::{
 };
 use crate::{
     interface::{ReadData, WriteData},
-    BitFlags, Datelike, Ds323x, Error, Hours, NaiveDate, NaiveDateTime, NaiveTime, Register, Rtcc,
-    Timelike,
+    BitFlags, DateTimeAccess, Datelike, Ds323x, Error, Hours, NaiveDate, NaiveDateTime, NaiveTime,
+    Register, Rtcc, Timelike,
 };
 
-impl<DI, IC, CommE, PinE> Rtcc for Ds323x<DI, IC>
+impl<DI, IC, CommE, PinE> DateTimeAccess for Ds323x<DI, IC>
 where
     DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>,
 {
     type Error = Error<CommE, PinE>;
 
-    fn get_seconds(&mut self) -> Result<u8, Self::Error> {
-        self.read_register_decimal(Register::SECONDS)
-    }
-
-    fn get_minutes(&mut self) -> Result<u8, Self::Error> {
-        self.read_register_decimal(Register::MINUTES)
-    }
-
-    fn get_hours(&mut self) -> Result<Hours, Self::Error> {
-        let data = self.iface.read_register(Register::HOURS)?;
-        Ok(hours_from_register(data))
-    }
-
-    fn get_time(&mut self) -> Result<NaiveTime, Self::Error> {
-        let mut data = [0; 4];
-        self.iface.read_data(&mut data)?;
-        let hour = hours_from_register(data[Register::HOURS as usize + 1]);
-        let minute = packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]);
-        let second = packed_bcd_to_decimal(data[Register::SECONDS as usize + 1]);
-
-        let time = NaiveTime::from_hms_opt(get_h24(hour).into(), minute.into(), second.into());
-        some_or_invalid_error(time)
-    }
-
-    fn get_weekday(&mut self) -> Result<u8, Self::Error> {
-        self.read_register_decimal(Register::DOW)
-    }
-
-    fn get_day(&mut self) -> Result<u8, Self::Error> {
-        self.read_register_decimal(Register::DOM)
-    }
-
-    fn get_month(&mut self) -> Result<u8, Self::Error> {
-        let data = self.iface.read_register(Register::MONTH)?;
-        let value = data & !BitFlags::CENTURY;
-        Ok(packed_bcd_to_decimal(value))
-    }
-
-    fn get_year(&mut self) -> Result<u16, Self::Error> {
-        let mut data = [0; 3];
-        data[0] = Register::MONTH;
-        self.iface.read_data(&mut data)?;
-        Ok(year_from_registers(data[1], data[2]))
-    }
-
-    fn get_date(&mut self) -> Result<NaiveDate, Self::Error> {
-        let mut data = [0; 4];
-        data[0] = Register::DOM;
-        self.iface.read_data(&mut data)?;
-
-        let offset = Register::DOM as usize;
-        let year = year_from_registers(
-            data[Register::MONTH as usize + 1 - offset],
-            data[Register::YEAR as usize + 1 - offset],
-        );
-        let month =
-            packed_bcd_to_decimal(data[Register::MONTH as usize + 1 - offset] & !BitFlags::CENTURY);
-        let day = packed_bcd_to_decimal(data[Register::DOM as usize + 1 - offset]);
-        let date = NaiveDate::from_ymd_opt(year.into(), month.into(), day.into());
-        some_or_invalid_error(date)
-    }
-
-    fn get_datetime(&mut self) -> Result<NaiveDateTime, Self::Error> {
+    fn datetime(&mut self) -> Result<NaiveDateTime, Self::Error> {
         let mut data = [0; 8];
         self.iface.read_data(&mut data)?;
 
@@ -95,6 +33,91 @@ where
         let date = some_or_invalid_error(date)?;
         let datetime = date.and_hms_opt(get_h24(hour).into(), minute.into(), second.into());
         some_or_invalid_error(datetime)
+    }
+
+    fn set_datetime(&mut self, datetime: &NaiveDateTime) -> Result<(), Self::Error> {
+        if datetime.year() < 2000 || datetime.year() > 2100 {
+            return Err(Error::InvalidInputData);
+        }
+        let (month, year) = month_year_to_registers(datetime.month() as u8, datetime.year() as u16);
+        let mut payload = [
+            Register::SECONDS,
+            decimal_to_packed_bcd(datetime.second() as u8),
+            decimal_to_packed_bcd(datetime.minute() as u8),
+            hours_to_register(Hours::H24(datetime.hour() as u8))?,
+            datetime.weekday().number_from_sunday() as u8,
+            decimal_to_packed_bcd(datetime.day() as u8),
+            month,
+            year,
+        ];
+        self.iface.write_data(&mut payload)
+    }
+}
+
+impl<DI, IC, CommE, PinE> Rtcc for Ds323x<DI, IC>
+where
+    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>,
+{
+    fn seconds(&mut self) -> Result<u8, Self::Error> {
+        self.read_register_decimal(Register::SECONDS)
+    }
+
+    fn minutes(&mut self) -> Result<u8, Self::Error> {
+        self.read_register_decimal(Register::MINUTES)
+    }
+
+    fn hours(&mut self) -> Result<Hours, Self::Error> {
+        let data = self.iface.read_register(Register::HOURS)?;
+        Ok(hours_from_register(data))
+    }
+
+    fn time(&mut self) -> Result<NaiveTime, Self::Error> {
+        let mut data = [0; 4];
+        self.iface.read_data(&mut data)?;
+        let hour = hours_from_register(data[Register::HOURS as usize + 1]);
+        let minute = packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]);
+        let second = packed_bcd_to_decimal(data[Register::SECONDS as usize + 1]);
+
+        let time = NaiveTime::from_hms_opt(get_h24(hour).into(), minute.into(), second.into());
+        some_or_invalid_error(time)
+    }
+
+    fn weekday(&mut self) -> Result<u8, Self::Error> {
+        self.read_register_decimal(Register::DOW)
+    }
+
+    fn day(&mut self) -> Result<u8, Self::Error> {
+        self.read_register_decimal(Register::DOM)
+    }
+
+    fn month(&mut self) -> Result<u8, Self::Error> {
+        let data = self.iface.read_register(Register::MONTH)?;
+        let value = data & !BitFlags::CENTURY;
+        Ok(packed_bcd_to_decimal(value))
+    }
+
+    fn year(&mut self) -> Result<u16, Self::Error> {
+        let mut data = [0; 3];
+        data[0] = Register::MONTH;
+        self.iface.read_data(&mut data)?;
+        Ok(year_from_registers(data[1], data[2]))
+    }
+
+    fn date(&mut self) -> Result<NaiveDate, Self::Error> {
+        let mut data = [0; 4];
+        data[0] = Register::DOM;
+        self.iface.read_data(&mut data)?;
+
+        let offset = Register::DOM as usize;
+        let year = year_from_registers(
+            data[Register::MONTH as usize + 1 - offset],
+            data[Register::YEAR as usize + 1 - offset],
+        );
+        let month =
+            packed_bcd_to_decimal(data[Register::MONTH as usize + 1 - offset] & !BitFlags::CENTURY);
+        let day = packed_bcd_to_decimal(data[Register::DOM as usize + 1 - offset]);
+        let date = NaiveDate::from_ymd_opt(year.into(), month.into(), day.into());
+        some_or_invalid_error(date)
     }
 
     fn set_seconds(&mut self, seconds: u8) -> Result<(), Self::Error> {
@@ -182,24 +205,6 @@ where
             Register::DOW,
             date.weekday().number_from_sunday() as u8,
             decimal_to_packed_bcd(date.day() as u8),
-            month,
-            year,
-        ];
-        self.iface.write_data(&mut payload)
-    }
-
-    fn set_datetime(&mut self, datetime: &NaiveDateTime) -> Result<(), Self::Error> {
-        if datetime.year() < 2000 || datetime.year() > 2100 {
-            return Err(Error::InvalidInputData);
-        }
-        let (month, year) = month_year_to_registers(datetime.month() as u8, datetime.year() as u16);
-        let mut payload = [
-            Register::SECONDS,
-            decimal_to_packed_bcd(datetime.second() as u8),
-            decimal_to_packed_bcd(datetime.minute() as u8),
-            hours_to_register(Hours::H24(datetime.hour() as u8))?,
-            datetime.weekday().number_from_sunday() as u8,
-            decimal_to_packed_bcd(datetime.day() as u8),
             month,
             year,
         ];

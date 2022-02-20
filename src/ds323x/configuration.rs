@@ -53,7 +53,7 @@ where
     }
 
     /// Read the aging offset.
-    pub fn get_aging_offset(&mut self) -> Result<i8, Error<CommE, PinE>> {
+    pub fn aging_offset(&mut self) -> Result<i8, Error<CommE, PinE>> {
         let offset = self.iface.read_register(Register::AGING_OFFSET)?;
         Ok(offset as i8)
     }

@@ -12,8 +12,8 @@ extremely accurate real-time clocks, based on the [`embedded-hal`] traits.
 [`embedded-hal`]: https://github.com/rust-embedded/embedded-hal
 
 This driver allows you to:
-- Read and set date and time in 12-hour and 24-hour format. See: `get_datetime`.
-- Read and set date and time individual elements. For example, see: `get_year`.
+- Read and set date and time in 12-hour and 24-hour format. See: `datetime`.
+- Read and set date and time individual elements. For example, see: `year`.
 - Enable and disable the real-time clock. See: `enable`.
 - Read the busy status. See `busy`.
 - Read whether the oscillator is or has been stopped. See `has_been_stopped`.
@@ -32,7 +32,7 @@ This driver allows you to:
     - Enable and disable the 32kHz output. See `enable_32khz_output`.
     - Enable and disable the 32kHz output when battery powered. See `enable_32khz_output_on_battery`.
 - Temperature conversion:
-    - Read the temperature. See `get_temperature`.
+    - Read the temperature. See `temperature`.
     - Force a temperature conversion and time compensation. See `convert_temperature`.
     - Set the temperature conversion rate. See `set_temperature_conversion_rate`.
     - Enable and disable the temperature conversions when battery-powered. See `enable_temperature_conversions_on_battery`.
@@ -111,7 +111,7 @@ Please find additional examples using hardware in this repository: [driver-examp
 [driver-examples]: https://github.com/eldruin/driver-examples
 
 ```rust
-use ds323x::{Ds323x, NaiveDate, Rtcc};
+use ds323x::{DateTimeAccess, Ds323x, NaiveDate, Rtcc};
 use linux_embedded_hal::I2cdev;
 
 fn main() {
@@ -120,7 +120,7 @@ fn main() {
     let datetime = NaiveDate::from_ymd(2020, 5, 1).and_hms(19, 59, 58);
     rtc.set_datetime(&datetime).unwrap();
     // do something else...
-    let time = rtc.get_time().unwrap();
+    let time = rtc.time().unwrap();
     println!("Time: {}", time);
 
     let _dev = rtc.destroy_ds3231();

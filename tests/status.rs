@@ -32,10 +32,10 @@ get_param_test!(
     !BF::ALARM2F
 );
 
-get_param_read_array_test!(temp_0, get_temperature, 0.0, TEMP_MSB, [0, 0], [0, 0]);
+get_param_read_array_test!(temp_0, temperature, 0.0, TEMP_MSB, [0, 0], [0, 0]);
 get_param_read_array_test!(
     temp_min,
-    get_temperature,
+    temperature,
     -128.0,
     TEMP_MSB,
     [0b1000_0000, 0],
@@ -43,7 +43,7 @@ get_param_read_array_test!(
 );
 get_param_read_array_test!(
     temp_max,
-    get_temperature,
+    temperature,
     127.75,
     TEMP_MSB,
     [0b0111_1111, 0b1100_0000],

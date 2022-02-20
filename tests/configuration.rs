@@ -220,18 +220,12 @@ set_param_test!(
 
 get_param_test!(
     get_aging_offset_min,
-    get_aging_offset,
+    aging_offset,
     AGING_OFFSET,
     -128,
     0b1000_0000
 );
-get_param_test!(
-    get_aging_offset_max,
-    get_aging_offset,
-    AGING_OFFSET,
-    127,
-    127
-);
+get_param_test!(get_aging_offset_max, aging_offset, AGING_OFFSET, 127, 127);
 
 call_method_test!(
     int_sqw_out_int,

@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-...
+### Changed
+
+- [breaking-change] Update `rtcc` to version 0.3.
+- [breaking-change] Remove `get_` from all public method names to comply with the Rust API guidelines.
 
 ## [0.4.0] - 2021-05-22
 

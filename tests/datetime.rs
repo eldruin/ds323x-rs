@@ -6,7 +6,7 @@ use self::common::{
 };
 #[allow(unused)] // Rust 1.31.0 is confused due to the macros
 use ds323x::Rtcc;
-use ds323x::{Error, Hours, NaiveDate, NaiveTime};
+use ds323x::{DateTimeAccess, Error, Hours, NaiveDate, NaiveTime};
 
 macro_rules! read_set_param_write_two_test {
     ($name:ident, $method:ident, $value:expr, $register:ident, $binary_value1_read:expr, $bin1:expr, $bin2:expr) => {
@@ -113,76 +113,69 @@ macro_rules! for_all {
 
 mod seconds {
     use super::*;
-    get_param_test!(get, get_seconds, SECONDS, 1, 1);
+    get_param_test!(get, seconds, SECONDS, 1, 1);
     set_param_test!(set, set_seconds, SECONDS, 1, 1);
     set_invalid_param_test!(invalid, set_seconds, 60);
 }
 
 mod minutes {
     use super::*;
-    get_param_test!(get, get_minutes, MINUTES, 1, 1);
+    get_param_test!(get, minutes, MINUTES, 1, 1);
     set_param_test!(set, set_minutes, MINUTES, 1, 1);
     set_invalid_param_test!(invalid, set_minutes, 60);
 }
 
 mod hours_24h {
     use super::*;
-    get_param_test!(get, get_hours, HOURS, Hours::H24(21), 0b0010_0001);
+    get_param_test!(get, hours, HOURS, Hours::H24(21), 0b0010_0001);
     set_param_test!(set, set_hours, HOURS, Hours::H24(21), 0b0010_0001);
     set_invalid_param_test!(invalid, set_hours, Hours::H24(24));
 }
 
 mod hours_12h_am {
     use super::*;
-    get_param_test!(get, get_hours, HOURS, Hours::AM(12), 0b0101_0010);
+    get_param_test!(get, hours, HOURS, Hours::AM(12), 0b0101_0010);
     set_param_test!(set, set_hours, HOURS, Hours::AM(12), 0b0101_0010);
     set_invalid_param_range_test!(invalid, set_hours, Hours::AM(0), Hours::AM(13));
 }
 
 mod hours_12h_pm {
     use super::*;
-    get_param_test!(get, get_hours, HOURS, Hours::PM(12), 0b0111_0010);
+    get_param_test!(get, hours, HOURS, Hours::PM(12), 0b0111_0010);
     set_param_test!(set, set_hours, HOURS, Hours::PM(12), 0b0111_0010);
     set_invalid_param_range_test!(invalid, set_hours, Hours::PM(0), Hours::PM(13));
 }
 
 mod weekday {
     use super::*;
-    get_param_test!(get, get_weekday, DOW, 1, 1);
+    get_param_test!(get, weekday, DOW, 1, 1);
     set_param_test!(set, set_weekday, DOW, 1, 1);
     set_invalid_param_range_test!(invalid, set_weekday, 0, 8);
 }
 
 mod day {
     use super::*;
-    get_param_test!(get, get_day, DOM, 1, 1);
+    get_param_test!(get, day, DOM, 1, 1);
     set_param_test!(set, set_day, DOM, 1, 1);
     set_invalid_param_range_test!(invalid, set_day, 0, 32);
 }
 
 mod month {
     use super::*;
-    get_param_test!(get, get_month, MONTH, 1, 1);
+    get_param_test!(get, month, MONTH, 1, 1);
     read_set_param_test!(set, set_month, MONTH, 12, 0b0000_0010, 0b0001_0010);
     set_invalid_param_range_test!(invalid, set_month, 0, 13);
 
     mod keeps_century {
         use super::*;
-        get_param_test!(get, get_month, MONTH, 12, 0b1001_0010);
+        get_param_test!(get, month, MONTH, 12, 0b1001_0010);
         read_set_param_test!(set, set_month, MONTH, 12, 0b1000_0010, 0b1001_0010);
     }
 }
 
 mod year {
     use super::*;
-    get_param_read_array_test!(
-        century0_get,
-        get_year,
-        2099,
-        MONTH,
-        [0, 0b1001_1001],
-        [0, 0]
-    );
+    get_param_read_array_test!(century0_get, year, 2099, MONTH, [0, 0b1001_1001], [0, 0]);
     read_set_param_write_two_test!(
         century0_set,
         set_year,
@@ -193,14 +186,7 @@ mod year {
         0b1001_1001
     );
 
-    get_param_read_array_test!(
-        century1_get,
-        get_year,
-        2100,
-        MONTH,
-        [0b1000_0000, 0],
-        [0, 0]
-    );
+    get_param_read_array_test!(century1_get, year, 2100, MONTH, [0b1000_0000, 0], [0, 0]);
     read_set_param_write_two_test!(
         century1_set,
         set_year,
@@ -283,7 +269,7 @@ macro_rules! dt_test {
                     ],
                     [0, 0, 0, 0, 0, 0, 0]
                 ));
-                assert_eq!(dt, dev.get_datetime().unwrap());
+                assert_eq!(dt, dev.datetime().unwrap());
                 $destroy_method(dev);
             }
 
@@ -314,7 +300,7 @@ macro_rules! dt_test {
                     [0b0001_0011, 0b0000_1000, 0b0001_1000],
                     [0, 0, 0]
                 ));
-                assert_eq!(d, dev.get_date().unwrap());
+                assert_eq!(d, dev.date().unwrap());
                 $destroy_method(dev);
             }
 
@@ -348,7 +334,7 @@ macro_rules! dt_test {
                     [0b0101_1000, 0b0101_1001, 0b0010_0011],
                     [0, 0, 0]
                 ));
-                assert_eq!(t, dev.get_time().unwrap());
+                assert_eq!(t, dev.time().unwrap());
                 $destroy_method(dev);
             }
 

@@ -21,8 +21,8 @@ include = [
 edition = "2018"
 
 [dependencies]
-embedded-hal = "0.2.6"
-rtcc = "0.2.1"
+embedded-hal = "0.2.7"
+rtcc = "0.3"
 
 [dev-dependencies]
 embedded-hal-mock = "0.8.0"

@@ -4,8 +4,8 @@
 //! [`embedded-hal`]: https://github.com/rust-embedded/embedded-hal
 //!
 //! This driver allows you to:
-//! - Read and set date and time in 12-hour and 24-hour format. See: [`get_datetime`].
-//! - Read and set date and time individual elements. For example, see: [`get_year`].
+//! - Read and set date and time in 12-hour and 24-hour format. See: [`datetime`].
+//! - Read and set date and time individual elements. For example, see: [`year`].
 //! - Enable and disable the real-time clock. See: [`enable`].
 //! - Read the busy status. See [`busy`].
 //! - Read whether the oscillator is or has been stopped. See [`has_been_stopped`].
@@ -24,32 +24,32 @@
 //!     - Enable and disable the 32kHz output. See [`enable_32khz_output`].
 //!     - Enable and disable the 32kHz output when battery powered. See [`enable_32khz_output_on_battery`].
 //! - Temperature conversion:
-//!     - Read the temperature. See [`get_temperature`].
+//!     - Read the temperature. See [`temperature`].
 //!     - Force a temperature conversion and time compensation. See [`convert_temperature`].
 //!     - Set the temperature conversion rate. See [`set_temperature_conversion_rate`].
 //!     - Enable and disable the temperature conversions when battery-powered. See [`enable_temperature_conversions_on_battery`].
 //!
-//! [`get_datetime`]: struct.Ds323x.html#method.get_datetime
-//! [`get_year`]: struct.Ds323x.html#method.get_year
-//! [`enable`]: struct.Ds323x.html#method.enable
-//! [`get_temperature`]: struct.Ds323x.html#method.get_temperature
-//! [`convert_temperature`]: struct.Ds323x.html#method.convert_temperature
-//! [`busy`]: struct.Ds323x.html#method.busy
-//! [`has_been_stopped`]: struct.Ds323x.html#method.has_been_stopped
-//! [`clear_has_been_stopped_flag`]: struct.Ds323x.html#method.clear_has_been_stopped_flag
-//! [`set_aging_offset`]: struct.Ds323x.html#method.set_aging_offset
-//! [`enable_32khz_output`]: struct.Ds323x.html#method.enable_32khz_output
-//! [`use_int_sqw_output_as_interrupt`]: struct.Ds323x.html#method.use_int_sqw_output_as_interrupt
-//! [`enable_square_wave`]: struct.Ds323x.html#method.enable_square_wave
-//! [`set_square_wave_frequency`]: struct.Ds323x.html#method.set_square_wave_frequency
-//! [`set_alarm1_day`]: struct.Ds323x.html#method.set_alarm1_day
-//! [`set_alarm1_hms`]: struct.Ds323x.html#method.set_alarm1_hms
-//! [`has_alarm1_matched`]: struct.Ds323x.html#method.has_alarm1_matched
-//! [`clear_alarm1_matched_flag`]: struct.Ds323x.html#method.clear_alarm1_matched_flag
-//! [`enable_alarm1_interrupts`]: struct.Ds323x.html#method.enable_alarm1_interrupts
-//! [`enable_32khz_output_on_battery`]: struct.Ds323x.html#method.enable_32khz_output_on_battery
-//! [`set_temperature_conversion_rate`]: struct.Ds323x.html#method.set_temperature_conversion_rate
-//! [`enable_temperature_conversions_on_battery`]: struct.Ds323x.html#method.enable_temperature_conversions_on_battery
+//! [`datetime`]: Ds323x::datetime
+//! [`year`]: Ds323x::year
+//! [`enable`]: Ds323x::enable
+//! [`temperature`]: Ds323x::temperature
+//! [`convert_temperature`]: Ds323x::convert_temperature
+//! [`busy`]: Ds323x::busy
+//! [`has_been_stopped`]: Ds323x::has_been_stopped
+//! [`clear_has_been_stopped_flag`]: Ds323x::clear_has_been_stopped_flag
+//! [`set_aging_offset`]: Ds323x::set_aging_offset
+//! [`enable_32khz_output`]: Ds323x::enable_32khz_output
+//! [`use_int_sqw_output_as_interrupt`]: Ds323x::use_int_sqw_output_as_interrupt
+//! [`enable_square_wave`]: Ds323x::enable_square_wave
+//! [`set_square_wave_frequency`]: Ds323x::set_square_wave_frequency
+//! [`set_alarm1_day`]: Ds323x::set_alarm1_day
+//! [`set_alarm1_hms`]: Ds323x::set_alarm1_hms
+//! [`has_alarm1_matched`]: Ds323x::has_alarm1_matched
+//! [`clear_alarm1_matched_flag`]: Ds323x::clear_alarm1_matched_flag
+//! [`enable_alarm1_interrupts`]: Ds323x::enable_alarm1_interrupts
+//! [`enable_32khz_output_on_battery`]: Ds323x::enable_32khz_output_on_battery
+//! [`set_temperature_conversion_rate`]: Ds323x::set_temperature_conversion_rate
+//! [`enable_temperature_conversions_on_battery`]: Ds323x::enable_temperature_conversions_on_battery
 //!
 //! ## The devices
 //!
@@ -198,7 +198,7 @@
 //! ### Set the current date and time at once
 //!
 //! ```no_run
-//! use ds323x::{Ds323x, NaiveDate, Rtcc};
+//! use ds323x::{Ds323x, NaiveDate, DateTimeAccess};
 //! use linux_embedded_hal::I2cdev;
 //!
 //! let dev = I2cdev::new("/dev/i2c-1").unwrap();
@@ -210,12 +210,12 @@
 //! ### Get the current date and time at once
 //!
 //! ```no_run
-//! use ds323x::{Ds323x, Rtcc};
+//! use ds323x::{Ds323x, DateTimeAccess};
 //! use linux_embedded_hal::I2cdev;
 //!
 //! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut rtc = Ds323x::new_ds3231(dev);
-//! let dt = rtc.get_datetime().unwrap();
+//! let dt = rtc.datetime().unwrap();
 //! println!("{}", dt);
 //! // This will print something like: 2020-05-01 19:59:58
 //! ```
@@ -230,7 +230,7 @@
 //!
 //! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut rtc = Ds323x::new_ds3231(dev);
-//! let year = rtc.get_year().unwrap();
+//! let year = rtc.year().unwrap();
 //! println!("Year: {}", year);
 //! ```
 //!
@@ -270,7 +270,7 @@
 //!
 //! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut rtc = Ds323x::new_ds3231(dev);
-//! let temperature = rtc.get_temperature().unwrap();
+//! let temperature = rtc.temperature().unwrap();
 //! ```
 //!
 //! ### Read busy status
@@ -392,7 +392,9 @@
 
 use core::marker::PhantomData;
 use embedded_hal::spi::{Mode, MODE_1, MODE_3};
-pub use rtcc::{Datelike, Hours, NaiveDate, NaiveDateTime, NaiveTime, Rtcc, Timelike};
+pub use rtcc::{
+    DateTimeAccess, Datelike, Hours, NaiveDate, NaiveDateTime, NaiveTime, Rtcc, Timelike,
+};
 
 /// SPI mode 1 (CPOL = 0, CPHA = 1)
 pub const SPI_MODE_1: Mode = MODE_1;

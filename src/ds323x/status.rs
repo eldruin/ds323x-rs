@@ -80,7 +80,7 @@ where
     ///
     /// Note: It is possible to manually force a temperature conversion with
     /// [`convert_temperature()`](#method.convert_temperature)
-    pub fn get_temperature(&mut self) -> Result<f32, Error<CommE, PinE>> {
+    pub fn temperature(&mut self) -> Result<f32, Error<CommE, PinE>> {
         let mut data = [Register::TEMP_MSB, 0, 0];
         self.iface.read_data(&mut data)?;
         let is_negative = (data[1] & 0b1000_0000) != 0;
