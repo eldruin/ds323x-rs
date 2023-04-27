@@ -160,7 +160,7 @@ where
         if !(1..=31).contains(&day) {
             return Err(Error::InvalidInputData);
         }
-        self.iface.write_register(Register::DOM, day)
+        self.write_register_decimal(Register::DOM, day)
     }
 
     fn set_month(&mut self, month: u8) -> Result<(), Self::Error> {
