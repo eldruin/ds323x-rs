@@ -637,7 +637,7 @@ mod alarm1_day {
         set_alarm1_hms,
         ALARM1_SECONDS,
         [4, 3, 2, AM | 1],
-        NaiveTime::from_hms(2, 3, 4)
+        NaiveTime::from_hms_opt(2, 3, 4).unwrap()
     );
     set_alarm_test!(
         match_hms,
@@ -922,7 +922,7 @@ mod alarm2_day {
         set_alarm2_hm,
         ALARM2_MINUTES,
         [3, 2, AM | 1],
-        NaiveTime::from_hms(2, 3, 0)
+        NaiveTime::from_hms_opt(2, 3, 0).unwrap()
     );
     set_alarm_test!(
         match_hm,

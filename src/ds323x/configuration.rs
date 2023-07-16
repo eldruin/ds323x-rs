@@ -84,13 +84,12 @@ where
 
     /// Set the square-wave output frequency.
     pub fn set_square_wave_frequency(&mut self, freq: SqWFreq) -> Result<(), Error<CommE, PinE>> {
-        let new_control;
-        match freq {
-            SqWFreq::_1Hz => new_control = self.control & !BitFlags::RS2 & !BitFlags::RS1,
-            SqWFreq::_1_024Hz => new_control = self.control & !BitFlags::RS2 | BitFlags::RS1,
-            SqWFreq::_4_096Hz => new_control = self.control | BitFlags::RS2 & !BitFlags::RS1,
-            SqWFreq::_8_192Hz => new_control = self.control | BitFlags::RS2 | BitFlags::RS1,
-        }
+        let new_control = match freq {
+            SqWFreq::_1Hz => self.control & !BitFlags::RS2 & !BitFlags::RS1,
+            SqWFreq::_1_024Hz => self.control & !BitFlags::RS2 | BitFlags::RS1,
+            SqWFreq::_4_096Hz => self.control | BitFlags::RS2 & !BitFlags::RS1,
+            SqWFreq::_8_192Hz => self.control | BitFlags::RS2 | BitFlags::RS1,
+        };
         self.write_control(new_control)
     }
 
