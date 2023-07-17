@@ -2,7 +2,7 @@
 
 [![crates.io](https://img.shields.io/crates/v/ds323x.svg)](https://crates.io/crates/ds323x)
 [![Docs](https://docs.rs/ds323x/badge.svg)](https://docs.rs/ds323x)
-![MSRV](https://img.shields.io/badge/rustc-1.35+-blue.svg)
+![MSRV](https://img.shields.io/badge/rustc-1.60+-blue.svg)
 [![Build Status](https://github.com/eldruin/ds323x-rs/workflows/Build/badge.svg)](https://github.com/eldruin/ds323x-rs/actions?query=workflow%3ABuild)
 [![Coverage Status](https://coveralls.io/repos/eldruin/ds323x-rs/badge.svg?branch=master)](https://coveralls.io/r/eldruin/ds323x-rs?branch=master)
 
@@ -117,7 +117,10 @@ use linux_embedded_hal::I2cdev;
 fn main() {
     let dev = I2cdev::new("/dev/i2c-1").unwrap();
     let mut rtc = Ds323x::new_ds3231(dev);
-    let datetime = NaiveDate::from_ymd(2020, 5, 1).and_hms(19, 59, 58);
+    let datetime = NaiveDate::from_ymd_opt(2020, 5, 1)
+        .unwrap()
+        .and_hms_opt(19, 59, 58)
+        .unwrap();
     rtc.set_datetime(&datetime).unwrap();
     // do something else...
     let time = rtc.time().unwrap();

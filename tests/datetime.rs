@@ -1,4 +1,5 @@
 use embedded_hal_mock::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTrans};
+use rtcc::NaiveDateTime;
 mod common;
 use self::common::{
     destroy_ds3231, destroy_ds3232, destroy_ds3234, new_ds3231, new_ds3232, new_ds3234, Register,
@@ -7,6 +8,17 @@ use self::common::{
 #[allow(unused)] // Rust 1.31.0 is confused due to the macros
 use ds323x::Rtcc;
 use ds323x::{DateTimeAccess, Error, Hours, NaiveDate, NaiveTime};
+
+fn new_datetime(y: i32, mo: u32, d: u32, h: u32, min: u32, s: u32) -> NaiveDateTime {
+    NaiveDate::from_ymd_opt(y, mo, d)
+        .unwrap()
+        .and_hms_opt(h, min, s)
+        .unwrap()
+}
+
+fn new_date(y: i32, mo: u32, d: u32) -> NaiveDate {
+    NaiveDate::from_ymd_opt(y, mo, d).unwrap()
+}
 
 macro_rules! read_set_param_write_two_test {
     ($name:ident, $method:ident, $value:expr, $register:ident, $binary_value1_read:expr, $bin1:expr, $bin2:expr) => {
@@ -206,28 +218,28 @@ macro_rules! invalid_dt_test {
             use super::*;
             #[test]
             fn datetime_too_small() {
-                let dt = NaiveDate::from_ymd(1999, 1, 2).and_hms(3, 4, 5);
+                let dt = new_datetime(1999, 1, 2, 3, 4, 5);
                 let mut dev = $create_method(&[]);
                 assert_invalid_input_data!(dev.set_datetime(&dt));
                 $destroy_method(dev);
             }
             #[test]
             fn datetime_too_big() {
-                let dt = NaiveDate::from_ymd(2101, 1, 2).and_hms(3, 4, 5);
+                let dt = new_datetime(2101, 1, 2, 3, 4, 5);
                 let mut dev = $create_method(&[]);
                 assert_invalid_input_data!(dev.set_datetime(&dt));
                 $destroy_method(dev);
             }
             #[test]
             fn date_too_small() {
-                let d = NaiveDate::from_ymd(1999, 1, 2);
+                let d = new_date(1999, 1, 2);
                 let mut dev = $create_method(&[]);
                 assert_invalid_input_data!(dev.set_date(&d));
                 $destroy_method(dev);
             }
             #[test]
             fn date_too_big() {
-                let d = NaiveDate::from_ymd(2101, 1, 2);
+                let d = new_date(2101, 1, 2);
                 let mut dev = $create_method(&[]);
                 assert_invalid_input_data!(dev.set_date(&d));
                 $destroy_method(dev);
@@ -255,7 +267,7 @@ macro_rules! dt_test {
             use super::*;
             #[test]
             fn get_datetime() {
-                let dt = NaiveDate::from_ymd(2018, 8, 13).and_hms(23, 59, 58);
+                let dt = new_datetime(2018, 8, 13, 23, 59, 58);
                 let mut dev = $create_method(&$mac_trans_read!(
                     SECONDS,
                     [
@@ -275,7 +287,7 @@ macro_rules! dt_test {
 
             #[test]
             fn set_datetime() {
-                let dt = NaiveDate::from_ymd(2018, 8, 13).and_hms(23, 59, 58);
+                let dt = new_datetime(2018, 8, 13, 23, 59, 58);
                 let mut dev = $create_method(&$mac_trans_write!(
                     SECONDS,
                     [
@@ -294,7 +306,7 @@ macro_rules! dt_test {
 
             #[test]
             fn get_date() {
-                let d = NaiveDate::from_ymd(2018, 8, 13);
+                let d = new_date(2018, 8, 13);
                 let mut dev = $create_method(&$mac_trans_read!(
                     DOM,
                     [0b0001_0011, 0b0000_1000, 0b0001_1000],
@@ -306,7 +318,7 @@ macro_rules! dt_test {
 
             #[test]
             fn set_date() {
-                let d = NaiveDate::from_ymd(2018, 8, 13);
+                let d = new_date(2018, 8, 13);
                 let mut dev = $create_method(&$mac_trans_write!(
                     DOW,
                     [0b0000_0010, 0b0001_0011, 0b0000_1000, 0b0001_1000]
@@ -317,7 +329,7 @@ macro_rules! dt_test {
 
             #[test]
             fn set_date_century() {
-                let d = NaiveDate::from_ymd(2100, 8, 13);
+                let d = new_date(2100, 8, 13);
                 let mut dev = $create_method(&$mac_trans_write!(
                     DOW,
                     [0b0000_0110, 0b0001_0011, 0b1000_1000, 0]
@@ -328,7 +340,7 @@ macro_rules! dt_test {
 
             #[test]
             fn get_time() {
-                let t = NaiveTime::from_hms(23, 59, 58);
+                let t = NaiveTime::from_hms_opt(23, 59, 58).unwrap();
                 let mut dev = $create_method(&$mac_trans_read!(
                     SECONDS,
                     [0b0101_1000, 0b0101_1001, 0b0010_0011],
@@ -340,7 +352,7 @@ macro_rules! dt_test {
 
             #[test]
             fn set_time() {
-                let t = NaiveTime::from_hms(23, 59, 58);
+                let t = NaiveTime::from_hms_opt(23, 59, 58).unwrap();
                 let mut dev = $create_method(&$mac_trans_write!(
                     SECONDS,
                     [0b0101_1000, 0b0101_1001, 0b0010_0011]
