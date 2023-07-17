@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Fixed `set_day` method. See: [PR #9](https://github.com/eldruin/ds323x-rs/pull/9)
+
 ### Changed
 - Raised MSRV to version 1.60.0
 
