@@ -1,4 +1,4 @@
-use embedded_hal_mock::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTrans};
+use embedded_hal_mock::eh1::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTrans};
 mod common;
 use self::common::{
     destroy_ds3231, destroy_ds3232, destroy_ds3234, new_ds3231, new_ds3232, new_ds3234,
@@ -583,7 +583,7 @@ macro_rules! set_alarm_test {
     ($name:ident, $method:ident, $register:ident, [ $( $registers:expr ),+ ], $( $value:expr ),+) => {
         set_values_test!($name, $method,
             [ I2cTrans::write(DEV_ADDR, vec![Register::$register, $( $registers ),*]) ],
-            [ SpiTrans::write(vec![Register::$register + 0x80, $( $registers ),*]) ],
+            [ SpiTrans::write_vec(vec![Register::$register + 0x80, $( $registers ),*]) ],
             $($value),*
         );
     };

@@ -1,5 +1,5 @@
 use ds323x::TempConvRate;
-use embedded_hal_mock::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTrans};
+use embedded_hal_mock::eh1::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTrans};
 
 #[allow(unused)]
 mod common;
@@ -24,7 +24,7 @@ macro_rules! call_method_status_test {
                 $method,
                 new_ds3234,
                 destroy_ds3234,
-                [SpiTrans::write(vec![Register::STATUS + 0x80, $value])]
+                [SpiTrans::write_vec(vec![Register::STATUS + 0x80, $value])]
             );
         }
     };
@@ -66,7 +66,7 @@ macro_rules! set_param_test_2_4 {
                 DEV_ADDR,
                 vec![Register::$register, $binary_value]
             )],
-            [SpiTrans::write(vec![
+            [SpiTrans::write_vec(vec![
                 Register::$register + 0x80,
                 $binary_value
             ])]

@@ -1,5 +1,5 @@
 use ds323x::SqWFreq;
-use embedded_hal_mock::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTrans};
+use embedded_hal_mock::eh1::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTrans};
 
 mod common;
 use self::common::{
@@ -46,7 +46,7 @@ macro_rules! call_method_test {
                 DEV_ADDR,
                 vec![Register::$register, $value_enabled]
             )],
-            [SpiTrans::write(vec![
+            [SpiTrans::write_vec(vec![
                 Register::$register + 0x80,
                 $value_enabled
             ])]
@@ -83,7 +83,7 @@ macro_rules! call_method_status_test {
                 $method,
                 new_ds3234,
                 destroy_ds3234,
-                [SpiTrans::write(vec![
+                [SpiTrans::write_vec(vec![
                     Register::STATUS + 0x80,
                     $value_ds323x
                 ])]
@@ -126,7 +126,7 @@ macro_rules! change_if_necessary_test {
                         vec![Register::$register, 0],
                         vec![Register::$register, $value_disabled]
                     ),
-                    SpiTrans::write(vec![Register::$register + 0x80, $value_enabled])
+                    SpiTrans::write_vec(vec![Register::$register + 0x80, $value_enabled])
                 ]
             );
         }

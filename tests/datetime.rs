@@ -1,4 +1,4 @@
-use embedded_hal_mock::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTrans};
+use embedded_hal_mock::eh1::{i2c::Transaction as I2cTrans, spi::Transaction as SpiTrans};
 use rtcc::NaiveDateTime;
 mod common;
 use self::common::{
@@ -39,7 +39,7 @@ macro_rules! read_set_param_write_two_test {
                     vec![Register::$register, 0],
                     vec![Register::$register, $binary_value1_read]
                 ),
-                SpiTrans::write(vec![Register::$register + 0x80, $bin1, $bin2])
+                SpiTrans::write_vec(vec![Register::$register + 0x80, $bin1, $bin2])
             ]
         );
     };
@@ -64,7 +64,7 @@ macro_rules! read_set_param_test {
                     vec![Register::$register, 0],
                     vec![Register::$register, $binary_value_read]
                 ),
-                SpiTrans::write(vec![Register::$register + 0x80, $binary_value_write])
+                SpiTrans::write_vec(vec![Register::$register + 0x80, $binary_value_write])
             ]
         );
     };
@@ -256,7 +256,7 @@ macro_rules! transactions_i2c_write {
 
 macro_rules! transactions_spi_write {
     ($register:ident, [ $( $exp_bin:expr ),+ ]) => {
-            [ SpiTrans::write(vec![Register::$register + 0x80, $( $exp_bin ),*]) ]
+            [ SpiTrans::write_vec(vec![Register::$register + 0x80, $( $exp_bin ),*]) ]
     };
 }
 
