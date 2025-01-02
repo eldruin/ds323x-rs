@@ -49,14 +49,12 @@ where
     type Error = Error<E>;
     fn write_register(&mut self, register: u8, data: u8) -> Result<(), Self::Error> {
         let payload: [u8; 2] = [register + 0x80, data];
-        let result = self.spi.write(&payload).map_err(Error::Comm);
-        result
+        self.spi.write(&payload).map_err(Error::Comm)
     }
 
     fn write_data(&mut self, payload: &mut [u8]) -> Result<(), Self::Error> {
         payload[0] += 0x80;
-        let result = self.spi.write(payload).map_err(Error::Comm);
-        result
+        self.spi.write(payload).map_err(Error::Comm)
     }
 }
 
