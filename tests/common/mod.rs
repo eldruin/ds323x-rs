@@ -1,5 +1,5 @@
 use ds323x::{ic, interface, Ds323x};
-use embedded_hal_mock::{
+use embedded_hal_mock::eh1::{
     i2c::{Mock as I2cMock, Transaction as I2cTrans},
     spi::{Mock as SpiMock, Transaction as SpiTrans},
 };
@@ -59,14 +59,17 @@ impl BitFlags {
 
 pub struct DummyOutputPin;
 
-impl embedded_hal::digital::v2::OutputPin for DummyOutputPin {
-    type Error = ();
+impl embedded_hal::digital::OutputPin for DummyOutputPin {
     fn set_low(&mut self) -> Result<(), Self::Error> {
         Ok(())
     }
     fn set_high(&mut self) -> Result<(), Self::Error> {
         Ok(())
     }
+}
+
+impl embedded_hal::digital::ErrorType for DummyOutputPin {
+    type Error = embedded_hal::digital::ErrorKind;
 }
 
 pub fn new_ds3231(
@@ -82,8 +85,8 @@ pub fn new_ds3232(
 }
 
 pub fn new_ds3234(
-    transactions: &[SpiTrans],
-) -> Ds323x<interface::SpiInterface<SpiMock, DummyOutputPin>, ic::DS3234> {
+    transactions: &[SpiTrans<u8>],
+) -> Ds323x<interface::SpiInterface<SpiMock<u8>, DummyOutputPin>, ic::DS3234> {
     Ds323x::new_ds3234(SpiMock::new(transactions), DummyOutputPin)
 }
 
@@ -95,7 +98,7 @@ pub fn destroy_ds3232(dev: Ds323x<interface::I2cInterface<I2cMock>, ic::DS3232>)
     dev.destroy_ds3232().done();
 }
 
-pub fn destroy_ds3234(dev: Ds323x<interface::SpiInterface<SpiMock, DummyOutputPin>, ic::DS3234>) {
+pub fn destroy_ds3234(dev: Ds323x<interface::SpiInterface<SpiMock<u8>, DummyOutputPin>, ic::DS3234>) {
     dev.destroy_ds3234().0.done();
 }
 
@@ -280,7 +283,7 @@ macro_rules! set_param_test {
                 DEV_ADDR,
                 vec![Register::$register, $binary_value]
             )],
-            [SpiTrans::write(vec![
+            [SpiTrans::write_vec(vec![
                 Register::$register + 0x80,
                 $binary_value
             ])]

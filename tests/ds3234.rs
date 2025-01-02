@@ -1,4 +1,4 @@
-use embedded_hal_mock::spi::Transaction as SpiTrans;
+use embedded_hal_mock::eh1::spi::Transaction as SpiTrans;
 
 #[allow(unused)]
 mod common;
@@ -9,7 +9,7 @@ call_test!(
     enable_temperature_conversions_on_battery,
     new_ds3234,
     destroy_ds3234,
-    [SpiTrans::write(vec![Register::TEMP_CONV + 0x80, 0])]
+    [SpiTrans::write_vec(vec![Register::TEMP_CONV + 0x80, 0])]
 );
 
 call_test!(
@@ -17,7 +17,7 @@ call_test!(
     disable_temperature_conversions_on_battery,
     new_ds3234,
     destroy_ds3234,
-    [SpiTrans::write(vec![
+    [SpiTrans::write_vec(vec![
         Register::TEMP_CONV + 0x80,
         BitFlags::TEMP_CONV_BAT
     ])]

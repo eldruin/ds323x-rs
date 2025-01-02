@@ -2,8 +2,8 @@
 
 use crate::{private, Error, DEVICE_ADDRESS};
 use embedded_hal::{
-    blocking::{i2c, spi},
-    digital::v2::OutputPin,
+    i2c, spi,
+    digital::OutputPin,
 };
 
 /// I2C interface
@@ -31,7 +31,7 @@ pub trait WriteData: private::Sealed {
 
 impl<I2C, E> WriteData for I2cInterface<I2C>
 where
-    I2C: i2c::Write<Error = E>,
+    I2C: i2c::I2c<Error = E>,
 {
     type Error = Error<E, ()>;
     fn write_register(&mut self, register: u8, data: u8) -> Result<(), Self::Error> {
@@ -48,7 +48,7 @@ where
 
 impl<SPI, CS, CommE, PinE> WriteData for SpiInterface<SPI, CS>
 where
-    SPI: spi::Write<u8, Error = CommE>,
+    SPI: spi::SpiDevice<u8, Error = CommE>,
     CS: OutputPin<Error = PinE>,
 {
     type Error = Error<CommE, PinE>;
@@ -84,7 +84,7 @@ pub trait ReadData: private::Sealed {
 
 impl<I2C, E> ReadData for I2cInterface<I2C>
 where
-    I2C: i2c::WriteRead<Error = E>,
+    I2C: i2c::I2c<Error = E>,
 {
     type Error = Error<E, ()>;
     fn read_register(&mut self, register: u8) -> Result<u8, Self::Error> {
@@ -105,23 +105,22 @@ where
 
 impl<SPI, CS, CommE, PinE> ReadData for SpiInterface<SPI, CS>
 where
-    SPI: spi::Transfer<u8, Error = CommE>,
+    SPI: spi::SpiDevice<u8, Error = CommE>,
     CS: OutputPin<Error = PinE>,
 {
     type Error = Error<CommE, PinE>;
     fn read_register(&mut self, register: u8) -> Result<u8, Self::Error> {
         self.cs.set_low().map_err(Error::Pin)?;
         let mut data = [register, 0];
-        let result = self.spi.transfer(&mut data).map_err(Error::Comm);
+        let result = self.spi.transfer_in_place(&mut data).map_err(Error::Comm);
         self.cs.set_high().map_err(Error::Pin)?;
-        Ok(result?[1])
+        result.and(Ok(data[1]))
     }
 
     fn read_data(&mut self, payload: &mut [u8]) -> Result<(), Self::Error> {
         self.cs.set_low().map_err(Error::Pin)?;
-        let result = self.spi.transfer(payload).map_err(Error::Comm);
+        let result = self.spi.transfer(payload, &[]).map_err(Error::Comm);
         self.cs.set_high().map_err(Error::Pin)?;
-        result?;
-        Ok(())
+        result
     }
 }
