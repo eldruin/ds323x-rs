@@ -2,7 +2,7 @@
 
 [![crates.io](https://img.shields.io/crates/v/ds323x.svg)](https://crates.io/crates/ds323x)
 [![Docs](https://docs.rs/ds323x/badge.svg)](https://docs.rs/ds323x)
-![MSRV](https://img.shields.io/badge/rustc-1.60+-blue.svg)
+![MSRV](https://img.shields.io/badge/rustc-1.75+-blue.svg)
 [![Build Status](https://github.com/eldruin/ds323x-rs/workflows/Build/badge.svg)](https://github.com/eldruin/ds323x-rs/actions?query=workflow%3ABuild)
 [![Coverage Status](https://coveralls.io/repos/eldruin/ds323x-rs/badge.svg?branch=master)](https://coveralls.io/r/eldruin/ds323x-rs?branch=master)
 
@@ -138,7 +138,7 @@ changes, please file an
 
 ## Minimum Supported Rust Version (MSRV)
 
-This crate is guaranteed to compile on stable Rust 1.35 and up. It *might*
+This crate is guaranteed to compile on stable Rust 1.75 and up. It *might*
 compile with older versions but that may change in any new patch release.
 
 ## License
