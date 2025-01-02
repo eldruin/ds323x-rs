@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased] - ReleaseDate
 
 ### Changed
+- [breaking-change] Update to `embedded-hal` 1.0.0.
 - Raised MSRV to version 1.75.0
 
 ## [0.5.1] - 2023-07-17
