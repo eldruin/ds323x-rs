@@ -157,15 +157,17 @@
 //!
 //! ```no_run
 //! use ds323x::Ds323x;
-//! use linux_embedded_hal::{SysfsPin as Pin, Spidev};
+//! use embedded_hal_bus::spi::ExclusiveDevice;
+//! use linux_embedded_hal::{Delay, SpidevBus, SysfsPin};
 //!
-//! let dev = Spidev::open("/dev/spidev0.0").unwrap();
-//! let chip_select = Pin::new(24);
-//! let rtc = Ds323x::new_ds3234(dev, chip_select);
+//! let spi = SpidevBus::open("/dev/spidev0.0").unwrap();
+//! let chip_select = SysfsPin::new(25);
+//! let dev = ExclusiveDevice::new(spi, chip_select, Delay).unwrap();
+//! let rtc = Ds323x::new_ds3234(dev);
 //! // do something...
 //!
-//! // get the SPI device and chip select pin back
-//! let (dev, chip_select) = rtc.destroy_ds3234();
+//! // get the SPI device back
+//! let dev = rtc.destroy_ds3234();
 //! ```
 //!
 //! ### Set the current date and time at once
@@ -375,11 +377,9 @@ pub const SPI_MODE_3: Mode = MODE_3;
 
 /// All possible errors in this crate
 #[derive(Debug)]
-pub enum Error<CommE, PinE> {
+pub enum Error<E> {
     /// I²C/SPI bus error
-    Comm(CommE),
-    /// Pin setting error
-    Pin(PinE),
+    Comm(E),
     /// Invalid input data provided
     InvalidInputData,
     /// Internal device state is invalid.
@@ -498,7 +498,7 @@ mod private {
     use super::{ic, interface};
     pub trait Sealed {}
 
-    impl<SPI, CS> Sealed for interface::SpiInterface<SPI, CS> {}
+    impl<SPI> Sealed for interface::SpiInterface<SPI> {}
     impl<I2C> Sealed for interface::I2cInterface<I2C> {}
 
     impl Sealed for ic::DS3231 {}

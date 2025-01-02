@@ -86,8 +86,8 @@ pub fn new_ds3232(
 
 pub fn new_ds3234(
     transactions: &[SpiTrans<u8>],
-) -> Ds323x<interface::SpiInterface<SpiMock<u8>, DummyOutputPin>, ic::DS3234> {
-    Ds323x::new_ds3234(SpiMock::new(transactions), DummyOutputPin)
+) -> Ds323x<interface::SpiInterface<SpiMock<u8>>, ic::DS3234> {
+    Ds323x::new_ds3234(SpiMock::new(transactions))
 }
 
 pub fn destroy_ds3231(dev: Ds323x<interface::I2cInterface<I2cMock>, ic::DS3231>) {
@@ -98,10 +98,8 @@ pub fn destroy_ds3232(dev: Ds323x<interface::I2cInterface<I2cMock>, ic::DS3232>)
     dev.destroy_ds3232().done();
 }
 
-pub fn destroy_ds3234(
-    dev: Ds323x<interface::SpiInterface<SpiMock<u8>, DummyOutputPin>, ic::DS3234>,
-) {
-    dev.destroy_ds3234().0.done();
+pub fn destroy_ds3234(dev: Ds323x<interface::SpiInterface<SpiMock<u8>>, ic::DS3234>) {
+    dev.destroy_ds3234().done();
 }
 
 #[macro_export]
@@ -210,10 +208,14 @@ macro_rules! get_param_test {
                 vec![Register::$register],
                 vec![$binary_value]
             )],
-            [SpiTrans::transfer(
-                vec![Register::$register, 0],
-                vec![Register::$register, $binary_value]
-            )]
+            [
+                SpiTrans::transaction_start(),
+                SpiTrans::transfer_in_place(
+                    vec![Register::$register, 0],
+                    vec![Register::$register, $binary_value]
+                ),
+                SpiTrans::transaction_end(),
+            ]
         );
     };
 }
@@ -228,7 +230,10 @@ macro_rules! transactions_i2c_read {
 #[macro_export]
 macro_rules! transactions_spi_read {
     ($register1:ident, [ $( $read_bin:expr ),+ ], [ $( $read_bin2:expr ),+ ]) => {
-        [ SpiTrans::transfer(vec![Register::$register1, $( $read_bin2 ),*], vec![Register::$register1, $( $read_bin ),*]) ]
+        [SpiTrans::transaction_start(),
+         SpiTrans::transfer_in_place(vec![Register::$register1, $( $read_bin2 ),*], vec![Register::$register1, $( $read_bin ),*]),
+         SpiTrans::transaction_end()
+        ]
     }
 }
 
@@ -285,10 +290,11 @@ macro_rules! set_param_test {
                 DEV_ADDR,
                 vec![Register::$register, $binary_value]
             )],
-            [SpiTrans::write_vec(vec![
-                Register::$register + 0x80,
-                $binary_value
-            ])]
+            [
+                SpiTrans::transaction_start(),
+                SpiTrans::write_vec(vec![Register::$register + 0x80, $binary_value]),
+                SpiTrans::transaction_end(),
+            ]
         );
     };
 }

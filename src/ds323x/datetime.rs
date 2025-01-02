@@ -9,11 +9,11 @@ use crate::{
     Register, Rtcc, Timelike,
 };
 
-impl<DI, IC, CommE, PinE> DateTimeAccess for Ds323x<DI, IC>
+impl<DI, IC, E> DateTimeAccess for Ds323x<DI, IC>
 where
-    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>,
+    DI: ReadData<Error = Error<E>> + WriteData<Error = Error<E>>,
 {
-    type Error = Error<CommE, PinE>;
+    type Error = Error<E>;
 
     fn datetime(&mut self) -> Result<NaiveDateTime, Self::Error> {
         let mut data = [0; 8];
@@ -54,9 +54,9 @@ where
     }
 }
 
-impl<DI, IC, CommE, PinE> Rtcc for Ds323x<DI, IC>
+impl<DI, IC, E> Rtcc for Ds323x<DI, IC>
 where
-    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>,
+    DI: ReadData<Error = Error<E>> + WriteData<Error = Error<E>>,
 {
     fn seconds(&mut self) -> Result<u8, Self::Error> {
         self.read_register_decimal(Register::SECONDS)
@@ -212,20 +212,16 @@ where
     }
 }
 
-impl<DI, IC, CommE, PinE> Ds323x<DI, IC>
+impl<DI, IC, E> Ds323x<DI, IC>
 where
-    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>,
+    DI: ReadData<Error = Error<E>> + WriteData<Error = Error<E>>,
 {
-    fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<CommE, PinE>> {
+    fn read_register_decimal(&mut self, register: u8) -> Result<u8, Error<E>> {
         let data = self.iface.read_register(register)?;
         Ok(packed_bcd_to_decimal(data))
     }
 
-    fn write_register_decimal(
-        &mut self,
-        register: u8,
-        decimal_number: u8,
-    ) -> Result<(), Error<CommE, PinE>> {
+    fn write_register_decimal(&mut self, register: u8, decimal_number: u8) -> Result<(), Error<E>> {
         self.iface
             .write_register(register, decimal_to_packed_bcd(decimal_number))
     }

@@ -9,7 +9,11 @@ call_test!(
     enable_temperature_conversions_on_battery,
     new_ds3234,
     destroy_ds3234,
-    [SpiTrans::write_vec(vec![Register::TEMP_CONV + 0x80, 0])]
+    [
+        SpiTrans::transaction_start(),
+        SpiTrans::write_vec(vec![Register::TEMP_CONV + 0x80, 0]),
+        SpiTrans::transaction_end()
+    ]
 );
 
 call_test!(
@@ -17,8 +21,9 @@ call_test!(
     disable_temperature_conversions_on_battery,
     new_ds3234,
     destroy_ds3234,
-    [SpiTrans::write_vec(vec![
-        Register::TEMP_CONV + 0x80,
-        BitFlags::TEMP_CONV_BAT
-    ])]
+    [
+        SpiTrans::transaction_start(),
+        SpiTrans::write_vec(vec![Register::TEMP_CONV + 0x80, BitFlags::TEMP_CONV_BAT]),
+        SpiTrans::transaction_end(),
+    ]
 );

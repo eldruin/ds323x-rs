@@ -583,7 +583,7 @@ macro_rules! set_alarm_test {
     ($name:ident, $method:ident, $register:ident, [ $( $registers:expr ),+ ], $( $value:expr ),+) => {
         set_values_test!($name, $method,
             [ I2cTrans::write(DEV_ADDR, vec![Register::$register, $( $registers ),*]) ],
-            [ SpiTrans::write_vec(vec![Register::$register + 0x80, $( $registers ),*]) ],
+            [ SpiTrans::transaction_start(), SpiTrans::write_vec(vec![Register::$register + 0x80, $( $registers ),*]), SpiTrans::transaction_end() ],
             $($value),*
         );
     };

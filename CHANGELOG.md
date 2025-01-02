@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased] - ReleaseDate
 
 ### Changed
+- [breaking-change] Removed `Error::Pin` variant.
 - [breaking-change] Update to `embedded-hal` 1.0.0.
 - Raised MSRV to version 1.75.0
 

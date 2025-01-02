@@ -24,7 +24,11 @@ macro_rules! call_method_status_test {
                 $method,
                 new_ds3234,
                 destroy_ds3234,
-                [SpiTrans::write_vec(vec![Register::STATUS + 0x80, $value])]
+                [
+                    SpiTrans::transaction_start(),
+                    SpiTrans::write_vec(vec![Register::STATUS + 0x80, $value]),
+                    SpiTrans::transaction_end(),
+                ]
             );
         }
     };
@@ -66,10 +70,11 @@ macro_rules! set_param_test_2_4 {
                 DEV_ADDR,
                 vec![Register::$register, $binary_value]
             )],
-            [SpiTrans::write_vec(vec![
-                Register::$register + 0x80,
-                $binary_value
-            ])]
+            [
+                SpiTrans::transaction_start(),
+                SpiTrans::write_vec(vec![Register::$register + 0x80, $binary_value]),
+                SpiTrans::transaction_end(),
+            ]
         );
     };
 }

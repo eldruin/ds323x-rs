@@ -17,7 +17,7 @@ fn packed_bcd_to_decimal(bcd: u8) -> u8 {
     (bcd >> 4) * 10 + (bcd & 0xF)
 }
 
-fn hours_to_register<CommE, PinE>(hours: Hours) -> Result<u8, Error<CommE, PinE>> {
+fn hours_to_register<E>(hours: Hours) -> Result<u8, Error<E>> {
     match hours {
         Hours::H24(h) if h > 23 => Err(Error::InvalidInputData),
         Hours::H24(h) => Ok(decimal_to_packed_bcd(h)),
@@ -28,7 +28,7 @@ fn hours_to_register<CommE, PinE>(hours: Hours) -> Result<u8, Error<CommE, PinE>
     }
 }
 
-fn some_or_invalid_error<T, CommE, PinE>(data: Option<T>) -> Result<T, Error<CommE, PinE>> {
+fn some_or_invalid_error<T, E>(data: Option<T>) -> Result<T, Error<E>> {
     if let Some(data) = data {
         Ok(data)
     } else {
@@ -42,7 +42,7 @@ mod tests {
 
     #[test]
     fn if_some_then_get_inner() {
-        match some_or_invalid_error::<u8, (), ()>(Some(1)) {
+        match some_or_invalid_error::<u8, ()>(Some(1)) {
             Ok(1) => (),
             _ => panic!(),
         }
@@ -50,7 +50,7 @@ mod tests {
 
     #[test]
     fn if_none_then_error() {
-        match some_or_invalid_error::<u8, (), ()>(None) {
+        match some_or_invalid_error::<u8, ()>(None) {
             Err(Error::InvalidDeviceState) => (),
             _ => panic!(),
         }

@@ -35,11 +35,15 @@ macro_rules! read_set_param_write_two_test {
                 I2cTrans::write(DEV_ADDR, vec![Register::$register, $bin1, $bin2])
             ],
             [
-                SpiTrans::transfer(
+                SpiTrans::transaction_start(),
+                SpiTrans::transfer_in_place(
                     vec![Register::$register, 0],
                     vec![Register::$register, $binary_value1_read]
                 ),
-                SpiTrans::write_vec(vec![Register::$register + 0x80, $bin1, $bin2])
+                SpiTrans::transaction_end(),
+                SpiTrans::transaction_start(),
+                SpiTrans::write_vec(vec![Register::$register + 0x80, $bin1, $bin2]),
+                SpiTrans::transaction_end(),
             ]
         );
     };
@@ -60,11 +64,15 @@ macro_rules! read_set_param_test {
                 I2cTrans::write(DEV_ADDR, vec![Register::$register, $binary_value_write])
             ],
             [
-                SpiTrans::transfer(
+                SpiTrans::transaction_start(),
+                SpiTrans::transfer_in_place(
                     vec![Register::$register, 0],
                     vec![Register::$register, $binary_value_read]
                 ),
-                SpiTrans::write_vec(vec![Register::$register + 0x80, $binary_value_write])
+                SpiTrans::transaction_end(),
+                SpiTrans::transaction_start(),
+                SpiTrans::write_vec(vec![Register::$register + 0x80, $binary_value_write]),
+                SpiTrans::transaction_end(),
             ]
         );
     };
@@ -256,7 +264,11 @@ macro_rules! transactions_i2c_write {
 
 macro_rules! transactions_spi_write {
     ($register:ident, [ $( $exp_bin:expr ),+ ]) => {
-            [ SpiTrans::write_vec(vec![Register::$register + 0x80, $( $exp_bin ),*]) ]
+            [
+                SpiTrans::transaction_start(),
+                SpiTrans::write_vec(vec![Register::$register + 0x80, $( $exp_bin ),*]),
+                SpiTrans::transaction_end()
+            ]
     };
 }
 

@@ -150,9 +150,9 @@ fn amend_hour(hours: Hours) -> Hours {
     }
 }
 
-impl<DI, IC, CommE, PinE> Ds323x<DI, IC>
+impl<DI, IC, E> Ds323x<DI, IC>
 where
-    DI: ReadData<Error = Error<CommE, PinE>> + WriteData<Error = Error<CommE, PinE>>,
+    DI: ReadData<Error = Error<E>> + WriteData<Error = Error<E>>,
 {
     /// Set Alarm1 for day of the month.
     ///
@@ -165,7 +165,7 @@ where
         &mut self,
         when: DayAlarm1,
         matching: Alarm1Matching,
-    ) -> Result<(), Error<CommE, PinE>> {
+    ) -> Result<(), Error<E>> {
         let day_invalid = when.day < 1 || when.day > 31;
         let hour_invalid = is_hour_valid(when.hour);
         let minute_invalid = when.minute > 59;
@@ -200,7 +200,7 @@ where
     ///
     /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
     /// The day is not used by this matching strategy and is set to 1.
-    pub fn set_alarm1_hms(&mut self, when: NaiveTime) -> Result<(), Error<CommE, PinE>> {
+    pub fn set_alarm1_hms(&mut self, when: NaiveTime) -> Result<(), Error<E>> {
         let alarm = DayAlarm1 {
             day: 1,
             hour: Hours::H24(when.hour() as u8),
@@ -221,7 +221,7 @@ where
         &mut self,
         when: WeekdayAlarm1,
         matching: Alarm1Matching,
-    ) -> Result<(), Error<CommE, PinE>> {
+    ) -> Result<(), Error<E>> {
         let weekday_invalid = when.weekday < 1 || when.weekday > 7;
         let hour_invalid = is_hour_valid(when.hour);
         let minute_invalid = when.minute > 59;
@@ -263,7 +263,7 @@ where
         &mut self,
         when: DayAlarm2,
         matching: Alarm2Matching,
-    ) -> Result<(), Error<CommE, PinE>> {
+    ) -> Result<(), Error<E>> {
         let day_invalid = when.day < 1 || when.day > 31;
         let hour_invalid = is_hour_valid(when.hour);
         let minute_invalid = when.minute > 59;
@@ -293,7 +293,7 @@ where
     ///
     /// Will return an `Error::InvalidInputData` if any of the parameters is out of range.
     /// The day is not used by this matching strategy and is set to 1.
-    pub fn set_alarm2_hm(&mut self, when: NaiveTime) -> Result<(), Error<CommE, PinE>> {
+    pub fn set_alarm2_hm(&mut self, when: NaiveTime) -> Result<(), Error<E>> {
         let alarm = DayAlarm2 {
             day: 1,
             hour: Hours::H24(when.hour() as u8),
@@ -313,7 +313,7 @@ where
         &mut self,
         when: WeekdayAlarm2,
         matching: Alarm2Matching,
-    ) -> Result<(), Error<CommE, PinE>> {
+    ) -> Result<(), Error<E>> {
         let weekday_invalid = when.weekday < 1 || when.weekday > 7;
         let hour_invalid = is_hour_valid(when.hour);
         let minute_invalid = when.minute > 59;

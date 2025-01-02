@@ -46,10 +46,11 @@ macro_rules! call_method_test {
                 DEV_ADDR,
                 vec![Register::$register, $value_enabled]
             )],
-            [SpiTrans::write_vec(vec![
-                Register::$register + 0x80,
-                $value_enabled
-            ])]
+            [
+                SpiTrans::transaction_start(),
+                SpiTrans::write_vec(vec![Register::$register + 0x80, $value_enabled]),
+                SpiTrans::transaction_end(),
+            ]
         );
     };
 }
@@ -83,10 +84,11 @@ macro_rules! call_method_status_test {
                 $method,
                 new_ds3234,
                 destroy_ds3234,
-                [SpiTrans::write_vec(vec![
-                    Register::STATUS + 0x80,
-                    $value_ds323x
-                ])]
+                [
+                    SpiTrans::transaction_start(),
+                    SpiTrans::write_vec(vec![Register::STATUS + 0x80, $value_ds323x]),
+                    SpiTrans::transaction_end(),
+                ]
             );
         }
     };
@@ -104,10 +106,14 @@ macro_rules! change_if_necessary_test {
                     vec![Register::$register],
                     vec![$value_enabled]
                 )],
-                [SpiTrans::transfer(
-                    vec![Register::$register, 0],
-                    vec![Register::$register, $value_enabled]
-                )]
+                [
+                    SpiTrans::transaction_start(),
+                    SpiTrans::transfer_in_place(
+                        vec![Register::$register, 0],
+                        vec![Register::$register, $value_enabled]
+                    ),
+                    SpiTrans::transaction_end(),
+                ]
             );
 
             call_triple_test!(
@@ -122,11 +128,15 @@ macro_rules! change_if_necessary_test {
                     I2cTrans::write(DEV_ADDR, vec![Register::$register, $value_enabled])
                 ],
                 [
-                    SpiTrans::transfer(
+                    SpiTrans::transaction_start(),
+                    SpiTrans::transfer_in_place(
                         vec![Register::$register, 0],
                         vec![Register::$register, $value_disabled]
                     ),
-                    SpiTrans::write_vec(vec![Register::$register + 0x80, $value_enabled])
+                    SpiTrans::transaction_end(),
+                    SpiTrans::transaction_start(),
+                    SpiTrans::write_vec(vec![Register::$register + 0x80, $value_enabled]),
+                    SpiTrans::transaction_end(),
                 ]
             );
         }
