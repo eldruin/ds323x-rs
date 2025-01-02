@@ -98,7 +98,9 @@ pub fn destroy_ds3232(dev: Ds323x<interface::I2cInterface<I2cMock>, ic::DS3232>)
     dev.destroy_ds3232().done();
 }
 
-pub fn destroy_ds3234(dev: Ds323x<interface::SpiInterface<SpiMock<u8>, DummyOutputPin>, ic::DS3234>) {
+pub fn destroy_ds3234(
+    dev: Ds323x<interface::SpiInterface<SpiMock<u8>, DummyOutputPin>, ic::DS3234>,
+) {
     dev.destroy_ds3234().0.done();
 }
 

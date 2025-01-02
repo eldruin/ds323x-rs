@@ -1,10 +1,7 @@
 //! I2C/SPI interfaces
 
 use crate::{private, Error, DEVICE_ADDRESS};
-use embedded_hal::{
-    i2c, spi,
-    digital::OutputPin,
-};
+use embedded_hal::{digital::OutputPin, i2c, spi};
 
 /// I2C interface
 #[derive(Debug, Default)]

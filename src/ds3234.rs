@@ -2,7 +2,7 @@
 use crate::interface::{SpiInterface, WriteData};
 use crate::{ic, BitFlags, Ds323x, Error, Register, TempConvRate, CONTROL_POR_VALUE};
 use core::marker::PhantomData;
-use embedded_hal::{spi, digital::OutputPin};
+use embedded_hal::{digital::OutputPin, spi};
 
 impl<SPI, CS, CommE, PinE> Ds323x<SpiInterface<SPI, CS>, ic::DS3234>
 where
