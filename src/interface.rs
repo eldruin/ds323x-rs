@@ -5,12 +5,14 @@ use embedded_hal::{i2c, spi};
 
 /// I2C interface
 #[derive(Debug, Default)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct I2cInterface<I2C> {
     pub(crate) i2c: I2C,
 }
 
 /// SPI interface
 #[derive(Debug, Default)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct SpiInterface<SPI> {
     pub(crate) spi: SPI,
 }
