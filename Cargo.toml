@@ -21,7 +21,7 @@ include = [
 edition = "2018"
 
 [features]
-defmt = ["dep:defmt", "rtcc/defmt"]
+defmt-03 = ["dep:defmt", "rtcc/defmt-03"]
 
 [dependencies]
 embedded-hal = "1.0.0"
