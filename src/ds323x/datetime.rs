@@ -36,7 +36,7 @@ where
     }
 
     fn set_datetime(&mut self, datetime: &NaiveDateTime) -> Result<(), Self::Error> {
-        if datetime.year() < 2000 || datetime.year() > 2100 {
+        if !(2000..=2199).contains(&datetime.year()) {
             return Err(Error::InvalidInputData);
         }
         let (month, year) = month_year_to_registers(datetime.month() as u8, datetime.year() as u16);
@@ -174,7 +174,7 @@ where
     }
 
     fn set_year(&mut self, year: u16) -> Result<(), Self::Error> {
-        if !(2000..=2100).contains(&year) {
+        if !(2000..=2199).contains(&year) {
             return Err(Error::InvalidInputData);
         }
         let data = self.iface.read_register(Register::MONTH)?;
@@ -197,7 +197,7 @@ where
     }
 
     fn set_date(&mut self, date: &rtcc::NaiveDate) -> Result<(), Self::Error> {
-        if date.year() < 2000 || date.year() > 2100 {
+        if !(2000..=2199).contains(&date.year()) {
             return Err(Error::InvalidInputData);
         }
         let (month, year) = month_year_to_registers(date.month() as u8, date.year() as u16);
