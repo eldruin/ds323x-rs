@@ -57,21 +57,6 @@ impl BitFlags {
     pub const WEEKDAY: u8 = 0b0100_0000;
 }
 
-pub struct DummyOutputPin;
-
-impl embedded_hal::digital::OutputPin for DummyOutputPin {
-    fn set_low(&mut self) -> Result<(), Self::Error> {
-        Ok(())
-    }
-    fn set_high(&mut self) -> Result<(), Self::Error> {
-        Ok(())
-    }
-}
-
-impl embedded_hal::digital::ErrorType for DummyOutputPin {
-    type Error = embedded_hal::digital::ErrorKind;
-}
-
 pub fn new_ds3231(
     transactions: &[I2cTrans],
 ) -> Ds323x<interface::I2cInterface<I2cMock>, ic::DS3231> {
