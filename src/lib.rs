@@ -377,6 +377,7 @@ pub const SPI_MODE_3: Mode = MODE_3;
 
 /// All possible errors in this crate
 #[derive(Debug)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error<E> {
     /// I²C/SPI bus error
     Comm(E),
@@ -391,6 +392,7 @@ pub enum Error<E> {
 
 /// Square-wave output frequency
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum SqWFreq {
     /// 1 Hz (default)
     _1Hz,
@@ -406,6 +408,7 @@ pub enum SqWFreq {
 ///
 /// This is only available on the DS3232 and DS3234 devices.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum TempConvRate {
     /// Once every 64 seconds (default)
     _64s,
@@ -478,6 +481,7 @@ pub mod ic {
 
 /// DS3231, DS3232 and DS3234 RTC driver
 #[derive(Debug, Default)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct Ds323x<DI, IC> {
     iface: DI,
     control: u8,

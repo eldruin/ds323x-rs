@@ -15,6 +15,7 @@ use crate::{
 /// - Second, minute and hour: 0
 /// - Day: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct DayAlarm1 {
     /// Day of the month [1-31]
     pub day: u8,
@@ -34,6 +35,7 @@ pub struct DayAlarm1 {
 /// - Second, minute and hour: 0
 /// - Weekday: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct WeekdayAlarm1 {
     /// Weekday [1-7]
     pub weekday: u8,
@@ -47,6 +49,7 @@ pub struct WeekdayAlarm1 {
 
 /// Alarm1 trigger rate
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Alarm1Matching {
     /// Alarm once per second.
     OncePerSecond,
@@ -68,6 +71,7 @@ pub enum Alarm1Matching {
 /// - Minute and hour: 0
 /// - Day: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct DayAlarm2 {
     /// Day of month [1-31]
     pub day: u8,
@@ -85,6 +89,7 @@ pub struct DayAlarm2 {
 /// - Minute and hour: 0
 /// - Weekday: 1
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct WeekdayAlarm2 {
     /// Weekday [1-7]
     pub weekday: u8,
@@ -96,6 +101,7 @@ pub struct WeekdayAlarm2 {
 
 /// Alarm2 trigger rate
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Alarm2Matching {
     /// Alarm once per minute. (00 seconds of every minute)
     OncePerMinute,
