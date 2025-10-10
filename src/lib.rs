@@ -388,6 +388,11 @@ pub enum Error<E> {
     /// It was not possible to read a valid date and/or time.
     /// The device is probably missing initialization.
     InvalidDeviceState,
+    /// Device century is not the 20th century.
+    ///
+    /// The device does not produce valid dates for centuries
+    /// other than the 20th century.
+    InvalidDeviceCentury,
 }
 
 /// Square-wave output frequency

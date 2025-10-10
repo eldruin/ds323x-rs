@@ -19,11 +19,13 @@ where
         let mut data = [0; 8];
         self.iface.read_data(&mut data)?;
 
-        let year = year_from_registers(
-            data[Register::MONTH as usize + 1],
-            data[Register::YEAR as usize + 1],
-        );
-        let month = packed_bcd_to_decimal(data[Register::MONTH as usize + 1] & !BitFlags::CENTURY);
+        let century = data[Register::MONTH as usize + 1] & BitFlags::CENTURY;
+        if century != 0 {
+            return Err(Error::InvalidDeviceCentury);
+        }
+
+        let year = 2000 + (packed_bcd_to_decimal(data[Register::YEAR as usize + 1]) as u16);
+        let month = packed_bcd_to_decimal(data[Register::MONTH as usize + 1]);
         let day = packed_bcd_to_decimal(data[Register::DOM as usize + 1]);
         let hour = hours_from_register(data[Register::HOURS as usize + 1]);
         let minute = packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]);
@@ -91,15 +93,28 @@ where
 
     fn month(&mut self) -> Result<u8, Self::Error> {
         let data = self.iface.read_register(Register::MONTH)?;
-        let value = data & !BitFlags::CENTURY;
-        Ok(packed_bcd_to_decimal(value))
+
+        let century = data & BitFlags::CENTURY;
+        if century != 0 {
+            return Err(Error::InvalidDeviceCentury);
+        }
+
+        Ok(packed_bcd_to_decimal(data))
     }
 
     fn year(&mut self) -> Result<u16, Self::Error> {
         let mut data = [0; 3];
         data[0] = Register::MONTH;
         self.iface.read_data(&mut data)?;
-        Ok(year_from_registers(data[1], data[2]))
+
+        let century = data[1] & BitFlags::CENTURY;
+        if century != 0 {
+            return Err(Error::InvalidDeviceCentury);
+        }
+
+        let year = 2000 + (packed_bcd_to_decimal(data[2]) as u16);
+
+        Ok(year)
     }
 
     fn date(&mut self) -> Result<NaiveDate, Self::Error> {
@@ -108,12 +123,15 @@ where
         self.iface.read_data(&mut data)?;
 
         let offset = Register::DOM as usize;
-        let year = year_from_registers(
-            data[Register::MONTH as usize + 1 - offset],
-            data[Register::YEAR as usize + 1 - offset],
-        );
-        let month =
-            packed_bcd_to_decimal(data[Register::MONTH as usize + 1 - offset] & !BitFlags::CENTURY);
+
+        let century = data[Register::MONTH as usize + 1 - offset] & BitFlags::CENTURY;
+        if century != 0 {
+            return Err(Error::InvalidDeviceCentury);
+        }
+
+        let year =
+            2000 + (packed_bcd_to_decimal(data[Register::YEAR as usize + 1 - offset]) as u16);
+        let month = packed_bcd_to_decimal(data[Register::MONTH as usize + 1 - offset]);
         let day = packed_bcd_to_decimal(data[Register::DOM as usize + 1 - offset]);
         let date = NaiveDate::from_ymd_opt(year.into(), month.into(), day.into());
         some_or_invalid_error(date)
@@ -228,16 +246,6 @@ fn hours_from_register(data: u8) -> Hours {
         Hours::PM(packed_bcd_to_decimal(
             data & !(BitFlags::H24_H12 | BitFlags::AM_PM),
         ))
-    }
-}
-
-fn year_from_registers(month: u8, year: u8) -> u16 {
-    let century = month & BitFlags::CENTURY;
-    let year = packed_bcd_to_decimal(year);
-    if century != 0 {
-        2100 + u16::from(year)
-    } else {
-        2000 + u16::from(year)
     }
 }
 

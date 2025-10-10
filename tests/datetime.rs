@@ -185,12 +185,6 @@ mod month {
     get_param_test!(get, month, MONTH, 1, 1);
     read_set_param_test!(set, set_month, MONTH, 12, 0b0000_0010, 0b0001_0010);
     set_invalid_param_range_test!(invalid, set_month, 0, 13);
-
-    mod keeps_century {
-        use super::*;
-        get_param_test!(get, month, MONTH, 12, 0b1001_0010);
-        read_set_param_test!(set, set_month, MONTH, 12, 0b1000_0010, 0b1001_0010);
-    }
 }
 
 mod year {
