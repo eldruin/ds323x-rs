@@ -36,10 +36,9 @@ where
     }
 
     fn set_datetime(&mut self, datetime: &NaiveDateTime) -> Result<(), Self::Error> {
-        if datetime.year() < 2000 || datetime.year() > 2100 {
+        if !(2000..=2099).contains(&datetime.year()) {
             return Err(Error::InvalidInputData);
         }
-        let (month, year) = month_year_to_registers(datetime.month() as u8, datetime.year() as u16);
         let mut payload = [
             Register::SECONDS,
             decimal_to_packed_bcd(datetime.second() as u8),
@@ -47,8 +46,8 @@ where
             hours_to_register(Hours::H24(datetime.hour() as u8))?,
             datetime.weekday().number_from_sunday() as u8,
             decimal_to_packed_bcd(datetime.day() as u8),
-            month,
-            year,
+            decimal_to_packed_bcd(datetime.month() as u8),
+            decimal_to_packed_bcd((datetime.year() - 2000) as u8),
         ];
         self.iface.write_data(&mut payload)
     }
@@ -174,39 +173,30 @@ where
     }
 
     fn set_year(&mut self, year: u16) -> Result<(), Self::Error> {
-        if !(2000..=2100).contains(&year) {
+        if !(2000..=2099).contains(&year) {
             return Err(Error::InvalidInputData);
         }
         let data = self.iface.read_register(Register::MONTH)?;
         let month_bcd = data & !BitFlags::CENTURY;
-        if year > 2099 {
-            let mut data = [
-                Register::MONTH,
-                BitFlags::CENTURY | month_bcd,
-                decimal_to_packed_bcd((year - 2100) as u8),
-            ];
-            self.iface.write_data(&mut data)
-        } else {
-            let mut data = [
-                Register::MONTH,
-                month_bcd,
-                decimal_to_packed_bcd((year - 2000) as u8),
-            ];
-            self.iface.write_data(&mut data)
-        }
+
+        let mut data = [
+            Register::MONTH,
+            month_bcd,
+            decimal_to_packed_bcd((year - 2000) as u8),
+        ];
+        self.iface.write_data(&mut data)
     }
 
     fn set_date(&mut self, date: &rtcc::NaiveDate) -> Result<(), Self::Error> {
-        if date.year() < 2000 || date.year() > 2100 {
+        if !(2000..=2099).contains(&date.year()) {
             return Err(Error::InvalidInputData);
         }
-        let (month, year) = month_year_to_registers(date.month() as u8, date.year() as u16);
         let mut payload = [
             Register::DOW,
             date.weekday().number_from_sunday() as u8,
             decimal_to_packed_bcd(date.day() as u8),
-            month,
-            year,
+            decimal_to_packed_bcd(date.month() as u8),
+            decimal_to_packed_bcd((date.year() - 2000) as u8),
         ];
         self.iface.write_data(&mut payload)
     }
@@ -248,18 +238,6 @@ fn year_from_registers(month: u8, year: u8) -> u16 {
         2100 + u16::from(year)
     } else {
         2000 + u16::from(year)
-    }
-}
-
-fn month_year_to_registers(month: u8, year: u16) -> (u8, u8) {
-    if year > 2099 {
-        let month = BitFlags::CENTURY | decimal_to_packed_bcd(month);
-        (month, decimal_to_packed_bcd((year - 2100) as u8))
-    } else {
-        (
-            decimal_to_packed_bcd(month),
-            decimal_to_packed_bcd((year - 2000) as u8),
-        )
     }
 }
 
