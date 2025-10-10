@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Added defmt support behind a feature flag.
+
+### Changed
+
+- Updated `rtcc` to version  0.4.0 because it has defmt support.
+
 ## [0.6.0] - 2025-01-02
 
 ### Changed
