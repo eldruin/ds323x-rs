@@ -23,6 +23,7 @@ impl Register {
     pub const DOW: u8 = 0x03;
     pub const DOM: u8 = 0x04;
     pub const MONTH: u8 = 0x05;
+    pub const YEAR: u8 = 0x06;
     pub const ALARM1_SECONDS: u8 = 0x07;
     pub const ALARM2_MINUTES: u8 = 0x0B;
     pub const CONTROL: u8 = 0x0E;
@@ -36,6 +37,7 @@ pub struct BitFlags;
 
 #[allow(unused)]
 impl BitFlags {
+    pub const CENTURY: u8 = 0b1000_0000;
     pub const EOSC: u8 = 0b1000_0000;
     pub const BBSQW: u8 = 0b0100_0000;
     pub const TEMP_CONV: u8 = 0b0010_0000;
@@ -124,12 +126,35 @@ macro_rules! assert_invalid_input_data {
 }
 
 #[macro_export]
+macro_rules! assert_invalid_device_century {
+    ($result:expr) => {
+        match $result {
+            Err(Error::InvalidDeviceCentury) => (),
+            _ => panic!("InvalidDeviceCentury error not returned."),
+        }
+    };
+}
+
+#[macro_export]
 macro_rules! set_invalid_test {
     ($name:ident, $method:ident, $create_method:ident, $destroy_method:ident, $value:expr) => {
         #[test]
         fn $name() {
             let mut dev = $create_method(&[]);
             assert_invalid_input_data!(dev.$method($value));
+            $destroy_method(dev);
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! get_invalid_test {
+    ($name:ident, $method:ident, $create_method:ident, $destroy_method:ident, $transactions:expr) => {
+        #[test]
+        fn $name() {
+            let trans = $transactions;
+            let mut dev = $create_method(&trans);
+            assert_invalid_device_century!(dev.$method());
             $destroy_method(dev);
         }
     };
