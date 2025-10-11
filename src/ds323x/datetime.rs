@@ -1,7 +1,7 @@
 //! Common implementation
 
 use super::{
-    decimal_to_packed_bcd, hours_to_register, packed_bcd_to_decimal, some_or_invalid_error,
+    decimal_to_packed_bcd, hours_to_register, packed_bcd_to_decimal,
 };
 use crate::{
     interface::{ReadData, WriteData},
@@ -27,14 +27,15 @@ where
         let year = 2000 + (packed_bcd_to_decimal(data[Register::YEAR as usize + 1]) as u16);
         let month = packed_bcd_to_decimal(data[Register::MONTH as usize + 1]);
         let day = packed_bcd_to_decimal(data[Register::DOM as usize + 1]);
-        let hour = hours_from_register(data[Register::HOURS as usize + 1]);
+        let hour = get_h24(hours_from_register(data[Register::HOURS as usize + 1]));
         let minute = packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]);
         let second = packed_bcd_to_decimal(data[Register::SECONDS as usize + 1]);
 
-        let date = NaiveDate::from_ymd_opt(year.into(), month.into(), day.into());
-        let date = some_or_invalid_error(date)?;
-        let datetime = date.and_hms_opt(get_h24(hour).into(), minute.into(), second.into());
-        some_or_invalid_error(datetime)
+        let date = NaiveDate::from_ymd_opt(year.into(), month.into(), day.into()).ok_or(Error::InvalidDeviceState)?;
+        let time = NaiveTime::from_hms_opt(hour.into(), minute.into(), second.into()).ok_or(Error::InvalidDeviceState)?;
+        let datetime = NaiveDateTime::new(date, time);
+
+        Ok(datetime)
     }
 
     fn set_datetime(&mut self, datetime: &NaiveDateTime) -> Result<(), Self::Error> {
@@ -75,12 +76,12 @@ where
     fn time(&mut self) -> Result<NaiveTime, Self::Error> {
         let mut data = [0; 4];
         self.iface.read_data(&mut data)?;
-        let hour = hours_from_register(data[Register::HOURS as usize + 1]);
+
+        let hour = get_h24(hours_from_register(data[Register::HOURS as usize + 1]));
         let minute = packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]);
         let second = packed_bcd_to_decimal(data[Register::SECONDS as usize + 1]);
 
-        let time = NaiveTime::from_hms_opt(get_h24(hour).into(), minute.into(), second.into());
-        some_or_invalid_error(time)
+        NaiveTime::from_hms_opt(hour.into(), minute.into(), second.into()).ok_or(Error::InvalidDeviceState)
     }
 
     fn weekday(&mut self) -> Result<u8, Self::Error> {
@@ -133,8 +134,8 @@ where
             2000 + (packed_bcd_to_decimal(data[Register::YEAR as usize + 1 - offset]) as u16);
         let month = packed_bcd_to_decimal(data[Register::MONTH as usize + 1 - offset]);
         let day = packed_bcd_to_decimal(data[Register::DOM as usize + 1 - offset]);
-        let date = NaiveDate::from_ymd_opt(year.into(), month.into(), day.into());
-        some_or_invalid_error(date)
+
+        NaiveDate::from_ymd_opt(year.into(), month.into(), day.into()).ok_or(Error::InvalidDeviceState)
     }
 
     fn set_seconds(&mut self, seconds: u8) -> Result<(), Self::Error> {
