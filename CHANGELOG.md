@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Updated `rtcc` to version  0.4.0 because it has defmt support.
+- Updated `rtcc` to version  0.4.0, which has `defmt` support.
 
 ## [0.6.0] - 2025-01-02
 
