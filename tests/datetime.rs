@@ -185,12 +185,6 @@ mod month {
     get_param_test!(get, month, MONTH, 1, 1);
     read_set_param_test!(set, set_month, MONTH, 12, 0b0000_0010, 0b0001_0010);
     set_invalid_param_range_test!(invalid, set_month, 0, 13);
-
-    mod keeps_century {
-        use super::*;
-        get_param_test!(get, month, MONTH, 12, 0b1001_0010);
-        read_set_param_test!(set, set_month, MONTH, 12, 0b1000_0010, 0b1001_0010);
-    }
 }
 
 mod year {
@@ -206,18 +200,7 @@ mod year {
         0b1001_1001
     );
 
-    get_param_read_array_test!(century1_get, year, 2100, MONTH, [0b1000_0000, 0], [0, 0]);
-    read_set_param_write_two_test!(
-        century1_set,
-        set_year,
-        2100,
-        MONTH,
-        0b0001_0010,
-        0b1001_0010,
-        0
-    );
-
-    set_invalid_param_range_test!(invalid, set_year, 1999, 2101);
+    set_invalid_param_range_test!(invalid, set_year, 1999, 2100);
 }
 
 macro_rules! invalid_dt_test {
@@ -233,7 +216,7 @@ macro_rules! invalid_dt_test {
             }
             #[test]
             fn datetime_too_big() {
-                let dt = new_datetime(2101, 1, 2, 3, 4, 5);
+                let dt = new_datetime(2100, 1, 2, 3, 4, 5);
                 let mut dev = $create_method(&[]);
                 assert_invalid_input_data!(dev.set_datetime(&dt));
                 $destroy_method(dev);
@@ -247,7 +230,7 @@ macro_rules! invalid_dt_test {
             }
             #[test]
             fn date_too_big() {
-                let d = new_date(2101, 1, 2);
+                let d = new_date(2100, 1, 2);
                 let mut dev = $create_method(&[]);
                 assert_invalid_input_data!(dev.set_date(&d));
                 $destroy_method(dev);
@@ -334,17 +317,6 @@ macro_rules! dt_test {
                 let mut dev = $create_method(&$mac_trans_write!(
                     DOW,
                     [0b0000_0010, 0b0001_0011, 0b0000_1000, 0b0001_1000]
-                ));
-                dev.set_date(&d).unwrap();
-                $destroy_method(dev);
-            }
-
-            #[test]
-            fn set_date_century() {
-                let d = new_date(2100, 8, 13);
-                let mut dev = $create_method(&$mac_trans_write!(
-                    DOW,
-                    [0b0000_0110, 0b0001_0011, 0b1000_1000, 0]
                 ));
                 dev.set_date(&d).unwrap();
                 $destroy_method(dev);
