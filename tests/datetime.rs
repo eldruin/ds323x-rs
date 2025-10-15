@@ -2,8 +2,8 @@ use embedded_hal_mock::eh1::{i2c::Transaction as I2cTrans, spi::Transaction as S
 use rtcc::NaiveDateTime;
 mod common;
 use self::common::{
-    destroy_ds3231, destroy_ds3232, destroy_ds3234, new_ds3231, new_ds3232, new_ds3234, Register,
-    DEVICE_ADDRESS as DEV_ADDR,
+    destroy_ds3231, destroy_ds3232, destroy_ds3234, new_ds3231, new_ds3232, new_ds3234, BitFlags,
+    Register, DEVICE_ADDRESS as DEV_ADDR,
 };
 #[allow(unused)] // Rust 1.31.0 is confused due to the macros
 use ds323x::Rtcc;
@@ -78,6 +78,31 @@ macro_rules! read_set_param_test {
     };
 }
 
+macro_rules! read_get_param_test {
+    ($name:ident, $method:ident, $register:ident, $value:expr, $binary_value:expr) => {
+        _get_param_test!(
+            $name,
+            $method,
+            $value,
+            [
+                I2cTrans::write_read(DEV_ADDR, vec![Register::MONTH], vec![1]),
+                I2cTrans::write_read(DEV_ADDR, vec![Register::$register], vec![$binary_value])
+            ],
+            [
+                SpiTrans::transaction_start(),
+                SpiTrans::transfer_in_place(vec![Register::MONTH, 0], vec![Register::MONTH, 1]),
+                SpiTrans::transaction_end(),
+                SpiTrans::transaction_start(),
+                SpiTrans::transfer_in_place(
+                    vec![Register::$register, 0],
+                    vec![Register::$register, $binary_value]
+                ),
+                SpiTrans::transaction_end(),
+            ]
+        );
+    };
+}
+
 macro_rules! set_invalid_param_test {
     ($name:ident, $method:ident, $value:expr) => {
         mod $name {
@@ -117,6 +142,50 @@ macro_rules! set_invalid_param_range_test {
     };
 }
 
+macro_rules! get_invalid_device_century_test {
+    ($name:ident, $method:ident) => {
+        mod $name {
+            use super::*;
+            get_invalid_test!(
+                cannot_get_invalid_ds3231,
+                $method,
+                new_ds3231,
+                destroy_ds3231,
+                [I2cTrans::write_read(
+                    DEV_ADDR,
+                    vec![Register::MONTH],
+                    vec![BitFlags::CENTURY | 0]
+                )]
+            );
+            get_invalid_test!(
+                cannot_get_invalid_ds3232,
+                $method,
+                new_ds3232,
+                destroy_ds3232,
+                [I2cTrans::write_read(
+                    DEV_ADDR,
+                    vec![Register::MONTH],
+                    vec![BitFlags::CENTURY | 0]
+                )]
+            );
+            get_invalid_test!(
+                cannot_get_invalid_ds3234,
+                $method,
+                new_ds3234,
+                destroy_ds3234,
+                [
+                    SpiTrans::transaction_start(),
+                    SpiTrans::transfer_in_place(
+                        vec![Register::MONTH, 0],
+                        vec![Register::MONTH, BitFlags::CENTURY | 0]
+                    ),
+                    SpiTrans::transaction_end(),
+                ]
+            );
+        }
+    };
+}
+
 macro_rules! for_all {
     ($name:ident) => {
         mod $name {
@@ -133,51 +202,58 @@ macro_rules! for_all {
 
 mod seconds {
     use super::*;
-    get_param_test!(get, seconds, SECONDS, 1, 1);
+    read_get_param_test!(get, seconds, SECONDS, 1, 1);
     set_param_test!(set, set_seconds, SECONDS, 1, 1);
     set_invalid_param_test!(invalid, set_seconds, 60);
+    get_invalid_device_century_test!(invalid_century, seconds);
 }
 
 mod minutes {
     use super::*;
-    get_param_test!(get, minutes, MINUTES, 1, 1);
+    read_get_param_test!(get, minutes, MINUTES, 1, 1);
     set_param_test!(set, set_minutes, MINUTES, 1, 1);
     set_invalid_param_test!(invalid, set_minutes, 60);
+    get_invalid_device_century_test!(invalid_century, minutes);
 }
 
 mod hours_24h {
     use super::*;
-    get_param_test!(get, hours, HOURS, Hours::H24(21), 0b0010_0001);
+    read_get_param_test!(get, hours, HOURS, Hours::H24(21), 0b0010_0001);
     set_param_test!(set, set_hours, HOURS, Hours::H24(21), 0b0010_0001);
     set_invalid_param_test!(invalid, set_hours, Hours::H24(24));
+    get_invalid_device_century_test!(invalid_century, hours);
 }
 
 mod hours_12h_am {
     use super::*;
-    get_param_test!(get, hours, HOURS, Hours::AM(12), 0b0101_0010);
+    read_get_param_test!(get, hours, HOURS, Hours::AM(12), 0b0101_0010);
     set_param_test!(set, set_hours, HOURS, Hours::AM(12), 0b0101_0010);
     set_invalid_param_range_test!(invalid, set_hours, Hours::AM(0), Hours::AM(13));
+    get_invalid_device_century_test!(invalid_century, hours);
 }
 
 mod hours_12h_pm {
     use super::*;
-    get_param_test!(get, hours, HOURS, Hours::PM(12), 0b0111_0010);
+    read_get_param_test!(get, hours, HOURS, Hours::PM(12), 0b0111_0010);
     set_param_test!(set, set_hours, HOURS, Hours::PM(12), 0b0111_0010);
     set_invalid_param_range_test!(invalid, set_hours, Hours::PM(0), Hours::PM(13));
+    get_invalid_device_century_test!(invalid_century, hours);
 }
 
 mod weekday {
     use super::*;
-    get_param_test!(get, weekday, DOW, 1, 1);
+    read_get_param_test!(get, weekday, DOW, 1, 1);
     set_param_test!(set, set_weekday, DOW, 1, 1);
     set_invalid_param_range_test!(invalid, set_weekday, 0, 8);
+    get_invalid_device_century_test!(invalid_century, weekday);
 }
 
 mod day {
     use super::*;
-    get_param_test!(get, day, DOM, 1, 1);
+    read_get_param_test!(get, day, DOM, 1, 1);
     set_param_test!(set, set_day, DOM, 1, 1);
     set_invalid_param_range_test!(invalid, set_day, 0, 32);
+    get_invalid_device_century_test!(invalid_century, day);
 }
 
 mod month {
@@ -185,19 +261,14 @@ mod month {
     get_param_test!(get, month, MONTH, 1, 1);
     read_set_param_test!(set, set_month, MONTH, 12, 0b0000_0010, 0b0001_0010);
     set_invalid_param_range_test!(invalid, set_month, 0, 13);
-
-    mod keeps_century {
-        use super::*;
-        get_param_test!(get, month, MONTH, 12, 0b1001_0010);
-        read_set_param_test!(set, set_month, MONTH, 12, 0b1000_0010, 0b1001_0010);
-    }
+    get_invalid_device_century_test!(invalid_century, month);
 }
 
 mod year {
     use super::*;
-    get_param_read_array_test!(century0_get, year, 2099, MONTH, [0, 0b1001_1001], [0, 0]);
+    read_get_param_test!(get, year, YEAR, 2099, 0b1001_1001);
     read_set_param_write_two_test!(
-        century0_set,
+        set,
         set_year,
         2099,
         MONTH,
@@ -206,18 +277,8 @@ mod year {
         0b1001_1001
     );
 
-    get_param_read_array_test!(century1_get, year, 2100, MONTH, [0b1000_0000, 0], [0, 0]);
-    read_set_param_write_two_test!(
-        century1_set,
-        set_year,
-        2100,
-        MONTH,
-        0b0001_0010,
-        0b1001_0010,
-        0
-    );
-
-    set_invalid_param_range_test!(invalid, set_year, 1999, 2101);
+    set_invalid_param_range_test!(invalid, set_year, 1999, 2100);
+    get_invalid_device_century_test!(invalid_century, year);
 }
 
 macro_rules! invalid_dt_test {
@@ -233,7 +294,7 @@ macro_rules! invalid_dt_test {
             }
             #[test]
             fn datetime_too_big() {
-                let dt = new_datetime(2101, 1, 2, 3, 4, 5);
+                let dt = new_datetime(2100, 1, 2, 3, 4, 5);
                 let mut dev = $create_method(&[]);
                 assert_invalid_input_data!(dev.set_datetime(&dt));
                 $destroy_method(dev);
@@ -247,7 +308,7 @@ macro_rules! invalid_dt_test {
             }
             #[test]
             fn date_too_big() {
-                let d = new_date(2101, 1, 2);
+                let d = new_date(2100, 1, 2);
                 let mut dev = $create_method(&[]);
                 assert_invalid_input_data!(dev.set_date(&d));
                 $destroy_method(dev);
@@ -298,6 +359,26 @@ macro_rules! dt_test {
             }
 
             #[test]
+            fn get_datetime_invalid_century() {
+                let _dt = new_datetime(2018, 8, 13, 23, 59, 58);
+                let mut dev = $create_method(&$mac_trans_read!(
+                    SECONDS,
+                    [
+                        0b0101_1000,
+                        0b0101_1001,
+                        0b0010_0011,
+                        0b0000_0010,
+                        0b0001_0011,
+                        0b0000_1000 | BitFlags::CENTURY,
+                        0b0001_1000
+                    ],
+                    [0, 0, 0, 0, 0, 0, 0]
+                ));
+                assert_invalid_device_century!(dev.datetime());
+                $destroy_method(dev);
+            }
+
+            #[test]
             fn set_datetime() {
                 let dt = new_datetime(2018, 8, 13, 23, 59, 58);
                 let mut dev = $create_method(&$mac_trans_write!(
@@ -329,6 +410,18 @@ macro_rules! dt_test {
             }
 
             #[test]
+            fn get_date_invalid_century() {
+                let _d = new_date(2018, 8, 13);
+                let mut dev = $create_method(&$mac_trans_read!(
+                    DOM,
+                    [0b0001_0011, 0b0000_1000 | BitFlags::CENTURY, 0b0001_1000],
+                    [0, 0, 0]
+                ));
+                assert_invalid_device_century!(dev.date());
+                $destroy_method(dev);
+            }
+
+            #[test]
             fn set_date() {
                 let d = new_date(2018, 8, 13);
                 let mut dev = $create_method(&$mac_trans_write!(
@@ -340,25 +433,32 @@ macro_rules! dt_test {
             }
 
             #[test]
-            fn set_date_century() {
-                let d = new_date(2100, 8, 13);
-                let mut dev = $create_method(&$mac_trans_write!(
-                    DOW,
-                    [0b0000_0110, 0b0001_0011, 0b1000_1000, 0]
-                ));
-                dev.set_date(&d).unwrap();
+            fn get_time() {
+                let t = NaiveTime::from_hms_opt(23, 59, 58).unwrap();
+                let month_transaction = $mac_trans_read!(MONTH, [1], [0]);
+                let time_transaction =
+                    $mac_trans_read!(SECONDS, [0b0101_1000, 0b0101_1001, 0b0010_0011], [0, 0, 0]);
+                let mut transactions = vec![];
+                let mut i: usize = 0;
+                while i < month_transaction.len() {
+                    transactions.push(month_transaction[i].clone());
+                    i += 1;
+                }
+                let mut j: usize = 0;
+                while j < time_transaction.len() {
+                    transactions.push(time_transaction[j].clone());
+                    j += 1;
+                }
+                let mut dev = $create_method(&transactions);
+                assert_eq!(t, dev.time().unwrap());
                 $destroy_method(dev);
             }
 
             #[test]
-            fn get_time() {
-                let t = NaiveTime::from_hms_opt(23, 59, 58).unwrap();
-                let mut dev = $create_method(&$mac_trans_read!(
-                    SECONDS,
-                    [0b0101_1000, 0b0101_1001, 0b0010_0011],
-                    [0, 0, 0]
-                ));
-                assert_eq!(t, dev.time().unwrap());
+            fn get_time_invalid_century() {
+                let transactions = $mac_trans_read!(MONTH, [0 | BitFlags::CENTURY], [0]);
+                let mut dev = $create_method(&transactions);
+                assert_invalid_device_century!(dev.time());
                 $destroy_method(dev);
             }
 

@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- [breaking-change] Return Error::InvalidInputData when attempting to set the year to something
+  outside of the range 2000-2099 because all chips have a problem with the year 2100 and beyond.
+- [breaking-change] Return Error::InvalidDeviceCentury when attempting to get a date and/or time value
+  and the the device's century bit is set because all chips have a problem withe year 2100 and beyond.
+
 ## [0.7.0] - 2025-10-11
 
 ### Added
