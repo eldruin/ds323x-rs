@@ -28,33 +28,9 @@ fn hours_to_register<E>(hours: Hours) -> Result<u8, Error<E>> {
     }
 }
 
-fn some_or_invalid_error<T, E>(data: Option<T>) -> Result<T, Error<E>> {
-    if let Some(data) = data {
-        Ok(data)
-    } else {
-        Err(Error::InvalidDeviceState)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn if_some_then_get_inner() {
-        match some_or_invalid_error::<u8, ()>(Some(1)) {
-            Ok(1) => (),
-            _ => panic!(),
-        }
-    }
-
-    #[test]
-    fn if_none_then_error() {
-        match some_or_invalid_error::<u8, ()>(None) {
-            Err(Error::InvalidDeviceState) => (),
-            _ => panic!(),
-        }
-    }
 
     #[test]
     fn can_convert_packed_bcd_to_decimal() {
