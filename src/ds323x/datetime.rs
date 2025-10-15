@@ -1,8 +1,6 @@
 //! Common implementation
 
-use super::{
-    decimal_to_packed_bcd, hours_to_register, packed_bcd_to_decimal, some_or_invalid_error,
-};
+use super::{decimal_to_packed_bcd, hours_to_register, packed_bcd_to_decimal};
 use crate::{
     interface::{ReadData, WriteData},
     BitFlags, DateTimeAccess, Datelike, Ds323x, Error, Hours, NaiveDate, NaiveDateTime, NaiveTime,
@@ -29,10 +27,11 @@ where
         let minute = packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]);
         let second = packed_bcd_to_decimal(data[Register::SECONDS as usize + 1]);
 
-        let date = NaiveDate::from_ymd_opt(year.into(), month.into(), day.into());
-        let date = some_or_invalid_error(date)?;
-        let datetime = date.and_hms_opt(get_h24(hour).into(), minute.into(), second.into());
-        some_or_invalid_error(datetime)
+        let date = NaiveDate::from_ymd_opt(year.into(), month.into(), day.into())
+            .ok_or(Error::InvalidDeviceState)?;
+
+        date.and_hms_opt(get_h24(hour).into(), minute.into(), second.into())
+            .ok_or(Error::InvalidDeviceState)
     }
 
     fn set_datetime(&mut self, datetime: &NaiveDateTime) -> Result<(), Self::Error> {
@@ -78,8 +77,8 @@ where
         let minute = packed_bcd_to_decimal(data[Register::MINUTES as usize + 1]);
         let second = packed_bcd_to_decimal(data[Register::SECONDS as usize + 1]);
 
-        let time = NaiveTime::from_hms_opt(get_h24(hour).into(), minute.into(), second.into());
-        some_or_invalid_error(time)
+        NaiveTime::from_hms_opt(get_h24(hour).into(), minute.into(), second.into())
+            .ok_or(Error::InvalidDeviceState)
     }
 
     fn weekday(&mut self) -> Result<u8, Self::Error> {
@@ -116,8 +115,9 @@ where
         let month =
             packed_bcd_to_decimal(data[Register::MONTH as usize + 1 - offset] & !BitFlags::CENTURY);
         let day = packed_bcd_to_decimal(data[Register::DOM as usize + 1 - offset]);
-        let date = NaiveDate::from_ymd_opt(year.into(), month.into(), day.into());
-        some_or_invalid_error(date)
+
+        NaiveDate::from_ymd_opt(year.into(), month.into(), day.into())
+            .ok_or(Error::InvalidDeviceState)
     }
 
     fn set_seconds(&mut self, seconds: u8) -> Result<(), Self::Error> {
