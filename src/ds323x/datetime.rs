@@ -271,11 +271,20 @@ fn is_am(hours_data: u8) -> bool {
     hours_data & BitFlags::AM_PM == 0
 }
 
+/// Returns the hours in 24H time.
+///
+/// 12AM and 12PM are treated differently because 12AM is midnight (not noon)
+/// and 12PM is noon (not midnight). So, 12AM must be converted 0, and 12PM must
+/// be converted to 0 before adding 12.
+///
+/// 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23
+/// |AM|AM|AM|AM|AM|AM|AM|AM|AM|AM|AM|AM|PM|PM|PM|PM|PM|PM|PM|PM|PM|PM|PM|PM|
+/// 12 1  2  3  4  5  6  7  8  9  10 11 12 1  2  3  4  5  6  7  8  9  10 11
 fn get_h24(hour: Hours) -> u8 {
     match hour {
         Hours::H24(h) => h,
-        Hours::AM(h) => h,
-        Hours::PM(h) => h + 12,
+        Hours::AM(h) => h % 12,
+        Hours::PM(h) => (h % 12) + 12,
     }
 }
 
@@ -286,15 +295,14 @@ mod tests {
     #[test]
     fn can_convert_to_h24() {
         assert_eq!(0, get_h24(Hours::H24(0)));
-        assert_eq!(0, get_h24(Hours::AM(0)));
-        assert_eq!(12, get_h24(Hours::PM(0)));
+        assert_eq!(0, get_h24(Hours::AM(12)));
+        assert_eq!(12, get_h24(Hours::PM(12)));
 
         assert_eq!(1, get_h24(Hours::H24(1)));
         assert_eq!(1, get_h24(Hours::AM(1)));
         assert_eq!(13, get_h24(Hours::PM(1)));
 
         assert_eq!(23, get_h24(Hours::H24(23)));
-        assert_eq!(12, get_h24(Hours::AM(12)));
         assert_eq!(23, get_h24(Hours::PM(11)));
     }
 }
